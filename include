@@ -1,0 +1,825 @@
+#pragma once
+#include "TStd.h"
+class TCamera
+{
+public:
+	D3DXMATRIX m_matView;
+	D3DXMATRIX m_matProj;
+	D3DXVECTOR3  m_vPos;
+	D3DXVECTOR3 m_vTarget;
+	D3DXVECTOR3 m_vUp;
+
+	D3DXVECTOR3 m_vLook;
+	D3DXVECTOR3 m_vSide;
+
+	float      m_fRoll;
+	float      m_fYaw;
+	float      m_fPitch;
+	float	   m_fRadius;
+public:
+	bool  Create(ID3D11Device * pDevice);
+	void  Update(D3DXVECTOR4 vDir);
+	void  Frame(D3DXVECTOR4 vDir);
+	void  UpdateVector();
+	void  MoveLook(float fValue);
+	D3DXMATRIX SetViewMatrix(D3DXVECTOR3 vPos, D3DXVECTOR3 vAt, D3DXVECTOR3 vUp=D3DXVECTOR3(0,1,0) );
+	D3DXMATRIX SetProjMatrix(FLOAT fFov, FLOAT fAsepect, FLOAT fNear, FLOAT fFar);
+public:
+	TCamera();
+	virtual ~TCamera();
+};
+
+#pragma once
+#include "TWindow.h"
+
+#include "TTimer.h"
+#include "TInput.h"
+#include "TWrite.h"
+using namespace DX;
+class TCore : public TWindow
+{
+public:
+	TTimer		m_Timer;
+	TWrite		m_Font;
+public:
+	bool	GameRun();
+	bool	GameInit();	
+	bool	GameFrame();
+	virtual bool	GameRender();
+	bool    GameRelease();
+	void	MsgEvent(MSG msg);
+
+	virtual bool	DrawDebug();
+	virtual bool    DrawDebug(TCHAR* pString, int iX, int iY);
+	virtual bool	PreRender();
+	virtual bool	PostRender();
+public:
+	////////// 가상 함수들 ///////////
+	virtual bool		Init() { return true; }
+	virtual bool		PreFrame() { return true; }	
+	virtual bool		PostFrame() { return true; }	
+	virtual bool		Frame() { return true; }
+	virtual bool		Render() { return true; }
+	virtual bool		Release() { return true; };
+public:
+	TCore();
+	virtual ~TCore();
+};
+
+#pragma once
+#include "TStd.h"
+#include "TDxHelperEx.h"
+using namespace DX;
+
+class TDevice
+{
+public:
+	TDxRT       m_DefaultRT;
+	HWND		m_hWnd; // 윈도우 핸들
+	HINSTANCE	m_hInstance; // 실행객체 핸들
+	RECT		m_rtWindow;
+	DWORD		m_dwWidth;
+	DWORD		m_dwHeight;
+	D3D11_VIEWPORT m_vp;
+public:
+	D3D_DRIVER_TYPE         g_driverType;
+	D3D_FEATURE_LEVEL       g_featureLevel;
+	ID3D11Device*           m_pd3dDevice;
+	ID3D11DeviceContext*    g_pImmediateContext;
+	ID3D11DeviceContext*  GetContext() 
+	{
+		return g_pImmediateContext;	
+	}
+	IDXGISwapChain*         g_pSwapChain;
+		
+	IDXGIFactory*			g_pGIFactory;
+	DXGI_SWAP_CHAIN_DESC	m_sd;
+public:
+	bool   ResizeDevice(UINT iWidth, UINT iHeight);
+	HRESULT SetRenderTarget();
+	HRESULT SetViewPort();
+	HRESULT CreateGIFactory();
+	HRESULT InitSwapChain();
+	HRESULT InitDevice();
+	void	CleanupDevice();
+	HRESULT  TDevice::CreateDXResouce();
+	HRESULT  TDevice::DeleteDXResouce();
+public:
+	TDevice();
+	virtual ~TDevice();
+};
+
+#pragma once
+#include <d3d11.h>
+#include <d3dx11.h>
+#include <d3dcompiler.h>
+//#include <xnamath.h>
+#include <d3dx10math.h>
+#include <d2d1.h>
+#include <d2d1helper.h>
+#include <wrl.h> // 
+#include <dwrite.h>
+#include <tchar.h>
+#include <vector>
+#include <map>
+#include <list>
+#include <string>	
+using namespace std;
+using namespace Microsoft::WRL;
+
+
+#pragma comment	(lib, "dxgi.lib")
+#pragma comment	(lib, "dxguid.lib")
+#pragma comment( lib, "d3d11.lib")
+#pragma comment( lib, "d3dcompiler.lib")
+
+#if defined(DEBUG) || defined(_DEBUG)
+	#pragma comment( lib, "d3dx10d.lib")
+	#pragma comment( lib, "d3dx11d.lib")
+#else
+	#pragma comment( lib, "d3dx10.lib")
+	#pragma comment( lib, "d3dx11.lib")
+#endif
+
+#pragma comment( lib, "dwrite.lib")
+#pragma comment	(lib, "d2d1.lib")
+
+extern ID3D11Device*	g_pd3dDevice;
+// # 스트링화 연산자
+// ## 연결연산자
+#define str(x)  L#x  // L"aa", _T("aa"), "aa"
+#define xstr(x)  str(x)
+
+#if defined(DEBUG) | defined(_DEBUG) 
+#ifndef H_RETURN
+#define H_RETURN(x){ if (FAILED(x)){\
+		LPWSTR output;\
+		WCHAR buffer[256]={0,};\
+		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM |FORMAT_MESSAGE_IGNORE_INSERTS |FORMAT_MESSAGE_ALLOCATE_BUFFER,\
+		NULL,x,MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),(LPTSTR)&output,0,NULL);\
+		wsprintf(buffer,L"File=%s\nLine=%s", xstr(__FILE__),xstr(__LINE__));\
+		MessageBox(NULL, buffer,output,MB_OK); return x;}\
+	}
+#endif
+#ifndef H
+#define H(x){ if (FAILED(x)){\
+		LPWSTR output;\
+		WCHAR buffer[256]={0,};\
+		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM |FORMAT_MESSAGE_IGNORE_INSERTS |FORMAT_MESSAGE_ALLOCATE_BUFFER,\
+		NULL,x,MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),(LPTSTR)&output,0,NULL);\
+		wsprintf(buffer,L"File=%s\nLine=%s", xstr(__FILE__),xstr(__LINE__));\
+		MessageBox(NULL, buffer,output,MB_OK);}\
+	}
+#endif
+#else
+#ifndef H_RETURN
+#define H_RETURN(x) { hr=(x); if( FAILED(hr) { return hr; }}
+#endif
+#ifndef H
+#define H(x) { hr = (x); }
+#endif
+#endif
+
+//////////////////////////////////////////////
+// 객체 및 배열 할당과 삭제 및 소멸 매크로
+//////////////////////////////////////////////
+#ifndef SAFE_ZERO
+#define SAFE_ZERO(A)				{ A = 0; }
+#endif
+
+#ifndef SAFE_NEW
+#define SAFE_NEW(A, B)				{ if (!A) A = new B; }
+#endif 
+
+#ifndef SAFE_DEL
+#define SAFE_DEL(A)					{ if (A) delete A; (A)=NULL; }
+#endif 
+
+#ifndef SAFE_NEW_ARRAY
+#define SAFE_NEW_ARRAY(A, B, C)		{ if (!A && C) A = new B[C]; }
+#endif 
+
+#ifndef SAFE_DELETE_ARRAY
+#define SAFE_DELETE_ARRAY(A)		{ if (A) delete [] A; (A)=NULL; }
+#endif 
+
+#ifndef SAFE_RELEASE
+#define SAFE_RELEASE(A)				{ if(A) { (A)->Release(); (A)=NULL; } }
+#endif 
+
+#ifndef SAFE_NEW_CLEAR
+#define SAFE_NEW_CLEAR( A, B )			{ if (!A) A = new B; if(A) memset( A, 0, sizeof(B) ); };
+#endif 
+
+#ifndef SAFE_NEW_ARRAY_CLEAR
+#define SAFE_NEW_ARRAY_CLEAR( A, B, C )	{ if (!A && C) A = new B[C]; if(A) memset( A, 0, sizeof(B)*C ); };
+#endif
+// 추가
+#define COUNTOF(a) ( sizeof( a ) / sizeof( ( a )[0] ) )
+#pragma once
+#include "TDxHelper.h"
+namespace DX
+{
+	class TDxState
+	{
+	public:
+		static ID3D11RasterizerState*   g_pWireFrameRS;
+		static ID3D11RasterizerState*   g_pBackSolidRS;
+		static ID3D11RasterizerState*   g_pFrontSolidRS;
+		static ID3D11RasterizerState*   g_pNoneSolidRS;		
+		static ID3D11RasterizerState*   g_pCullSolidRS[3];
+
+		static ID3D11DepthStencilState* g_pDepthStencilAddDSS; // 깊이 버퍼링 할성화
+		static ID3D11DepthStencilState* g_pDepthStencilDisableDSS;// 비활성화
+		
+		static ID3D11SamplerState*		g_pSamplerState;
+		static HRESULT SetState(ID3D11Device* pDevice);
+		static bool Release();
+	};
+
+	static void ApplyRS(
+		ID3D11DeviceContext*    pContext,
+		ID3D11RasterizerState*  pRasterState)
+	{
+		pContext->RSSetState(pRasterState);
+	}
+	static void ApplyDSS(
+		ID3D11DeviceContext*    pContext,
+		ID3D11DepthStencilState*  pRasterState)
+	{
+		pContext->OMSetDepthStencilState(pRasterState, 0x01);
+	}
+	static void ApplySS(
+		ID3D11DeviceContext*    pContext,
+		ID3D11SamplerState*  pSamplerState)
+	{
+		pContext->PSSetSamplers(0, 1, &pSamplerState);
+	}
+	
+
+	HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
+	ID3D11VertexShader*		LoadVertexShaderFile(
+		ID3D11Device*  pd3dDevice,
+		TCHAR* pLoadShaderFile,
+		ID3DBlob** ppVSBlob);
+	ID3D11PixelShader*		LoadPixelShaderFile(
+		ID3D11Device*  pd3dDevice, 
+		TCHAR* pLoadShaderFile,
+		char* csEntry = 0);
+	ID3D11GeometryShader*   LoadGeometryShaderFile(
+		ID3D11Device*  pd3dDevice,
+		TCHAR* pLoadShaderFile);
+	ID3D11InputLayout* CreateInputlayout(
+		ID3D11Device*  pd3dDevice,
+		D3D11_INPUT_ELEMENT_DESC layout[],
+		UINT numElements,
+		ID3DBlob* pVSBlob);
+
+	ID3D11Buffer* CreateBuffer(
+		ID3D11Device*  pd3dDevice,
+		void *data,
+		UINT iNumCount,
+		UINT iSize,
+		D3D11_BIND_FLAG bindFlag,
+		bool bDynamic = false);
+
+	ID3D11ShaderResourceView* CreateShaderResourceView(
+		ID3D11Device*  pd3dDevice, 
+		TCHAR* szFileName);
+	class TDXObject
+	{
+	public:
+		TDXObject::TDXObject();
+		TDXObject::~TDXObject();
+		ComPtr<ID3D11Buffer>	g_pVertexBuffer;
+		ComPtr<ID3D11Buffer>		g_pIndexBuffer;
+		ComPtr<ID3D11Buffer>		g_pConstantBuffer;
+		ComPtr<ID3D11VertexShader> g_pVertexShader;
+		ComPtr<ID3D11PixelShader>  g_pPixelShader;
+		ComPtr<ID3D11GeometryShader>  g_pGeometryShader;
+		ComPtr<ID3D11InputLayout>  g_pInputlayout;
+		ComPtr<ID3DBlob>			g_pVSBlob;
+		ComPtr<ID3D11ShaderResourceView>   g_pTexSRV;
+
+		UINT    m_iNumVertex;
+		UINT    m_iNumIndex;
+		UINT    m_iVertexSize;
+
+		bool m_bWireFrameRender;
+		int m_iPrimitiveType;
+		int m_iCullMode;
+	public:
+		bool Frame();
+		bool PreRender(ID3D11DeviceContext*    pContext, UINT VertexSize, UINT VertexCount);
+		bool Render(ID3D11DeviceContext*    pContext, UINT VertexSize, UINT VertexCount);
+		bool PostRender(ID3D11DeviceContext*    pContext, UINT VertexSize, UINT VertexCount);
+		void  Release();
+	};
+	class TDxRT
+	{
+	public:
+		ID3D11RenderTargetView*  m_pRenderTargetView;
+		ID3D11DepthStencilView*  m_pDSV;
+		HRESULT					 CreateDSV(ID3D11Device*  pd3dDevice,
+			UINT iWidth, UINT iHeight);
+		void					 Release()
+		{			
+			if (m_pRenderTargetView)
+				m_pRenderTargetView->Release();
+			if (m_pDSV)
+				m_pDSV->Release();
+		};
+	};
+}
+#pragma once
+#include "tstd.h"
+#include <dinput.h>
+#pragma comment (lib, "dinput8.lib")
+
+enum KeyState {
+	KEY_FREE = 0,
+	KEY_PUSH,
+	KEY_UP,
+	KEY_HOLD,
+};
+
+
+#define KEYSTATECOUNT 256
+//#define WIN_KEY_USE
+
+class TInput : public TSingleton<TInput>
+{
+private:
+	friend class TSingleton<TInput>;
+public:
+	//  인풋 객체
+	LPDIRECTINPUT8		m_pDI;
+	LPDIRECTINPUTDEVICE8  m_pKeyDevice; // 키보드
+	LPDIRECTINPUTDEVICE8  m_pMouseDevice;// 마우스
+	BYTE				  m_KeyState[KEYSTATECOUNT];
+	BYTE				  m_KeyStateOld[KEYSTATECOUNT];
+	DIMOUSESTATE		  m_DIMouseState;
+	bool   InitDirectInput();
+public:
+	std::vector<wstring>    m_strList;
+	TCHAR		m_csBuffer[MAX_PATH];
+	BYTE		m_MouseState[3];
+	BYTE		m_BeforeMouseState[3];
+	POINT		m_MousePos;
+public:
+	BYTE		KeyCheck(BYTE dwKey);
+	// 클래스 멤버 변수 초기화
+	bool		Init();
+	// 매 프레임에서 계산을 담당한다.
+	bool		Frame();
+	// 매 프레임에서 드로우를 담당한다.
+	bool		Render();
+	// 클래스 멤버 변수 소멸을 담당한다.
+	bool		Release();
+	void		MsgEvent(MSG msg);
+private:
+	TInput();
+public:
+	virtual ~TInput();
+};
+#define I_Input TInput::GetInstance()
+#pragma once
+#include "TDXHelperEx.h"
+using namespace DX;
+
+struct PCT_VERTEX
+{
+	D3DXVECTOR3 p;
+	D3DXVECTOR4 c;
+	D3DXVECTOR2 t;	
+	PCT_VERTEX() {}
+	PCT_VERTEX( D3DXVECTOR3 p0,
+				D3DXVECTOR4 c0,
+				D3DXVECTOR2 t0 )
+	{
+		p = p0;
+		c = c0;
+		t = t0;
+	}
+};
+struct PNCT_VERTEX
+{
+	D3DXVECTOR3 p;
+	D3DXVECTOR3 n;
+	D3DXVECTOR4 c;
+	D3DXVECTOR2 t;
+	PNCT_VERTEX() {}
+	PNCT_VERTEX(D3DXVECTOR3 p0, D3DXVECTOR3 n0,
+				D3DXVECTOR4 c0,
+				D3DXVECTOR2 t0)
+	{
+		p = p0;
+		n = n0;
+		c = c0;
+		t = t0;
+	}
+};
+struct PC_VERTEX
+{
+	D3DXVECTOR3 p;	
+	D3DXVECTOR4 c;	
+	PC_VERTEX() {}
+	PC_VERTEX(D3DXVECTOR3 p0,
+		D3DXVECTOR4 c0)
+	{
+		p = p0;
+		c = c0;		
+	}
+};
+struct VS_CONSTANT_BUFFER
+{
+	D3DXMATRIX matWorld;
+	D3DXMATRIX matView;
+	D3DXMATRIX matProj;
+	D3DXVECTOR4 Color;
+};
+
+class TShape
+{
+public:
+	ID3D11Device*		m_pd3dDevice;
+	TDXObject           m_Object;
+	VS_CONSTANT_BUFFER	m_cbData;
+	std::vector<DWORD>  m_IndexList;
+	D3DXMATRIX			m_matWorld;
+	D3DXMATRIX			m_matView;
+	D3DXMATRIX			m_matProj;
+	D3DXVECTOR3         m_vLook;
+	D3DXVECTOR3         m_vUp;
+	D3DXVECTOR3         m_vSide;
+	D3DXVECTOR3			m_vPos;
+public:
+	void   SetMatrix( D3DXMATRIX* pWolrd, 
+		D3DXMATRIX* pView, 
+		D3DXMATRIX* pProj );
+	virtual bool  Create(ID3D11Device* g_pd3dDevice,
+		TCHAR* pShaderFile,
+		TCHAR* pTextureFile);
+	virtual bool  PreRender(ID3D11DeviceContext*   pContext);
+	virtual bool  Render(ID3D11DeviceContext*   pContext);
+	virtual bool  PostRender(ID3D11DeviceContext*   pContext);
+	virtual HRESULT CreateVertexBuffer() { return true; };
+	virtual HRESULT CreateIndexBuffer() { return true; };
+	virtual HRESULT CreateConstantBuffer();
+	virtual HRESULT SetInputlayout() { return true; };
+	virtual HRESULT LoadShaderFile(TCHAR* pShaderFile);
+	virtual HRESULT LoadShaderResourceView(TCHAR* pTextureFile);
+public:
+	TShape();
+	virtual ~TShape();
+};
+class TBoxShape : public TShape
+{
+public:
+	std::vector<PNCT_VERTEX>  m_VertexList;
+public:
+	HRESULT CreateVertexBuffer();
+	HRESULT CreateIndexBuffer();
+	HRESULT SetInputlayout();
+public:
+	TBoxShape() {};
+	virtual ~TBoxShape() {};
+};
+class TPlaneShape : public TShape
+{
+public:
+	std::vector<PCT_VERTEX>  m_VertexList;
+public:
+	HRESULT CreateVertexBuffer();
+	HRESULT CreateIndexBuffer();
+	HRESULT SetInputlayout();
+public:
+	TPlaneShape() {};
+	virtual ~TPlaneShape() {};
+};
+class TLineShape : public TShape
+{
+public:
+	std::vector<PC_VERTEX>  m_VertexList;
+public:
+	HRESULT CreateVertexBuffer();
+	HRESULT CreateIndexBuffer();
+	HRESULT SetInputlayout();
+	bool    Draw(ID3D11DeviceContext*   pContext,
+		D3DXVECTOR3 vStart, 
+		D3DXVECTOR3 vEnd,
+		D3DXVECTOR4 vColor	);
+public:
+	TLineShape() {
+		m_Object.m_iPrimitiveType =
+			D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+	};
+	virtual ~TLineShape() {};
+};
+class TDirectionLineShape : public TShape
+{
+public:
+	std::vector<PC_VERTEX>  m_VertexList;
+public:
+	HRESULT CreateVertexBuffer();
+	HRESULT CreateIndexBuffer();
+	HRESULT SetInputlayout();
+public:
+	TDirectionLineShape() {
+		m_Object.m_iPrimitiveType =
+			D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+	};
+	virtual ~TDirectionLineShape() {};
+};#ifndef KGCA
+	#define KGCA
+	//#include <WinSock2.h>
+	#include <windows.h>
+	#include <time.h>
+	#include <memory> // 
+	#include "TDxHelper.h"
+
+	using namespace std;		
+	#pragma comment( lib, "ws2_32.lib")
+	#pragma comment( lib, "winmm.lib")
+	
+#ifdef _DEBUG
+	#pragma comment( lib, "TCoreLib32_d.lib")
+#else
+	#pragma comment( lib, "TCoreLib32_r.lib")
+#endif	
+
+	typedef basic_string<TCHAR> T_STR;
+	typedef basic_string<wchar_t> W_STG;
+	typedef basic_string<char>  C_STR;
+	typedef vector<basic_string<TCHAR>>		TCHAR_STRING_VECTOR;
+	typedef vector<DWORD>					DWORD_VECTOR;
+	// 멀티바이트 문자집합 사용경우
+	// ABC홍길동 = 9
+	// [A][B][C] [0]
+	// 유니코드바이트 문자집합 사용경우
+	// ABC홍길동 = 12
+	// [A][0][B][0][C][0] [][][][][][]
+	static std::wstring mtw(std::string str)
+	{
+		std::wstring ret = std::wstring(str.begin(), str.end());
+		return  ret;
+	}
+	static std::string wtm(std::wstring str)
+	{
+		return  std::string(str.begin(), str.end());
+	}
+	static char* GetWtM(WCHAR* data)
+	{
+		char retData[4096] = { 0 };
+		// 변형되는 문자열의 크기가 반환된다.
+		int iLength = WideCharToMultiByte(CP_ACP, 0,
+			data, -1, 0, 0, NULL, NULL);
+		int iRet = WideCharToMultiByte(CP_ACP, 0,
+			data, -1,  //  소스
+			retData, iLength, // 대상
+			NULL, NULL);
+		return retData;
+	}
+	static bool GetWtM(WCHAR* src, char* pDest)
+	{
+		// 변형되는 문자열의 크기가 반환된다.
+		int iLength = WideCharToMultiByte(CP_ACP, 0,
+			src, -1, 0, 0, NULL, NULL);
+		int iRet = WideCharToMultiByte(CP_ACP, 0,
+			src, -1,  //  소스
+			pDest, iLength, // 대상
+			NULL, NULL);
+		if (iRet == 0) return false;
+		return true;
+	}
+	static WCHAR* GetMtW(char* data)
+	{
+		WCHAR retData[4096] = { 0 };
+		// 변형되는 문자열의 크기가 반환된다.
+		int iLength = MultiByteToWideChar(CP_ACP, 0, data, -1, 0, 0);
+		int iRet = MultiByteToWideChar(CP_ACP, 0,
+			data, -1,  //  소스
+			retData, iLength); // 대상
+		return retData;
+	}
+	static bool GetMtW(char* pSrc, WCHAR* pDest)
+	{
+		// 변형되는 문자열의 크기가 반환된다.
+		int iLength = MultiByteToWideChar(CP_ACP, 0,
+			pSrc, -1, 0, 0);
+		int iRet = MultiByteToWideChar(CP_ACP, 0,
+			pSrc, -1,  //  소스
+			pDest, iLength); // 대상		
+		if (iRet == 0) return false;
+		return true;
+	}
+	static void PRINT(char* fmt, ...) // 나열연산자
+	{
+		va_list arg;
+		va_start(arg, fmt);
+		char buf[256] = { 0, };
+		vsprintf_s(buf, fmt, arg);
+		printf("\n=====> %s", buf);
+		va_end(arg);
+	}
+	template<class T> class TSingleton
+	{
+	public:
+		static T& GetInstance()
+		{
+			static T theSingleInstance;
+			return theSingleInstance;
+		}
+	};
+#define TCORE_START int WINAPI wWinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPWSTR    lpCmdLine,int       nCmdShow){Sample sample;
+#define TCORE_WIN(s,x,y) if (sample.SetWindow(hInstance, L#s, x, y))	{	sample.Run();	} }
+#define TCORE_RUN(s,x,y) TCORE_START;TCORE_WIN(s,x,y);
+#define TCORE_END }
+
+#define TBASIS_EPSILON		((FLOAT)  0.001f)
+#define TBASIS_PI			((FLOAT)  3.141592654f)
+#define DegreeToRadian( degree ) ((degree) * (TBASIS_PI / 180.0f))
+#define RadianToDegree( radian ) ((radian) * (180.0f / TBASIS_PI))
+#define MAKECOLOR_ARGB(a, r, g, b)			(((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)
+#define IS_IN_RANGE(value,r0,r1) (( ((r0) <= (value)) && ((value) <= (r1)) ) ? 1 : 0)
+#define randf(x) (x*rand()/(float)RAND_MAX)
+#define randf2(x,off) (off+x*rand()/(float)RAND_MAX)
+#define randstep(fMin,fMax) (fMin+((float)fMax-(float)fMin)*rand()/(float)RAND_MAX)
+#define clamp(x,MinX,MaxX) if (x>MaxX) x=MaxX; else if (x<MinX) x=MinX;
+
+	static void T_ERR_EXIT(TCHAR *msg)
+	{
+		LPVOID lpMsgBuf;
+		FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+			NULL, GetLastError(),
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+			(TCHAR*)&lpMsgBuf, 0, NULL);
+		MessageBox(NULL, (TCHAR*)lpMsgBuf, msg, MB_ICONERROR);
+		LocalFree(lpMsgBuf);
+		exit(-1);
+	}
+	static void T_ERR(TCHAR *msg)
+	{
+		LPVOID lpMsgBuf;
+		FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+			NULL, GetLastError(),
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+			(TCHAR*)&lpMsgBuf, 0, NULL);
+		MessageBox(NULL, (TCHAR*)lpMsgBuf, msg, MB_ICONERROR);
+		LocalFree(lpMsgBuf);
+	}
+	///////////////////////////////////////////////////////////////////////////////////////////////////
+	// 디버그 메세지( 오류가 예상되는 곳에서 사용함 ) : 파일명과 라인 및 문자열이 출력되며 강제 종료됨.
+	///////////////////////////////////////////////////////////////////////////////////////////////////
+#ifdef _DEBUG
+#define	DEBUGMSG(lpText)															\
+	{																						\
+		TCHAR szBuffer[256];															\
+		_stprintf_s(szBuffer, _T("[File: %s][Line: %d]\n[Note : %s]"), __FILE__, __LINE__, lpText);	\
+		MessageBox(NULL, szBuffer, _T("ERROR"), MB_ICONERROR);									\
+		_ASSERT(1);																			\
+		_asm {																				\
+		int 3																			\
+		}																					\
+	}
+#else
+#define DEBUGMSG(lpText)
+#endif
+
+	extern HWND			g_hWnd;
+	extern HINSTANCE	g_hInstance;
+	extern RECT			g_rtWindow;
+	extern int			g_iFPS;// 1초당 프레임 개수
+	extern float		g_fSecPerFrame; // 1프레임의 경과시간
+	extern float		g_fAccumulation;// 실행된 경과 시간
+#endif#pragma once
+#include "TStd.h"
+class TTexture
+{
+public:
+	T_STR		 m_strName;	
+public:
+	bool	Init();
+	bool	Frame();
+	bool	Render();
+	bool	Release();
+
+	bool Load( T_STR fileName );
+public:
+	TTexture(void);
+	~TTexture(void);
+};
+
+#pragma once
+#include "TTexture.h"
+class TTextureMgr : public TSingleton<TTextureMgr>
+{
+private:
+	friend class TSingleton<TTextureMgr>;
+public:
+	typedef std::map<int, TTexture*>::iterator TItor;
+	map<int, TTexture*>   m_Map;
+	int					m_iCurIndex;
+public:
+	bool	Init();
+	bool	Frame();
+	bool	Render();
+	bool	Release();
+	int	  Load(	T_STR strLoadFile);
+	TTexture*    GetPtr( int iIndex );
+
+private:
+	TTextureMgr(void);
+	~TTextureMgr(void);
+};
+#define I_TexMgr TTextureMgr::GetInstance()
+#pragma once
+#include "TStd.h"
+class TTimer
+{
+public:
+	LARGE_INTEGER   m_Frequency; // 초당 주파수
+	LARGE_INTEGER   m_Current; // 초당 주파수
+	LARGE_INTEGER   m_Frame; // 초당 주파수
+
+public:
+	TCHAR		m_csBuffer[MAX_PATH];
+	int			m_iFPS;// 1초당 프레임 개수
+	float		m_fSecondPerFrame; // 1프레임의 경과시간
+	float		m_fAccumulation;// 실행된 경과 시간
+
+	DWORD		m_dwBeforeTick;
+	float		m_fFrameTime; // 임시변수
+	DWORD		m_dwFrameCnt;
+public:
+	// 클래스 멤버 변수 초기화
+	bool		Init();
+	// 매 프레임에서 계산을 담당한다.
+	bool		Frame();
+	// 매 프레임에서 드로우를 담당한다.
+	bool		Render();
+	// 클래스 멤버 변수 소멸을 담당한다.
+	bool		Release();
+public:
+	TTimer();
+	virtual ~TTimer();
+};
+
+#pragma once
+
+#include "TDevice.h"
+
+class TWindow : public TDevice
+{
+public:
+	void	CenterWindow();	
+	bool	SetWindow(HINSTANCE hInstance,
+		TCHAR* pTitleName = L"Sample",
+		int iWidth=800, int iHeight=600,
+		DWORD dwStyle = WS_OVERLAPPEDWINDOW);
+	bool	Run();
+	bool	Release();
+	virtual  bool   ResizeClient(UINT iWidth, UINT iHeight);
+	virtual  bool	GameRun() { return true; };
+	virtual  void   MsgEvent(MSG msg) {};
+	virtual  bool	GameInit() { return true; };
+	virtual  bool   GameRelease() { return true; };
+	virtual LRESULT MsgProc(HWND hWnd,
+							UINT msg,
+							WPARAM wParam,
+							LPARAM lParam);
+public:
+	TWindow();
+	virtual ~TWindow();
+};
+
+#pragma once
+#include "TDxHelper.h"
+
+class TWrite
+{
+public:
+	ID2D1Factory*		m_pD2DFactory;	
+	ID2D1RenderTarget*  m_pRT;
+
+	IDWriteFactory*		m_WriteFactory;
+	IDWriteTextFormat*  m_TextFormat;
+
+	ID2D1SolidColorBrush*  m_pRedBrush;
+public:
+	bool   Init();
+	bool   Release();
+	void   Begin();
+	void   End();
+	bool   Set(IDXGISurface1*  pSurface);
+	HRESULT DrawText(RECT rt,
+		TCHAR* pText,
+		D2D1::ColorF Color);
+	HRESULT CreateDeviceIndendentResource();
+	HRESULT CreateDeviceResources(IDXGISurface1* pSurface);
+public:
+	TWrite();
+	virtual ~TWrite();
+};
+
+

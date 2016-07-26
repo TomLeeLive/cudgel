@@ -1,0 +1,7 @@
+P056_AlphaBlend_1
+P057_MultiTexture_1
+P058_AlphaBlend_2
+P060_AlphaTestting
+P061_AlphaBlend_3
+P062_MultiTexture_2
+P063_EffectState

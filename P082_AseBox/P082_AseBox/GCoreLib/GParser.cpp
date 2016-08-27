@@ -63,6 +63,24 @@ BOOL GParser::GetData(VOID* pData, INT DataType)
 			}
 		}
 		break;
+		case MESH_FACE_DATA:
+		{
+			_stscanf(m_pBuffer, _T("%s %s%s %d %s %d %s %d"),
+				m_pString, m_pString, m_pString,
+				&((ST_MESH_FACE*)pData)->index1, m_pString, &((ST_MESH_FACE*)pData)->index2, m_pString, &((ST_MESH_FACE*)pData)->index3);
+		}
+		break;
+		case MESH_VERTEX_DATA:
+		{
+			INT iData;
+			_stscanf(m_pBuffer, _T("%s %d %f %f %f"),
+				m_pString,
+				&iData,
+				&((D3DXVECTOR3*)pData)->x,
+				&((D3DXVECTOR3*)pData)->z,
+				&((D3DXVECTOR3*)pData)->y);
+		}
+		break;
 		case VERTEX_DATA:
 		{
 			_stscanf(m_pBuffer, _T("%s %f %f %f"),

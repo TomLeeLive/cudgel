@@ -98,8 +98,8 @@ public:
 	bool			GetData(TCHAR* pString = NULL, VOID* pData = NULL, INT DataType = NULL_DATA, bool bLoop = true);
 	bool			GetData(VOID* pData = NULL, INT DataType = NULL_DATA);
 	bool			GetVertexFromIndexData(TCHAR* strToken, DWORD dwSearchIndex, VOID* pData, INT DataType);
-	bool			GeGVertexListFromString(TCHAR* strVertexList, DWORD dwNumVertex, vector<D3DXVECTOR3>& VertexList, TCHAR* strToken = _T("*"));
-	bool			GeGFaceListFromString(TCHAR* strFaceList, DWORD dwNumFace, GVertexList& VertexList, TCHAR* strToken = _T("*"));
+	bool			GetVertexListFromString(TCHAR* strVertexList, DWORD dwNumVertex, vector<D3DXVECTOR3>& VertexList, TCHAR* strToken = _T("*"));
+	bool			GetFaceListFromString(TCHAR* strFaceList, DWORD dwNumFace, GVertexList& VertexList, TCHAR* strToken = _T("*"));
 	bool			GetPositionFaceListFromString(TCHAR* strFaceList, DWORD dwNumFace, GVertexList& VertexList, TCHAR* strToken = _T("*"));
 	bool			GetNormalListFromString(TCHAR* strFaceList, DWORD dwNumFace, GAseMesh* pGeomObject, TCHAR* strToken = _T("*"));
 	bool			GetTrackListFromString(vector<GAnimTrack>& PosTrack,

@@ -1,6 +1,12 @@
 #pragma once
 #include "GBASISStd.h"
 
+struct ST_MESH_FACE {
+	int index1;
+	int index2;
+	int index3;
+};
+
 enum SET_DATA_TYPES
 {
 	// Gameplay semantics
@@ -14,6 +20,8 @@ enum SET_DATA_TYPES
 	INDEX_DATA,
 	FACE_DATA,
 	MATRIX_DATA,
+	MESH_VERTEX_DATA,
+	MESH_FACE_DATA
 };
 
 class GParser

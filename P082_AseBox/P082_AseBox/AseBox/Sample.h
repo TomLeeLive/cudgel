@@ -54,7 +54,7 @@ struct ConstantBuffer
 
 
 
-TCHAR* g_pAseItems[] = { L"SCENE",L"MATERIAL_LIST",L"GEOMOBJECT"/*,L"HELPEROBJECT"*/ };
+TCHAR* g_pAseItems[] = { L"*SCENE",L"*MATERIAL_LIST",L"*GEOMOBJECT"/*,L"HELPEROBJECT"*/ };
 enum AseItemsType { SCENE = 0, MATERIALLIST, GEOMOBJECT, /*HELPEROBJECT, */};
 
 TCHAR* g_pAseSceneTokens[] = { L"*SCENE_FILENAME", L"*SCENE_FIRSTFRAME", L"*SCENE_LASTFRAME",L"*SCENE_FRAMESPEED",L"*SCENE_TICKSPERFRAME" };
@@ -99,8 +99,8 @@ struct GAseObj {
 
 struct GAseModel {
 	GAseScene					m_stScene;
-	vector<GAseMaterial*>		m_vMaterial;
-	vector<GAseObj*>			m_vObj;
+	vector<shared_ptr<GAseMaterial>>		m_vMaterial;
+	vector<shared_ptr<GAseObj>>			m_vObj;
 };
 
 class Sample : public GBASISLib_0
@@ -111,16 +111,20 @@ public:
 
 	int		GetObjDataFromFile() {
 		
-		GAseObj* aseobj = new GAseObj;
+		//GAseObj* aseobj = new GAseObj;
+		auto aseobj = make_shared<GAseObj>();
+
+		int iSize = sizeof(g_pAseObjTokens) / sizeof(g_pAseObjTokens[0]);
 
 		while (!feof(m_Parser.m_pStream))
 		{
 			_fgetts(m_Parser.m_pBuffer, 256, m_Parser.m_pStream);
 			_stscanf(m_Parser.m_pBuffer, _T("%s"), m_Parser.m_pString);
 
-			int iSize = sizeof(g_pAseObjTokens) / sizeof(g_pAseObjTokens[0]);
 
 			for (int i = 0; i < iSize; i++) {
+
+
 				if (!_tcsicmp(m_Parser.m_pString, g_pAseObjTokens[i]))
 				{
 					switch (i)
@@ -128,8 +132,8 @@ public:
 
 					case NODE_NAME:
 					{
-						m_Parser.GetDataFromFileNext(g_pAseObjTokens[0], &(aseobj->m_szName), STRING_DATA);
-						//continue;
+
+						m_Parser.GetData(&(aseobj->m_szName), STRING_DATA);
 					}
 					break;
 					case NODE_TM:
@@ -156,14 +160,14 @@ public:
 					{
 						ST_MESH_FACE stMeshFace;
 						//int			iNumVertex,iNumFaces;
-						D3DXVECTOR3* pPos;
+						D3DXVECTOR3 pPos;
 						m_Parser.GetDataFromFileLoop(L"*MESH_NUMVERTEX", &(aseobj->m_iPosCount), INT_DATA);
 						m_Parser.GetDataFromFileLoop(L"*MESH_NUMFACES", &(aseobj->m_iFaceCount), INT_DATA);
 
 						for (int i = 0; i < aseobj->m_iPosCount; i++) {
-							pPos = new D3DXVECTOR3;
-							m_Parser.GetDataFromFileLoop(L"*MESH_VERTEX", *pPos, MESH_VERTEX_DATA);
-							aseobj->m_vPosList.push_back(*pPos);
+							//pPos = new D3DXVECTOR3;
+							m_Parser.GetDataFromFileLoop(L"*MESH_VERTEX", &pPos, MESH_VERTEX_DATA);
+							aseobj->m_vPosList.push_back(pPos);
 						}
 
 						for (int i = 0; i < aseobj->m_iFaceCount; i++) {
@@ -179,7 +183,7 @@ public:
 					}
 				}
 			}
-			fgetc(m_Parser.m_pStream);
+			//fgetc(m_Parser.m_pStream);
 		}
 
 		m_stModel.m_vObj.push_back(aseobj);
@@ -187,14 +191,17 @@ public:
 
 	}
 	int		GetDataFromFile() {
+		
+		int iSize = sizeof(g_pAseItems) / sizeof(g_pAseItems[0]);
+
 		while (!feof(m_Parser.m_pStream))
 		{
 			_fgetts(m_Parser.m_pBuffer, 256, m_Parser.m_pStream);
 			_stscanf(m_Parser.m_pBuffer, _T("%s"), m_Parser.m_pString);
 
-			int iSize = sizeof(g_pAseItems) / sizeof(g_pAseItems[0]);
-				
+			
 			for (int i = 0; i < iSize; i++){
+
 				if (!_tcsicmp(m_Parser.m_pString, g_pAseItems[i]))
 				{
 					switch (i)
@@ -210,7 +217,8 @@ public:
 						break;
 					case MATERIALLIST: 
 					{
-						GAseMaterial* material = new GAseMaterial;
+						//GAseMaterial* material = new GAseMaterial;
+						auto material = make_shared<GAseMaterial>();
 						m_Parser.GetDataFromFileLoop(g_pAseMaterialTokens[0], &(material->m_szName), STRING_DATA);
 						m_Parser.GetDataFromFileLoop(g_pAseMaterialTokens[1], &(material->m_vecAmbient), VERTEX_DATA);
 						m_Parser.GetDataFromFileLoop(g_pAseMaterialTokens[2], &(material->m_vecDiffuse), VERTEX_DATA);
@@ -227,7 +235,7 @@ public:
 					}
 				}
 			}
-			fgetc(m_Parser.m_pStream);
+			//fgetc(m_Parser.m_pStream);
 		}
 
 		return -1;
@@ -313,7 +321,7 @@ public:
 
 
 		for (int i = 0; i < m_stModel.m_vObj[0]->m_iPosCount; i++) {
-			vertices[i] = { m_stModel.m_vObj[0]->m_vPosList[i], D3DXVECTOR4(1.0f, 0.0f, 1.0f, 1.0f) };
+			vertices[i] = { m_stModel.m_vObj[0]->m_vPosList[i], D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f) };
 		}
 		/*
 		SimpleVertex vertices[] =
@@ -364,7 +372,17 @@ public:
 
 
 		for (int i = 0; i < m_stModel.m_vObj[0]->m_iFaceCount * 3; i++) {
-			indices[i] = { (WORD)(m_stModel.m_vObj[0]->m_vIndex[i]) };
+
+			if(i == 0 || i% 3 ==0){
+				indices[i] = { (WORD)(m_stModel.m_vObj[0]->m_vIndex[i]) };
+			}
+			else if (i ==1 || i%3 ==1) {
+				indices[i] = { (WORD)(m_stModel.m_vObj[0]->m_vIndex[i+1]) };
+			}
+			else if( i ==2 || i%3 ==2 ) {
+				indices[i] = { (WORD)(m_stModel.m_vObj[0]->m_vIndex[i-1]) };
+			}
+
 		}
 		/*
 		WORD indices[] =
@@ -444,6 +462,9 @@ public:
 		D3DXMatrixPerspectiveFovLH(&g_Projection,XM_PIDIV2, m_iWindowWidth / (FLOAT)m_iWindowHeight, 0.01f, 1000.0f);
 
 
+
+		delete[] indices;
+		delete[] vertices;
 		return true; 
 	};
 	bool		Frame() {
@@ -502,7 +523,16 @@ public:
 
 		return true;
 	};
-	bool		Release() { return true; };
+	bool		Release() { 
+		
+		if (g_pConstantBuffer) g_pConstantBuffer->Release();
+		if (g_pVertexBuffer) g_pVertexBuffer->Release();
+		if (g_pIndexBuffer) g_pIndexBuffer->Release();
+		if (g_pVertexLayout) g_pVertexLayout->Release();
+		if (g_pVertexShader) g_pVertexShader->Release();
+		if (g_pPixelShader) g_pPixelShader->Release();
+
+		return true; };
 	Sample();
 	virtual ~Sample();
 };

@@ -1,7 +1,7 @@
 #pragma once
 #include "GBASISStd.h"
 
-struct ST_MESH_FACE {
+struct ST_INT_THREE {
 	int index1;
 	int index2;
 	int index3;

@@ -150,11 +150,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\GCoreLib\GParser.h" />
+    <ClInclude Include="GAseModel.h" />
+    <ClInclude Include="GAseParser.h" />
     <ClInclude Include="Sample.h" />
+    <ClInclude Include="_stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\GCoreLib\GParser.cpp" />
+    <ClCompile Include="GAseModel.cpp" />
+    <ClCompile Include="GAseParser.cpp" />
     <ClCompile Include="Sample.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

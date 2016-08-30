@@ -1,0 +1,214 @@
+#include "_stdafx.h"
+
+bool		GAseModel::Init() {
+
+	HRESULT hr = S_OK;
+
+
+	// Create the sample state
+	D3D11_SAMPLER_DESC sampDesc;
+	ZeroMemory(&sampDesc, sizeof(sampDesc));
+	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sampDesc.MinLOD = 0;
+	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	hr = g_pd3dDevice->CreateSamplerState(&sampDesc, &m_pSamplerLinear);
+	if (FAILED(hr))
+		return hr;
+
+
+
+
+	// Compile the vertex shader
+	ID3DBlob* pVSBlob = NULL;
+	hr = CompileShaderFromFile(L"Tutorial04.fx", "VS", "vs_4_0", &pVSBlob);
+	if (FAILED(hr))
+	{
+		MessageBox(NULL,
+			L"The FX file cannot be compiled.  Please run this executable from the directory that contains the FX file.", L"Error", MB_OK);
+		return hr;
+	}
+
+	// Create the vertex shader
+	hr = g_pd3dDevice->CreateVertexShader(pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), NULL, &m_pVertexShader);
+	if (FAILED(hr))
+	{
+		pVSBlob->Release();
+		return hr;
+	}
+
+	// Define the input layout
+	D3D11_INPUT_ELEMENT_DESC layout[] =
+	{
+		//{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		//{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, 40, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+	UINT numElements = ARRAYSIZE(layout);
+
+	// Create the input layout
+	hr = g_pd3dDevice->CreateInputLayout(layout, numElements, pVSBlob->GetBufferPointer(),
+		pVSBlob->GetBufferSize(), &m_pVertexLayout);
+	pVSBlob->Release();
+	if (FAILED(hr))
+		return hr;
+
+	// Set the input layout
+	g_pImmediateContext->IASetInputLayout(m_pVertexLayout);
+
+	// Compile the pixel shader
+	ID3DBlob* pPSBlob = NULL;
+	hr = CompileShaderFromFile(L"Tutorial04.fx", "PS", "ps_4_0", &pPSBlob);
+	if (FAILED(hr))
+	{
+		MessageBox(NULL,
+			L"The FX file cannot be compiled.  Please run this executable from the directory that contains the FX file.", L"Error", MB_OK);
+		return hr;
+	}
+
+	// Create the pixel shader
+	hr = g_pd3dDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), NULL, &m_pPixelShader);
+	pPSBlob->Release();
+	if (FAILED(hr))
+		return hr;
+
+
+	// Create vertex buffer
+	PNCT_VERTEX* vertices;
+	vertices = (PNCT_VERTEX *)malloc(sizeof(PNCT_VERTEX) * m_vObj[0]->m_iFaceCount * 3);
+
+	for (int i = 0; i < m_vObj[0]->m_iFaceCount * 3; i++) {
+
+		vertices[i] = m_vObj[0]->m_vPnctVertex[i];
+
+	}
+
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof(PNCT_VERTEX) * m_vObj[0]->m_iFaceCount * 3;//m_iPosCount;
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bd.CPUAccessFlags = 0;
+	D3D11_SUBRESOURCE_DATA InitData;
+	ZeroMemory(&InitData, sizeof(InitData));
+	InitData.pSysMem = vertices;
+	hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &m_vObj[0]->m_pVertexBuffer);
+	if (FAILED(hr))
+		return hr;
+
+	// Set vertex buffer
+	UINT stride = sizeof(PNCT_VERTEX);
+	UINT offset = 0;
+	g_pImmediateContext->IASetVertexBuffers(0, 1, &m_vObj[0]->m_pVertexBuffer, &stride, &offset);
+
+
+	// Create index buffer
+	WORD* indices;
+	indices = (WORD *)malloc(sizeof(WORD) * m_vObj[0]->m_iFaceCount * 3);
+
+	for (int i = 0; i < m_vObj[0]->m_iFaceCount * 3; i++) {
+		indices[i] = i;
+	}
+
+
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof(WORD) * m_vObj[0]->m_iFaceCount * 3;        // 36 vertices needed for 12 triangles in a triangle list
+	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	bd.CPUAccessFlags = 0;
+	InitData.pSysMem = indices;
+	hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &m_vObj[0]->m_pIndexBuffer);
+	if (FAILED(hr))
+		return hr;
+
+	// Set index buffer
+	g_pImmediateContext->IASetIndexBuffer(m_vObj[0]->m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+
+	// Set primitive topology
+	g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	// Create the constant buffer
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof(ConstantBuffer);
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bd.CPUAccessFlags = 0;
+	hr = g_pd3dDevice->CreateBuffer(&bd, NULL, &m_pConstantBuffer);
+	if (FAILED(hr))
+		return hr;
+
+
+
+
+
+	// Load the Texture
+	hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/flagstone.bmp", NULL, NULL, &m_vObj[0]->m_pTextureRV, NULL);
+	if (FAILED(hr))
+		return hr;
+
+
+
+
+
+
+
+
+
+	delete[] indices;
+	delete[] vertices;
+
+	return true;
+};
+bool		GAseModel::Frame(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* matProj) {
+
+
+
+
+	//
+	// Update variables
+	//
+	ConstantBuffer cb;
+	D3DXMatrixTranspose(&cb.mWorld, matWorld);
+	D3DXMatrixTranspose(&cb.mView, matView);
+	D3DXMatrixTranspose(&cb.mProjection, matProj);
+	g_pImmediateContext->UpdateSubresource(m_pConstantBuffer, 0, NULL, &cb, 0, 0);
+
+
+	return true;
+};
+
+bool		GAseModel::Render() {
+
+	//
+	// Renders a triangle
+	//
+	g_pImmediateContext->VSSetShader(m_pVertexShader, NULL, 0);
+	g_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
+	g_pImmediateContext->PSSetShader(m_pPixelShader, NULL, 0);
+
+	g_pImmediateContext->PSSetShaderResources(0, 1, &m_vObj[0]->m_pTextureRV);
+	g_pImmediateContext->PSSetSamplers(0, 1, &m_pSamplerLinear);
+
+	g_pImmediateContext->DrawIndexed(m_vObj[0]->m_iFaceCount * 3, 0, 0);        // 36 vertices needed for 12 triangles in a triangle list
+
+
+	return true;
+};
+bool		GAseModel::Release() {
+
+	if (m_vObj[0]->m_pVertexBuffer) m_vObj[0]->m_pVertexBuffer->Release();
+	if (m_vObj[0]->m_pIndexBuffer) m_vObj[0]->m_pIndexBuffer->Release();
+	if (m_vObj[0]->m_pTextureRV) m_vObj[0]->m_pTextureRV->Release();
+
+	if (m_pConstantBuffer) m_pConstantBuffer->Release();
+	if (m_pVertexLayout) m_pVertexLayout->Release();
+	if (m_pVertexShader) m_pVertexShader->Release();
+	if (m_pPixelShader) m_pPixelShader->Release();
+	if (m_pSamplerLinear) m_pSamplerLinear->Release();
+
+	return true;
+};

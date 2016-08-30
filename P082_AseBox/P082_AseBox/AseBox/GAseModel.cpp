@@ -79,87 +79,212 @@ bool		GAseModel::Init() {
 		return hr;
 
 
-	// Create vertex buffer
-	PNCT_VERTEX* vertices;
-	vertices = (PNCT_VERTEX *)malloc(sizeof(PNCT_VERTEX) * m_vObj[0]->m_iFaceCount * 3);
 
-	for (int i = 0; i < m_vObj[0]->m_iFaceCount * 3; i++) {
+	
+	if (m_vMaterial[0]->m_iSubMaterial == 0) {
 
-		vertices[i] = m_vObj[0]->m_vPnctVertex[i];
+		D3D11_BUFFER_DESC bd;
+		ZeroMemory(&bd, sizeof(bd));
+		bd.Usage = D3D11_USAGE_DEFAULT;
+		bd.ByteWidth = sizeof(ConstantBuffer);
+		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		bd.CPUAccessFlags = 0;
+
+
+		hr = g_pd3dDevice->CreateBuffer(&bd, NULL, &m_vObj[0]->m_pConstantBuffer);
+		if (FAILED(hr))
+			return hr;
+
+		// Load the Texture
+		hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/flagstone.bmp", NULL, NULL, &m_vMaterial[0]->m_pTextureRV, NULL);
+		if (FAILED(hr))
+			return hr;
+
+		// Create vertex buffer
+		PNCT_VERTEX* vertices;
+		vertices = (PNCT_VERTEX *)malloc(sizeof(PNCT_VERTEX) * m_vObj[0]->m_vPnctVertex.size());
+
+		for (int j = 0; j < m_vObj[0]->m_vPnctVertex.size(); ++j) {
+
+			vertices[j] = m_vObj[0]->m_vPnctVertex[j];
+
+		}
+
+		//D3D11_BUFFER_DESC bd;
+		ZeroMemory(&bd, sizeof(bd));
+		bd.Usage = D3D11_USAGE_DEFAULT;
+		bd.ByteWidth = sizeof(PNCT_VERTEX) * m_vObj[0]->m_vPnctVertex.size();//m_iPosCount;
+		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		bd.CPUAccessFlags = 0;
+		D3D11_SUBRESOURCE_DATA InitData;
+		ZeroMemory(&InitData, sizeof(InitData));
+		InitData.pSysMem = vertices;
+		hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &m_vObj[0]->m_pVertexBuffer);
+		if (FAILED(hr))
+			return hr;
+
+		// Set vertex buffer
+		UINT stride = sizeof(PNCT_VERTEX);
+		UINT offset = 0;
+		g_pImmediateContext->IASetVertexBuffers(0, 1, &m_vObj[0]->m_pVertexBuffer, &stride, &offset);
+
+
+		// Create index buffer
+		WORD* indices;
+		indices = (WORD *)malloc(sizeof(WORD) * m_vObj[0]->m_vPnctVertex.size());
+
+		for (int j = 0; j < m_vObj[0]->m_vPnctVertex.size(); j++) {
+			indices[j] = j;
+		}
+
+
+		bd.Usage = D3D11_USAGE_DEFAULT;
+		bd.ByteWidth = sizeof(WORD) * m_vObj[0]->m_vPnctVertex.size();        // 36 vertices needed for 12 triangles in a triangle list
+		bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+		bd.CPUAccessFlags = 0;
+		InitData.pSysMem = indices;
+		hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &m_vObj[0]->m_pIndexBuffer);
+		if (FAILED(hr))
+			return hr;
+
+		// Set index buffer
+		g_pImmediateContext->IASetIndexBuffer(m_vObj[0]->m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+
+		// Set primitive topology
+		g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+
+
+
+
+
+
+
+		delete[] indices;
+		delete[] vertices;
+
+
+
+	}
+	else {
+
+		for (int i = 1; i < m_vMaterial[0]->m_iSubMaterial+1; i++) {
+
+			D3D11_BUFFER_DESC bd;
+			ZeroMemory(&bd, sizeof(bd));
+			bd.Usage = D3D11_USAGE_DEFAULT;
+			bd.ByteWidth = sizeof(ConstantBuffer);
+			bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+			bd.CPUAccessFlags = 0;
+
+			hr = g_pd3dDevice->CreateBuffer(&bd, NULL, &m_vObj[i]->m_pConstantBuffer);
+			if (FAILED(hr))
+				return hr;
+
+
+
+
+#ifdef TESTTEST
+			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/flagstone.bmp", NULL, NULL, &m_vSubMaterial[i-1]->m_pTextureRV, NULL);
+			if (FAILED(hr))
+				return hr;
+#else
+			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g04.dds", NULL, NULL, &m_vSubMaterial[0]->m_pTextureRV, NULL);
+			if (FAILED(hr))
+				return hr;
+
+			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g00.dds", NULL, NULL, &m_vSubMaterial[1]->m_pTextureRV, NULL);
+			if (FAILED(hr))
+				return hr;
+			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g01.dds", NULL, NULL, &m_vSubMaterial[2]->m_pTextureRV, NULL);
+			if (FAILED(hr))
+				return hr;
+			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g03.dds", NULL, NULL, &m_vSubMaterial[3]->m_pTextureRV, NULL);
+			if (FAILED(hr))
+				return hr;
+			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g02.dds", NULL, NULL, &m_vSubMaterial[4]->m_pTextureRV, NULL);
+			if (FAILED(hr))
+				return hr;
+#endif 
+
+		//}
+
+
+		//for (int i = 1; i < m_vMaterial[0]->m_iSubMaterial + 1; i++) {
+
+			// Create vertex buffer
+			PNCT_VERTEX* vertices;
+			vertices = (PNCT_VERTEX *)malloc(sizeof(PNCT_VERTEX) * m_vObj[i]->m_vPnctVertex.size());
+
+			for (int j = 0; j < m_vObj[i]->m_vPnctVertex.size(); ++j) {
+
+				vertices[j] = m_vObj[i]->m_vPnctVertex[j];
+
+			}
+
+			//D3D11_BUFFER_DESC bd;
+			ZeroMemory(&bd, sizeof(bd));
+			bd.Usage = D3D11_USAGE_DEFAULT;
+			bd.ByteWidth = sizeof(PNCT_VERTEX) * m_vObj[i]->m_vPnctVertex.size();//m_iPosCount;
+			bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+			bd.CPUAccessFlags = 0;
+			D3D11_SUBRESOURCE_DATA InitData;
+			ZeroMemory(&InitData, sizeof(InitData));
+			InitData.pSysMem = vertices;
+			hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &m_vObj[i]->m_pVertexBuffer);
+			if (FAILED(hr))
+				return hr;
+
+			// Set vertex buffer
+			UINT stride = sizeof(PNCT_VERTEX);
+			UINT offset = 0;
+			g_pImmediateContext->IASetVertexBuffers(0, 1, &m_vObj[i]->m_pVertexBuffer, &stride, &offset);
+
+
+			// Create index buffer
+			WORD* indices;
+			indices = (WORD *)malloc(sizeof(WORD) * m_vObj[i]->m_vPnctVertex.size());
+
+			for (int j = 0; j < m_vObj[i]->m_vPnctVertex.size(); j++) {
+				indices[j] = j;
+			}
+
+
+			bd.Usage = D3D11_USAGE_DEFAULT;
+			bd.ByteWidth = sizeof(WORD) * m_vObj[i]->m_vPnctVertex.size();        // 36 vertices needed for 12 triangles in a triangle list
+			bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+			bd.CPUAccessFlags = 0;
+			ZeroMemory(&InitData, sizeof(InitData));
+			InitData.pSysMem = indices;
+			hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &m_vObj[i]->m_pIndexBuffer);
+			if (FAILED(hr))
+				return hr;
+
+			// Set index buffer
+			g_pImmediateContext->IASetIndexBuffer(m_vObj[i]->m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+
+			// Set primitive topology
+			g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+
+
+
+
+
+
+
+			delete[] indices;
+			delete[] vertices;
 
 	}
 
-	D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(PNCT_VERTEX) * m_vObj[0]->m_iFaceCount * 3;//m_iPosCount;
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-	D3D11_SUBRESOURCE_DATA InitData;
-	ZeroMemory(&InitData, sizeof(InitData));
-	InitData.pSysMem = vertices;
-	hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &m_vObj[0]->m_pVertexBuffer);
-	if (FAILED(hr))
-		return hr;
 
-	// Set vertex buffer
-	UINT stride = sizeof(PNCT_VERTEX);
-	UINT offset = 0;
-	g_pImmediateContext->IASetVertexBuffers(0, 1, &m_vObj[0]->m_pVertexBuffer, &stride, &offset);
-
-
-	// Create index buffer
-	WORD* indices;
-	indices = (WORD *)malloc(sizeof(WORD) * m_vObj[0]->m_iFaceCount * 3);
-
-	for (int i = 0; i < m_vObj[0]->m_iFaceCount * 3; i++) {
-		indices[i] = i;
+	
 	}
 
 
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(WORD) * m_vObj[0]->m_iFaceCount * 3;        // 36 vertices needed for 12 triangles in a triangle list
-	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-	InitData.pSysMem = indices;
-	hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &m_vObj[0]->m_pIndexBuffer);
-	if (FAILED(hr))
-		return hr;
+	
 
-	// Set index buffer
-	g_pImmediateContext->IASetIndexBuffer(m_vObj[0]->m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-
-	// Set primitive topology
-	g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	// Create the constant buffer
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(ConstantBuffer);
-	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bd.CPUAccessFlags = 0;
-	hr = g_pd3dDevice->CreateBuffer(&bd, NULL, &m_pConstantBuffer);
-	if (FAILED(hr))
-		return hr;
-
-
-
-
-
-	// Load the Texture
-	hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/flagstone.bmp", NULL, NULL, &m_vObj[0]->m_pTextureRV, NULL);
-	if (FAILED(hr))
-		return hr;
-
-
-
-
-
-
-
-
-
-	delete[] indices;
-	delete[] vertices;
 
 	return true;
 };
@@ -175,7 +300,16 @@ bool		GAseModel::Frame(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* ma
 	D3DXMatrixTranspose(&cb.mWorld, matWorld);
 	D3DXMatrixTranspose(&cb.mView, matView);
 	D3DXMatrixTranspose(&cb.mProjection, matProj);
-	g_pImmediateContext->UpdateSubresource(m_pConstantBuffer, 0, NULL, &cb, 0, 0);
+
+	if (m_vMaterial[0]->m_iSubMaterial == 0) {
+		g_pImmediateContext->UpdateSubresource(m_vObj[0]->m_pConstantBuffer, 0, NULL, &cb, 0, 0);
+	}
+	else {
+		for (int i = 1; i < m_vMaterial[0]->m_iSubMaterial+1; i++) {
+			g_pImmediateContext->UpdateSubresource(m_vObj[i]->m_pConstantBuffer, 0, NULL, &cb, 0, 0);
+		}
+	}
+
 
 
 	return true;
@@ -186,14 +320,39 @@ bool		GAseModel::Render() {
 	//
 	// Renders a triangle
 	//
-	g_pImmediateContext->VSSetShader(m_pVertexShader, NULL, 0);
-	g_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
-	g_pImmediateContext->PSSetShader(m_pPixelShader, NULL, 0);
 
-	g_pImmediateContext->PSSetShaderResources(0, 1, &m_vObj[0]->m_pTextureRV);
-	g_pImmediateContext->PSSetSamplers(0, 1, &m_pSamplerLinear);
 
-	g_pImmediateContext->DrawIndexed(m_vObj[0]->m_iFaceCount * 3, 0, 0);        // 36 vertices needed for 12 triangles in a triangle list
+	if (m_vMaterial[0]->m_iSubMaterial == 0) {
+
+		g_pImmediateContext->VSSetShader(m_pVertexShader, NULL, 0);
+		g_pImmediateContext->VSSetConstantBuffers(0, 1, &m_vObj[0]->m_pConstantBuffer);
+		g_pImmediateContext->PSSetShader(m_pPixelShader, NULL, 0);
+
+		g_pImmediateContext->PSSetSamplers(0, 1, &m_pSamplerLinear);
+		g_pImmediateContext->PSSetShaderResources(0, 1, &m_vMaterial[0]->m_pTextureRV);
+		g_pImmediateContext->DrawIndexed(m_vObj[0]->m_vPnctVertex.size(), 0, 0);
+	}
+	else {
+		for (int i = 1; i < m_vMaterial[0]->m_iSubMaterial + 1; i++) {
+
+			// Set vertex buffer
+			UINT stride = sizeof(PNCT_VERTEX);
+			UINT offset = 0;
+			g_pImmediateContext->IASetVertexBuffers(0, 1, &m_vObj[i]->m_pVertexBuffer, &stride, &offset);
+
+			g_pImmediateContext->VSSetShader(m_pVertexShader, NULL, 0);
+			g_pImmediateContext->VSSetConstantBuffers(0, 1, &m_vObj[i]->m_pConstantBuffer);
+			g_pImmediateContext->PSSetShader(m_pPixelShader, NULL, 0);
+
+			g_pImmediateContext->PSSetSamplers(0, 1, &m_pSamplerLinear);
+
+			g_pImmediateContext->PSSetShaderResources(0, 1, &m_vSubMaterial[i-1]->m_pTextureRV);
+			//int temp = m_vObj[i]->m_vPnctVertex.size();
+			g_pImmediateContext->IASetIndexBuffer(m_vObj[i]->m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+			g_pImmediateContext->DrawIndexed(m_vObj[i]->m_vPnctVertex.size(), 0, 0);
+				// 36 vertices needed for 12 triangles in a triangle list
+		}
+	}
 
 
 	return true;
@@ -202,9 +361,9 @@ bool		GAseModel::Release() {
 
 	if (m_vObj[0]->m_pVertexBuffer) m_vObj[0]->m_pVertexBuffer->Release();
 	if (m_vObj[0]->m_pIndexBuffer) m_vObj[0]->m_pIndexBuffer->Release();
-	if (m_vObj[0]->m_pTextureRV) m_vObj[0]->m_pTextureRV->Release();
+	if (m_vMaterial[0]->m_pTextureRV) m_vMaterial[0]->m_pTextureRV->Release();
 
-	if (m_pConstantBuffer) m_pConstantBuffer->Release();
+	if (m_vObj[0]->m_pConstantBuffer) m_vObj[0]->m_pConstantBuffer->Release();
 	if (m_pVertexLayout) m_pVertexLayout->Release();
 	if (m_pVertexShader) m_pVertexShader->Release();
 	if (m_pPixelShader) m_pPixelShader->Release();

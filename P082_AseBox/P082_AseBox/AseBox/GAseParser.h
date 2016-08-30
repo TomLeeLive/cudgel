@@ -3,27 +3,13 @@
 #ifndef __GASEPARSER_H__
 #define __GASEPARSER_H__
 
+
+struct GAseScene;
+struct GAseMaterial;
+
 class GAseObj;
 class GAseModel;
 
-struct GAseScene {
-	// Scene¡§∫∏µÈ..
-	TCHAR				m_szName[MAX_PATH];				//*SCENE_FILENAME "Box.max"
-	int					m_iFrame;						//*SCENE_FIRSTFRAME 0
-	int					m_iLastFrame;					//*SCENE_LASTFRAME 100
-	int					m_iFrameSpeed;					//*SCENE_FRAMESPEED 30
-	int					m_iTicksPerFrame;				//*SCENE_TICKSPERFRAME 160
-};
-
-struct GAseMaterial {
-	TCHAR					m_szName[MAX_PATH];			//*MATERIAL_NAME "01 - Default"
-	D3DXVECTOR3				m_vecAmbient;				//*MATERIAL_AMBIENT 0.5882	0.5882	0.5882
-	D3DXVECTOR3				m_vecDiffuse;				//*MATERIAL_DIFFUSE 0.5882	0.5882	0.5882
-	D3DXVECTOR3				m_vecSpecular;				//*MATERIAL_SPECULAR 0.9000	0.9000	0.9000
-	TCHAR					m_szMapDiffuse[MAX_PATH];	//*BITMAP "C:\TBasis200\Data\object\textures\flagstone.bmp"
-	GAseMaterial() {};
-	~GAseMaterial() {};
-};
 
 class GAseParser : public GParser
 {
@@ -66,10 +52,27 @@ public:
 		MESH_NORMALS
 	};
 
+	fpos_t		m_FilePosition;
+
 	void    SetPnctData(GAseModel* stModel);
-	int		GetMeshDataFromFile(GAseModel* stModel,GAseObj* aseobj);
+	int		GetMeshDataFromFile(GAseModel* stModel);
 	int		GetObjDataFromFile(GAseModel* stModel);
 	int		GetDataFromFile(GAseModel* stModel);
+
+	void GAseParser::SaveFilePosition()
+	{
+		if (fgetpos(m_pStream, &m_FilePosition))
+		{
+			CloseStream();
+		}
+	}
+	void GAseParser::RestoreFilePosition()
+	{
+		if (fsetpos(m_pStream, &m_FilePosition))
+		{
+			CloseStream();
+		}
+	}
 
 	GAseParser();
 	virtual ~GAseParser();

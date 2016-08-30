@@ -6,6 +6,12 @@ struct ST_INT_THREE {
 	int index2;
 	int index3;
 };
+struct ST_INT_FOUR {
+	int index1;
+	int index2;
+	int index3;
+	int index4;
+};
 
 enum SET_DATA_TYPES
 {

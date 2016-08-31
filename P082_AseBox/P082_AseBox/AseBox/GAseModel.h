@@ -17,18 +17,19 @@ struct GAseScene {
 	int					m_iTicksPerFrame;				//*SCENE_TICKSPERFRAME 160
 };
 
-struct GAseSubMaterial {
-	TCHAR						m_szName[MAX_PATH];			//*MATERIAL_NAME "01 - Default"
-	D3DXVECTOR3					m_vecAmbient;				//*MATERIAL_AMBIENT 0.5882	0.5882	0.5882
-	D3DXVECTOR3					m_vecDiffuse;				//*MATERIAL_DIFFUSE 0.5882	0.5882	0.5882
-	D3DXVECTOR3					m_vecSpecular;				//*MATERIAL_SPECULAR 0.9000	0.9000	0.9000
-	TCHAR						m_szMapDiffuse[MAX_PATH];	//*BITMAP "C:\TBasis200\Data\object\textures\flagstone.bmp"
-	ID3D11ShaderResourceView*   m_pTextureRV = NULL;
-	GAseSubMaterial() {};
-	~GAseSubMaterial() {};
-};
+//struct GAseSubMaterial {
+//	TCHAR						m_szName[MAX_PATH];			//*MATERIAL_NAME "01 - Default"
+//	D3DXVECTOR3					m_vecAmbient;				//*MATERIAL_AMBIENT 0.5882	0.5882	0.5882
+//	D3DXVECTOR3					m_vecDiffuse;				//*MATERIAL_DIFFUSE 0.5882	0.5882	0.5882
+//	D3DXVECTOR3					m_vecSpecular;				//*MATERIAL_SPECULAR 0.9000	0.9000	0.9000
+//	TCHAR						m_szMapDiffuse[MAX_PATH];	//*BITMAP "C:\TBasis200\Data\object\textures\flagstone.bmp"
+//	ID3D11ShaderResourceView*   m_pTextureRV = NULL;
+//	GAseSubMaterial() {};
+//	~GAseSubMaterial() {};
+//};
 
 struct GAseMaterial {
+	vector<shared_ptr<GAseMaterial>>					m_vSubMaterial;
 	int										m_iSubMaterial;				//0이면 SubMaterial 없는 걸로 처리. 0이 아니면 Submaterial 있음.
 	TCHAR									m_szName[MAX_PATH];			//*MATERIAL_NAME "01 - Default"
 	D3DXVECTOR3								m_vecAmbient;				//*MATERIAL_AMBIENT 0.5882	0.5882	0.5882
@@ -77,7 +78,6 @@ class GAseModel {
 public:
 	GAseScene								m_stScene;
 	vector<shared_ptr<GAseMaterial>>		m_vMaterial;
-	vector<shared_ptr<GAseSubMaterial>>		m_vSubMaterial;
 	vector<shared_ptr<GAseObj>>				m_vObj;
 
 	ID3D11VertexShader*					m_pVertexShader = NULL;

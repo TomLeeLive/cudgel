@@ -272,13 +272,13 @@ int		GAseParser::GetDataFromFile(GAseModel* stModel ){
 						material->m_iSubMaterial = iSubMtls;
 
 						for (int i = 0; i < iSubMtls; i++){
-							auto submaterial = make_shared<GAseSubMaterial>();
+							auto submaterial = make_shared<GAseMaterial>();
 							GetDataFromFileLoop(g_pAseMaterialTokens[0], &(submaterial->m_szName), STRING_DATA);
 							GetDataFromFileLoop(g_pAseMaterialTokens[1], &(submaterial->m_vecAmbient), VERTEX_DATA);
 							GetDataFromFileLoop(g_pAseMaterialTokens[2], &(submaterial->m_vecDiffuse), VERTEX_DATA);
 							GetDataFromFileLoop(g_pAseMaterialTokens[3], &(submaterial->m_vecSpecular), VERTEX_DATA);
 							GetDataFromFileLoop(g_pAseMaterialTokens[4], &(submaterial->m_szMapDiffuse), STRING_DATA);
-							stModel->m_vSubMaterial.push_back(submaterial);
+							material->m_vSubMaterial.push_back(submaterial);
 						}
 					}
 
@@ -295,6 +295,8 @@ int		GAseParser::GetDataFromFile(GAseModel* stModel ){
 		}
 		//fgetc( m_pStream);
 	}
+
+
 
 	return -1;
 }

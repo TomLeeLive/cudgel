@@ -189,20 +189,20 @@ bool		GAseModel::Init() {
 			if (FAILED(hr))
 				return hr;
 #else
-			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g04.dds", NULL, NULL, &m_vSubMaterial[0]->m_pTextureRV, NULL);
+			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g04.dds", NULL, NULL, &m_vMaterial[0]->m_vSubMaterial[0]->m_pTextureRV, NULL);
 			if (FAILED(hr))
 				return hr;
 
-			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g00.dds", NULL, NULL, &m_vSubMaterial[1]->m_pTextureRV, NULL);
+			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g00.dds", NULL, NULL, &m_vMaterial[0]->m_vSubMaterial[1]->m_pTextureRV, NULL);
 			if (FAILED(hr))
 				return hr;
-			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g01.dds", NULL, NULL, &m_vSubMaterial[2]->m_pTextureRV, NULL);
+			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g01.dds", NULL, NULL, &m_vMaterial[0]->m_vSubMaterial[2]->m_pTextureRV, NULL);
 			if (FAILED(hr))
 				return hr;
-			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g03.dds", NULL, NULL, &m_vSubMaterial[3]->m_pTextureRV, NULL);
+			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g03.dds", NULL, NULL, &m_vMaterial[0]->m_vSubMaterial[3]->m_pTextureRV, NULL);
 			if (FAILED(hr))
 				return hr;
-			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g02.dds", NULL, NULL, &m_vSubMaterial[4]->m_pTextureRV, NULL);
+			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g02.dds", NULL, NULL, &m_vMaterial[0]->m_vSubMaterial[4]->m_pTextureRV, NULL);
 			if (FAILED(hr))
 				return hr;
 #endif 
@@ -346,7 +346,7 @@ bool		GAseModel::Render() {
 
 			g_pImmediateContext->PSSetSamplers(0, 1, &m_pSamplerLinear);
 
-			g_pImmediateContext->PSSetShaderResources(0, 1, &m_vSubMaterial[i-1]->m_pTextureRV);
+			g_pImmediateContext->PSSetShaderResources(0, 1, &m_vMaterial[0]->m_vSubMaterial[i-1]->m_pTextureRV);
 			//int temp = m_vObj[i]->m_vPnctVertex.size();
 			g_pImmediateContext->IASetIndexBuffer(m_vObj[i]->m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
 			g_pImmediateContext->DrawIndexed(m_vObj[i]->m_vPnctVertex.size(), 0, 0);

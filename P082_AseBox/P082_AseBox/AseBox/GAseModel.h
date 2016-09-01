@@ -29,25 +29,28 @@ struct GAseScene {
 //};
 
 struct GAseMaterial {
-	vector<shared_ptr<GAseMaterial>>					m_vSubMaterial;
-	int										m_iSubMaterial;				//0이면 SubMaterial 없는 걸로 처리. 0이 아니면 Submaterial 있음.
-	TCHAR									m_szName[MAX_PATH];			//*MATERIAL_NAME "01 - Default"
-	D3DXVECTOR3								m_vecAmbient;				//*MATERIAL_AMBIENT 0.5882	0.5882	0.5882
-	D3DXVECTOR3								m_vecDiffuse;				//*MATERIAL_DIFFUSE 0.5882	0.5882	0.5882
-	D3DXVECTOR3								m_vecSpecular;				//*MATERIAL_SPECULAR 0.9000	0.9000	0.9000
-	TCHAR									m_szMapDiffuse[MAX_PATH];	//*BITMAP "C:\TBasis200\Data\object\textures\flagstone.bmp"
-	ID3D11ShaderResourceView*				m_pTextureRV = NULL;
+	vector<shared_ptr<GAseMaterial>>				m_vSubMaterial;
+	int												m_iSubMaterial;				//0이면 SubMaterial 없는 걸로 처리. 0이 아니면 Submaterial 있음.
+	TCHAR											m_szName[MAX_PATH];			//*MATERIAL_NAME "01 - Default"
+	D3DXVECTOR3										m_vecAmbient;				//*MATERIAL_AMBIENT 0.5882	0.5882	0.5882
+	D3DXVECTOR3										m_vecDiffuse;				//*MATERIAL_DIFFUSE 0.5882	0.5882	0.5882
+	D3DXVECTOR3										m_vecSpecular;				//*MATERIAL_SPECULAR 0.9000	0.9000	0.9000
+	TCHAR											m_szMapDiffuse[MAX_PATH];	//*BITMAP "C:\TBasis200\Data\object\textures\flagstone.bmp"
+	ComPtr<ID3D11ShaderResourceView>				m_pTextureRV = NULL;
 	GAseMaterial() { m_iSubMaterial = 0; };
-	~GAseMaterial() {};
+	~GAseMaterial() {
+	
+	
+	};
 };
 
 class GAseObj {
 public:
 
 
-	ID3D11Buffer*			m_pConstantBuffer = NULL;
-	ID3D11Buffer*			m_pVertexBuffer = NULL;
-	ID3D11Buffer*			m_pIndexBuffer = NULL;
+	ComPtr<ID3D11Buffer>			m_pConstantBuffer = NULL;
+	ComPtr<ID3D11Buffer>			m_pVertexBuffer = NULL;
+	ComPtr<ID3D11Buffer>			m_pIndexBuffer = NULL;
 
 	TCHAR					m_szName[MAX_PATH];			//*NODE_NAME "Box01"
 	D3DXMATRIX				m_matWorld;					//월드행렬
@@ -70,7 +73,21 @@ public:
 	vector<int>				m_vSubMtlIndex;
 
 	GAseObj() { m_iFaceCount = 0; };
-	~GAseObj() {};
+	~GAseObj() {
+	
+		m_vPosList.clear();
+		m_vNorList.clear();
+		m_vColList.clear();
+		m_vTexList.clear();
+
+		m_vFaceNormal.clear();
+
+		m_vPnctVertex.clear();
+		m_vIndex.clear();
+		m_vTextureIndex.clear();
+		m_vSubMtlIndex.clear();
+
+	};
 
 };
 
@@ -80,12 +97,10 @@ public:
 	vector<shared_ptr<GAseMaterial>>		m_vMaterial;
 	vector<shared_ptr<GAseObj>>				m_vObj;
 
-	ID3D11VertexShader*					m_pVertexShader = NULL;
-	ID3D11PixelShader*					m_pPixelShader = NULL;
-	ID3D11InputLayout*					m_pVertexLayout = NULL;
-	
-
-	ID3D11SamplerState*                 m_pSamplerLinear = NULL;
+	ComPtr<ID3D11VertexShader>			m_pVertexShader = NULL;
+	ComPtr<ID3D11PixelShader>			m_pPixelShader = NULL;
+	ComPtr<ID3D11InputLayout>			m_pVertexLayout = NULL;
+	ComPtr<ID3D11SamplerState>          m_pSamplerLinear = NULL;
 
 	bool		Init();
 	bool		Frame(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* matProj);

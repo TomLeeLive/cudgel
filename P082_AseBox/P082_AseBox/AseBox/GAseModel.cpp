@@ -15,7 +15,7 @@ bool		GAseModel::Init() {
 	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	hr = g_pd3dDevice->CreateSamplerState(&sampDesc, &m_pSamplerLinear);
+	hr = g_pd3dDevice->CreateSamplerState(&sampDesc, m_pSamplerLinear.GetAddressOf());
 	if (FAILED(hr))
 		return hr;
 
@@ -33,7 +33,7 @@ bool		GAseModel::Init() {
 	}
 
 	// Create the vertex shader
-	hr = g_pd3dDevice->CreateVertexShader(pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), NULL, &m_pVertexShader);
+	hr = g_pd3dDevice->CreateVertexShader(pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), NULL, m_pVertexShader.GetAddressOf());
 	if (FAILED(hr))
 	{
 		pVSBlob->Release();
@@ -54,13 +54,13 @@ bool		GAseModel::Init() {
 
 	// Create the input layout
 	hr = g_pd3dDevice->CreateInputLayout(layout, numElements, pVSBlob->GetBufferPointer(),
-		pVSBlob->GetBufferSize(), &m_pVertexLayout);
+		pVSBlob->GetBufferSize(), m_pVertexLayout.GetAddressOf());
 	pVSBlob->Release();
 	if (FAILED(hr))
 		return hr;
 
 	// Set the input layout
-	g_pImmediateContext->IASetInputLayout(m_pVertexLayout);
+	g_pImmediateContext->IASetInputLayout(m_pVertexLayout.Get());
 
 	// Compile the pixel shader
 	ID3DBlob* pPSBlob = NULL;
@@ -73,7 +73,7 @@ bool		GAseModel::Init() {
 	}
 
 	// Create the pixel shader
-	hr = g_pd3dDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), NULL, &m_pPixelShader);
+	hr = g_pd3dDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), NULL, m_pPixelShader.GetAddressOf());
 	pPSBlob->Release();
 	if (FAILED(hr))
 		return hr;
@@ -91,12 +91,12 @@ bool		GAseModel::Init() {
 		bd.CPUAccessFlags = 0;
 
 
-		hr = g_pd3dDevice->CreateBuffer(&bd, NULL, &m_vObj[0]->m_pConstantBuffer);
+		hr = g_pd3dDevice->CreateBuffer(&bd, NULL, m_vObj[0]->m_pConstantBuffer.GetAddressOf());
 		if (FAILED(hr))
 			return hr;
 
 		// Load the Texture
-		hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/flagstone.bmp", NULL, NULL, &m_vMaterial[0]->m_pTextureRV, NULL);
+		hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/flagstone.bmp", NULL, NULL, m_vMaterial[0]->m_pTextureRV.GetAddressOf(), NULL);
 		if (FAILED(hr))
 			return hr;
 
@@ -119,14 +119,14 @@ bool		GAseModel::Init() {
 		D3D11_SUBRESOURCE_DATA InitData;
 		ZeroMemory(&InitData, sizeof(InitData));
 		InitData.pSysMem = vertices;
-		hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &m_vObj[0]->m_pVertexBuffer);
+		hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, m_vObj[0]->m_pVertexBuffer.GetAddressOf());
 		if (FAILED(hr))
 			return hr;
 
 		// Set vertex buffer
 		UINT stride = sizeof(PNCT_VERTEX);
 		UINT offset = 0;
-		g_pImmediateContext->IASetVertexBuffers(0, 1, &m_vObj[0]->m_pVertexBuffer, &stride, &offset);
+		g_pImmediateContext->IASetVertexBuffers(0, 1, m_vObj[0]->m_pVertexBuffer.GetAddressOf(), &stride, &offset);
 
 
 		// Create index buffer
@@ -143,12 +143,12 @@ bool		GAseModel::Init() {
 		bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		bd.CPUAccessFlags = 0;
 		InitData.pSysMem = indices;
-		hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &m_vObj[0]->m_pIndexBuffer);
+		hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, m_vObj[0]->m_pIndexBuffer.GetAddressOf());
 		if (FAILED(hr))
 			return hr;
 
 		// Set index buffer
-		g_pImmediateContext->IASetIndexBuffer(m_vObj[0]->m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+		g_pImmediateContext->IASetIndexBuffer(m_vObj[0]->m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
 		// Set primitive topology
 		g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -177,7 +177,7 @@ bool		GAseModel::Init() {
 			bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 			bd.CPUAccessFlags = 0;
 
-			hr = g_pd3dDevice->CreateBuffer(&bd, NULL, &m_vObj[i]->m_pConstantBuffer);
+			hr = g_pd3dDevice->CreateBuffer(&bd, NULL, m_vObj[i]->m_pConstantBuffer.GetAddressOf());
 			if (FAILED(hr))
 				return hr;
 
@@ -185,24 +185,24 @@ bool		GAseModel::Init() {
 
 
 #ifdef TESTTEST
-			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/flagstone.bmp", NULL, NULL, &m_vSubMaterial[i-1]->m_pTextureRV, NULL);
+			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/flagstone.bmp", NULL, NULL, m_vSubMaterial[i-1]->m_pTextureRV.GetAddressOf(), NULL);
 			if (FAILED(hr))
 				return hr;
 #else
-			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g04.dds", NULL, NULL, &m_vMaterial[0]->m_vSubMaterial[0]->m_pTextureRV, NULL);
-			if (FAILED(hr))
-				return hr;
-
-			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g00.dds", NULL, NULL, &m_vMaterial[0]->m_vSubMaterial[1]->m_pTextureRV, NULL);
-			if (FAILED(hr))
-				return hr;
-			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g01.dds", NULL, NULL, &m_vMaterial[0]->m_vSubMaterial[2]->m_pTextureRV, NULL);
-			if (FAILED(hr))
-				return hr;
-			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g03.dds", NULL, NULL, &m_vMaterial[0]->m_vSubMaterial[3]->m_pTextureRV, NULL);
-			if (FAILED(hr))
-				return hr;
-			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g02.dds", NULL, NULL, &m_vMaterial[0]->m_vSubMaterial[4]->m_pTextureRV, NULL);
+			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g04.dds", NULL, NULL,  m_vMaterial[0]->m_vSubMaterial[0]->m_pTextureRV.GetAddressOf(), NULL);
+			if (FAILED(hr))																					    
+				return hr;																					    
+																											    
+			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g00.dds", NULL, NULL,  m_vMaterial[0]->m_vSubMaterial[1]->m_pTextureRV.GetAddressOf(), NULL);
+			if (FAILED(hr))																					    
+				return hr;																					    
+			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g01.dds", NULL, NULL,  m_vMaterial[0]->m_vSubMaterial[2]->m_pTextureRV.GetAddressOf(), NULL);
+			if (FAILED(hr))																					    
+				return hr;																					    
+			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g03.dds", NULL, NULL,  m_vMaterial[0]->m_vSubMaterial[3]->m_pTextureRV.GetAddressOf(), NULL);
+			if (FAILED(hr))																					    
+				return hr;																					    
+			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g02.dds", NULL, NULL,  m_vMaterial[0]->m_vSubMaterial[4]->m_pTextureRV.GetAddressOf(), NULL);
 			if (FAILED(hr))
 				return hr;
 #endif 
@@ -231,14 +231,14 @@ bool		GAseModel::Init() {
 			D3D11_SUBRESOURCE_DATA InitData;
 			ZeroMemory(&InitData, sizeof(InitData));
 			InitData.pSysMem = vertices;
-			hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &m_vObj[i]->m_pVertexBuffer);
+			hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, m_vObj[i]->m_pVertexBuffer.GetAddressOf());
 			if (FAILED(hr))
 				return hr;
 
 			// Set vertex buffer
 			UINT stride = sizeof(PNCT_VERTEX);
 			UINT offset = 0;
-			g_pImmediateContext->IASetVertexBuffers(0, 1, &m_vObj[i]->m_pVertexBuffer, &stride, &offset);
+			g_pImmediateContext->IASetVertexBuffers(0, 1, m_vObj[i]->m_pVertexBuffer.GetAddressOf(), &stride, &offset);
 
 
 			// Create index buffer
@@ -256,12 +256,12 @@ bool		GAseModel::Init() {
 			bd.CPUAccessFlags = 0;
 			ZeroMemory(&InitData, sizeof(InitData));
 			InitData.pSysMem = indices;
-			hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &m_vObj[i]->m_pIndexBuffer);
+			hr = g_pd3dDevice->CreateBuffer(&bd, &InitData,m_vObj[i]->m_pIndexBuffer.GetAddressOf());
 			if (FAILED(hr))
 				return hr;
 
 			// Set index buffer
-			g_pImmediateContext->IASetIndexBuffer(m_vObj[i]->m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+			g_pImmediateContext->IASetIndexBuffer(m_vObj[i]->m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
 			// Set primitive topology
 			g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -302,11 +302,11 @@ bool		GAseModel::Frame(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* ma
 	D3DXMatrixTranspose(&cb.mProjection, matProj);
 
 	if (m_vMaterial[0]->m_iSubMaterial == 0) {
-		g_pImmediateContext->UpdateSubresource(m_vObj[0]->m_pConstantBuffer, 0, NULL, &cb, 0, 0);
+		g_pImmediateContext->UpdateSubresource(m_vObj[0]->m_pConstantBuffer.Get(), 0, NULL, &cb, 0, 0);
 	}
 	else {
 		for (int i = 1; i < m_vMaterial[0]->m_iSubMaterial+1; i++) {
-			g_pImmediateContext->UpdateSubresource(m_vObj[i]->m_pConstantBuffer, 0, NULL, &cb, 0, 0);
+			g_pImmediateContext->UpdateSubresource(m_vObj[i]->m_pConstantBuffer.Get(), 0, NULL, &cb, 0, 0);
 		}
 	}
 
@@ -324,12 +324,12 @@ bool		GAseModel::Render() {
 
 	if (m_vMaterial[0]->m_iSubMaterial == 0) {
 
-		g_pImmediateContext->VSSetShader(m_pVertexShader, NULL, 0);
-		g_pImmediateContext->VSSetConstantBuffers(0, 1, &m_vObj[0]->m_pConstantBuffer);
-		g_pImmediateContext->PSSetShader(m_pPixelShader, NULL, 0);
+		g_pImmediateContext->VSSetShader(m_pVertexShader.Get(), NULL, 0);
+		g_pImmediateContext->VSSetConstantBuffers(0, 1, m_vObj[0]->m_pConstantBuffer.GetAddressOf());
+		g_pImmediateContext->PSSetShader(m_pPixelShader.Get(), NULL, 0);
 
-		g_pImmediateContext->PSSetSamplers(0, 1, &m_pSamplerLinear);
-		g_pImmediateContext->PSSetShaderResources(0, 1, &m_vMaterial[0]->m_pTextureRV);
+		g_pImmediateContext->PSSetSamplers(0, 1, m_pSamplerLinear.GetAddressOf());
+		g_pImmediateContext->PSSetShaderResources(0, 1, m_vMaterial[0]->m_pTextureRV.GetAddressOf());
 		g_pImmediateContext->DrawIndexed(m_vObj[0]->m_vPnctVertex.size(), 0, 0);
 	}
 	else {
@@ -338,17 +338,17 @@ bool		GAseModel::Render() {
 			// Set vertex buffer
 			UINT stride = sizeof(PNCT_VERTEX);
 			UINT offset = 0;
-			g_pImmediateContext->IASetVertexBuffers(0, 1, &m_vObj[i]->m_pVertexBuffer, &stride, &offset);
+			g_pImmediateContext->IASetVertexBuffers(0, 1, m_vObj[i]->m_pVertexBuffer.GetAddressOf(), &stride, &offset);
 
-			g_pImmediateContext->VSSetShader(m_pVertexShader, NULL, 0);
-			g_pImmediateContext->VSSetConstantBuffers(0, 1, &m_vObj[i]->m_pConstantBuffer);
-			g_pImmediateContext->PSSetShader(m_pPixelShader, NULL, 0);
+			g_pImmediateContext->VSSetShader(m_pVertexShader.Get(), NULL, 0);
+			g_pImmediateContext->VSSetConstantBuffers(0, 1, m_vObj[i]->m_pConstantBuffer.GetAddressOf());
+			g_pImmediateContext->PSSetShader(m_pPixelShader.Get(), NULL, 0);
 
-			g_pImmediateContext->PSSetSamplers(0, 1, &m_pSamplerLinear);
+			g_pImmediateContext->PSSetSamplers(0, 1, m_pSamplerLinear.GetAddressOf());
 
-			g_pImmediateContext->PSSetShaderResources(0, 1, &m_vMaterial[0]->m_vSubMaterial[i-1]->m_pTextureRV);
+			g_pImmediateContext->PSSetShaderResources(0, 1, m_vMaterial[0]->m_vSubMaterial[i-1]->m_pTextureRV.GetAddressOf());
 			//int temp = m_vObj[i]->m_vPnctVertex.size();
-			g_pImmediateContext->IASetIndexBuffer(m_vObj[i]->m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+			g_pImmediateContext->IASetIndexBuffer(m_vObj[i]->m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 			g_pImmediateContext->DrawIndexed(m_vObj[i]->m_vPnctVertex.size(), 0, 0);
 				// 36 vertices needed for 12 triangles in a triangle list
 		}
@@ -359,15 +359,15 @@ bool		GAseModel::Render() {
 };
 bool		GAseModel::Release() {
 
-	if (m_vObj[0]->m_pVertexBuffer) m_vObj[0]->m_pVertexBuffer->Release();
-	if (m_vObj[0]->m_pIndexBuffer) m_vObj[0]->m_pIndexBuffer->Release();
-	if (m_vMaterial[0]->m_pTextureRV) m_vMaterial[0]->m_pTextureRV->Release();
+	//if (m_vObj[0]->m_pVertexBuffer.Get()) m_vObj[0]->m_pVertexBuffer.Get()->Release();
+	//if (m_vObj[0]->m_pIndexBuffer.Get()) m_vObj[0]->m_pIndexBuffer.Get()->Release();
+	//if (m_vMaterial[0]->m_pTextureRV.Get()) m_vMaterial[0]->m_pTextureRV.Get()->Release();
 
-	if (m_vObj[0]->m_pConstantBuffer) m_vObj[0]->m_pConstantBuffer->Release();
-	if (m_pVertexLayout) m_pVertexLayout->Release();
-	if (m_pVertexShader) m_pVertexShader->Release();
-	if (m_pPixelShader) m_pPixelShader->Release();
-	if (m_pSamplerLinear) m_pSamplerLinear->Release();
+	//if (m_vObj[0]->m_pConstantBuffer.Get()) m_vObj[0]->m_pConstantBuffer.Get()->Release();
+	//if (m_pVertexLayout.Get()) m_pVertexLayout.Get()->Release();
+	//if (m_pVertexShader.Get()) m_pVertexShader.Get()->Release();
+	//if (m_pPixelShader.Get()) m_pPixelShader.Get()->Release();
+	//if (m_pSamplerLinear.Get()) m_pSamplerLinear.Get()->Release();
 
 	return true;
 };

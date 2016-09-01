@@ -13,7 +13,7 @@ bool	Sample::Init() {
 	m_Parser.OpenStream(L"data/st02sc00.ASE");
 #endif
 #ifdef G_DEFINE_MULTICAMERAS
-	m_Parser.OpenStream(L"MultiCameras.ASE");
+	m_Parser.OpenStream(L"data/MultiCameras.ASE");
 #endif
 
 
@@ -40,7 +40,7 @@ bool	Sample::Init() {
 	D3DXVECTOR3 Eye = D3DXVECTOR3(0.0f, 1.0f, -700.0f);
 #endif
 #ifdef G_DEFINE_MULTICAMERAS
-	D3DXVECTOR3 Eye = D3DXVECTOR3(0.0f, 1.0f, -700.0f);
+	D3DXVECTOR3 Eye = D3DXVECTOR3(0.0f, 1.0f, -100.0f);
 #endif
 
 	D3DXVECTOR3 At = D3DXVECTOR3(0.0f, 1.0f, 0.0f);

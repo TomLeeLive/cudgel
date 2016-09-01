@@ -17,17 +17,6 @@ struct GAseScene {
 	int					m_iTicksPerFrame;				//*SCENE_TICKSPERFRAME 160
 };
 
-//struct GAseSubMaterial {
-//	TCHAR						m_szName[MAX_PATH];			//*MATERIAL_NAME "01 - Default"
-//	D3DXVECTOR3					m_vecAmbient;				//*MATERIAL_AMBIENT 0.5882	0.5882	0.5882
-//	D3DXVECTOR3					m_vecDiffuse;				//*MATERIAL_DIFFUSE 0.5882	0.5882	0.5882
-//	D3DXVECTOR3					m_vecSpecular;				//*MATERIAL_SPECULAR 0.9000	0.9000	0.9000
-//	TCHAR						m_szMapDiffuse[MAX_PATH];	//*BITMAP "C:\TBasis200\Data\object\textures\flagstone.bmp"
-//	ID3D11ShaderResourceView*   m_pTextureRV = NULL;
-//	GAseSubMaterial() {};
-//	~GAseSubMaterial() {};
-//};
-
 struct GAseMaterial {
 	vector<shared_ptr<GAseMaterial>>				m_vSubMaterial;
 	int												m_iSubMaterial;				//0이면 SubMaterial 없는 걸로 처리. 0이 아니면 Submaterial 있음.
@@ -38,15 +27,11 @@ struct GAseMaterial {
 	TCHAR											m_szMapDiffuse[MAX_PATH];	//*BITMAP "C:\TBasis200\Data\object\textures\flagstone.bmp"
 	ComPtr<ID3D11ShaderResourceView>				m_pTextureRV = NULL;
 	GAseMaterial() { m_iSubMaterial = 0; };
-	~GAseMaterial() {
-	
-	
-	};
+	~GAseMaterial() {};
 };
 
 class GAseObj {
 public:
-
 
 	ComPtr<ID3D11Buffer>			m_pConstantBuffer = NULL;
 	ComPtr<ID3D11Buffer>			m_pVertexBuffer = NULL;
@@ -74,19 +59,15 @@ public:
 
 	GAseObj() { m_iFaceCount = 0; };
 	~GAseObj() {
-	
 		m_vPosList.clear();
 		m_vNorList.clear();
 		m_vColList.clear();
 		m_vTexList.clear();
-
 		m_vFaceNormal.clear();
-
 		m_vPnctVertex.clear();
 		m_vIndex.clear();
 		m_vTextureIndex.clear();
 		m_vSubMtlIndex.clear();
-
 	};
 
 };

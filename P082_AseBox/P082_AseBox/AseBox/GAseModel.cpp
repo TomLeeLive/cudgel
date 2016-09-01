@@ -168,6 +168,35 @@ bool		GAseModel::Init() {
 	}
 	else {
 
+#ifdef TESTTEST
+		hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/flagstone.bmp", NULL, NULL, m_vSubMaterial[i - 1]->m_pTextureRV.GetAddressOf(), NULL);
+		if (FAILED(hr))
+			return hr;
+#else
+		for (int i = 0; i < m_vMaterial[0]->m_iSubMaterial; i++) {
+			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, m_vMaterial[0]->m_vSubMaterial[i]->m_szMapDiffuse, NULL, NULL, m_vMaterial[0]->m_vSubMaterial[i]->m_pTextureRV.GetAddressOf(), NULL);
+			if (FAILED(hr))
+				return hr;
+		}
+
+		//hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g04.dds", NULL, NULL, m_vMaterial[0]->m_vSubMaterial[0]->m_pTextureRV.GetAddressOf(), NULL);
+		//if (FAILED(hr))
+		//	return hr;
+
+		//hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g00.dds", NULL, NULL, m_vMaterial[0]->m_vSubMaterial[1]->m_pTextureRV.GetAddressOf(), NULL);
+		//if (FAILED(hr))
+		//	return hr;
+		//hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g01.dds", NULL, NULL, m_vMaterial[0]->m_vSubMaterial[2]->m_pTextureRV.GetAddressOf(), NULL);
+		//if (FAILED(hr))
+		//	return hr;
+		//hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g03.dds", NULL, NULL, m_vMaterial[0]->m_vSubMaterial[3]->m_pTextureRV.GetAddressOf(), NULL);
+		//if (FAILED(hr))
+		//	return hr;
+		//hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g02.dds", NULL, NULL, m_vMaterial[0]->m_vSubMaterial[4]->m_pTextureRV.GetAddressOf(), NULL);
+		//if (FAILED(hr))
+		//	return hr;
+#endif 
+
 		for (int i = 1; i < m_vMaterial[0]->m_iSubMaterial+1; i++) {
 
 			D3D11_BUFFER_DESC bd;
@@ -184,28 +213,7 @@ bool		GAseModel::Init() {
 
 
 
-#ifdef TESTTEST
-			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/flagstone.bmp", NULL, NULL, m_vSubMaterial[i-1]->m_pTextureRV.GetAddressOf(), NULL);
-			if (FAILED(hr))
-				return hr;
-#else
-			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g04.dds", NULL, NULL,  m_vMaterial[0]->m_vSubMaterial[0]->m_pTextureRV.GetAddressOf(), NULL);
-			if (FAILED(hr))																					    
-				return hr;																					    
-																											    
-			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g00.dds", NULL, NULL,  m_vMaterial[0]->m_vSubMaterial[1]->m_pTextureRV.GetAddressOf(), NULL);
-			if (FAILED(hr))																					    
-				return hr;																					    
-			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g01.dds", NULL, NULL,  m_vMaterial[0]->m_vSubMaterial[2]->m_pTextureRV.GetAddressOf(), NULL);
-			if (FAILED(hr))																					    
-				return hr;																					    
-			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g03.dds", NULL, NULL,  m_vMaterial[0]->m_vSubMaterial[3]->m_pTextureRV.GetAddressOf(), NULL);
-			if (FAILED(hr))																					    
-				return hr;																					    
-			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"data/0_st02_sc00_g02.dds", NULL, NULL,  m_vMaterial[0]->m_vSubMaterial[4]->m_pTextureRV.GetAddressOf(), NULL);
-			if (FAILED(hr))
-				return hr;
-#endif 
+
 
 		//}
 
@@ -335,7 +343,8 @@ bool		GAseModel::Render() {
 	else {
 		for (int i = 1; i < m_vMaterial[0]->m_iSubMaterial + 1; i++) {
 
-			// Set vertex buffer
+			 //Set vertex buffer
+
 			UINT stride = sizeof(PNCT_VERTEX);
 			UINT offset = 0;
 			g_pImmediateContext->IASetVertexBuffers(0, 1, m_vObj[i]->m_pVertexBuffer.GetAddressOf(), &stride, &offset);
@@ -347,10 +356,9 @@ bool		GAseModel::Render() {
 			g_pImmediateContext->PSSetSamplers(0, 1, m_pSamplerLinear.GetAddressOf());
 
 			g_pImmediateContext->PSSetShaderResources(0, 1, m_vMaterial[0]->m_vSubMaterial[i-1]->m_pTextureRV.GetAddressOf());
-			//int temp = m_vObj[i]->m_vPnctVertex.size();
 			g_pImmediateContext->IASetIndexBuffer(m_vObj[i]->m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 			g_pImmediateContext->DrawIndexed(m_vObj[i]->m_vPnctVertex.size(), 0, 0);
-				// 36 vertices needed for 12 triangles in a triangle list
+
 		}
 	}
 
@@ -359,15 +367,56 @@ bool		GAseModel::Render() {
 };
 bool		GAseModel::Release() {
 
-	//if (m_vObj[0]->m_pVertexBuffer.Get()) m_vObj[0]->m_pVertexBuffer.Get()->Release();
-	//if (m_vObj[0]->m_pIndexBuffer.Get()) m_vObj[0]->m_pIndexBuffer.Get()->Release();
-	//if (m_vMaterial[0]->m_pTextureRV.Get()) m_vMaterial[0]->m_pTextureRV.Get()->Release();
+	//if (m_vMaterial[0]->m_iSubMaterial != 0) {
+	//	m_vMaterial[0]->m_vSubMaterial[0]->m_pTextureRV.Get()->Release();
+	//	m_vMaterial[0]->m_vSubMaterial[1]->m_pTextureRV.Get()->Release();
+	//	m_vMaterial[0]->m_vSubMaterial[2]->m_pTextureRV.Get()->Release();
+	//	m_vMaterial[0]->m_vSubMaterial[3]->m_pTextureRV.Get()->Release();
+	//	m_vMaterial[0]->m_vSubMaterial[4]->m_pTextureRV.Get()->Release();
 
-	//if (m_vObj[0]->m_pConstantBuffer.Get()) m_vObj[0]->m_pConstantBuffer.Get()->Release();
-	//if (m_pVertexLayout.Get()) m_pVertexLayout.Get()->Release();
-	//if (m_pVertexShader.Get()) m_pVertexShader.Get()->Release();
-	//if (m_pPixelShader.Get()) m_pPixelShader.Get()->Release();
-	//if (m_pSamplerLinear.Get()) m_pSamplerLinear.Get()->Release();
+	//}
+/*	if (m_vObj[0]->m_pVertexBuffer.Get()) m_vObj[0]->m_pVertexBuffer.Get()->Release();
+	if (m_vObj[0]->m_pIndexBuffer.Get()) m_vObj[0]->m_pIndexBuffer.Get()->Release();
+	if (m_vMaterial[0]->m_pTextureRV.Get()) m_vMaterial[0]->m_pTextureRV.Get()->Release();
+
+	if (m_vObj[0]->m_pConstantBuffer.Get()) m_vObj[0]->m_pConstantBuffer.Get()->Release();
+	if (m_pVertexLayout.Get()) m_pVertexLayout.Get()->Release();
+	if (m_pVertexShader.Get()) m_pVertexShader.Get()->Release();
+	if (m_pPixelShader.Get()) m_pPixelShader.Get()->Release();
+	if (m_pSamplerLinear.Get()) m_pSamplerLinear.Get()->Release();
+	*/
+	if (m_vMaterial[0]->m_iSubMaterial != 0) {
+
+
+		vector<shared_ptr<GAseMaterial>>::iterator _F = m_vMaterial[0]->m_vSubMaterial.begin();
+		vector<shared_ptr<GAseMaterial>>::iterator _L = m_vMaterial[0]->m_vSubMaterial.end();
+
+		for (; _F != _L; ++_F)
+		{
+			(*_F).reset();
+		}
+		m_vMaterial[0]->m_vSubMaterial.clear();
+
+		m_vMaterial[0]->m_iSubMaterial = 0;
+	}
+
+	vector<shared_ptr<GAseMaterial>>::iterator _F = m_vMaterial.begin();
+	vector<shared_ptr<GAseMaterial>>::iterator _L = m_vMaterial.end();
+
+	for (; _F != _L; ++_F)
+	{
+		(*_F).reset();
+	}
+	m_vMaterial.clear();
+
+	vector<shared_ptr<GAseObj>>::iterator _B = m_vObj.begin();
+	vector<shared_ptr<GAseObj>>::iterator _E = m_vObj.end();
+
+	for (; _B != _E; ++_B)
+	{
+		(*_B).reset();
+	}
+	m_vObj.clear();
 
 	return true;
 };

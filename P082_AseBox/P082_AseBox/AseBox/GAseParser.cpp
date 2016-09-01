@@ -1,5 +1,32 @@
 #include "_stdafx.h"
 
+
+void GetStringWeNeed(VOID* pOutStr, VOID* pInStr) {
+	//D:\test\STAGE_02\st02_sc00\st02_sc00_map\0_st02_sc00_g02.dds
+
+	//tcscpy((TCHAR*)pData, &szTexPath[1]);
+
+	vector<TCHAR*> vString;
+
+	TCHAR* token =NULL;
+	token = _tcstok((TCHAR*)pInStr, L"\\");
+	while (token != NULL)
+	{
+		token = _tcstok(NULL, L"\\");
+		vString.push_back(token);
+	}
+	_tcscpy((TCHAR*)pOutStr, vString[vString.size() - 2]);
+
+	TCHAR strDir[MAX_PATH] = L"data\\";
+	_tcsncat(strDir, (TCHAR*)pOutStr, _tcsclen((TCHAR*)pOutStr));
+	/*_tcsncat((TCHAR*)pOutStr, L"data\\", sizeof(strDir));*/
+	_tcscpy((TCHAR*)pOutStr, strDir);
+	/*return token;*/
+}
+
+
+
+
 int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 
 
@@ -252,10 +279,10 @@ int		GAseParser::GetDataFromFile(GAseModel* stModel ){
 					int iSubMtls = 0;
 
 					auto material = make_shared<GAseMaterial>();
-					GetDataFromFileLoop(g_pAseMaterialTokens[0], &(material->m_szName), STRING_DATA);
-					GetDataFromFileLoop(g_pAseMaterialTokens[1], &(material->m_vecAmbient), VERTEX_DATA);
-					GetDataFromFileLoop(g_pAseMaterialTokens[2], &(material->m_vecDiffuse), VERTEX_DATA);
-					GetDataFromFileLoop(g_pAseMaterialTokens[3], &(material->m_vecSpecular), VERTEX_DATA);
+					GetDataFromFileLoop(g_pAseMaterialTokens[0], &(material.get()->m_szName), STRING_DATA);
+					GetDataFromFileLoop(g_pAseMaterialTokens[1], &(material.get()->m_vecAmbient), VERTEX_DATA);
+					GetDataFromFileLoop(g_pAseMaterialTokens[2], &(material.get()->m_vecDiffuse), VERTEX_DATA);
+					GetDataFromFileLoop(g_pAseMaterialTokens[3], &(material.get()->m_vecSpecular), VERTEX_DATA);
 
 
 					SaveFilePosition();
@@ -264,20 +291,22 @@ int		GAseParser::GetDataFromFile(GAseModel* stModel ){
 
 					if (iSubMtls == 0) {
 						RestoreFilePosition();
-						GetDataFromFileLoop(g_pAseMaterialTokens[4], &(material->m_szMapDiffuse), STRING_DATA);
+						GetDataFromFileLoop(g_pAseMaterialTokens[4], &(material.get()->m_szMapDiffuse), STRING_DATA);
 						material->m_iSubMaterial = 0;
 					}
 					else {
-						memset(&(material->m_szMapDiffuse), 0, sizeof(&(material->m_szMapDiffuse)));
+						memset(&(material.get()->m_szMapDiffuse), 0, sizeof(&(material.get()->m_szMapDiffuse)));
 						material->m_iSubMaterial = iSubMtls;
 
 						for (int i = 0; i < iSubMtls; i++){
 							auto submaterial = make_shared<GAseMaterial>();
-							GetDataFromFileLoop(g_pAseMaterialTokens[0], &(submaterial->m_szName), STRING_DATA);
-							GetDataFromFileLoop(g_pAseMaterialTokens[1], &(submaterial->m_vecAmbient), VERTEX_DATA);
-							GetDataFromFileLoop(g_pAseMaterialTokens[2], &(submaterial->m_vecDiffuse), VERTEX_DATA);
-							GetDataFromFileLoop(g_pAseMaterialTokens[3], &(submaterial->m_vecSpecular), VERTEX_DATA);
-							GetDataFromFileLoop(g_pAseMaterialTokens[4], &(submaterial->m_szMapDiffuse), STRING_DATA);
+							GetDataFromFileLoop(g_pAseMaterialTokens[0], &(submaterial.get()->m_szName), STRING_DATA);
+							GetDataFromFileLoop(g_pAseMaterialTokens[1], &(submaterial.get()->m_vecAmbient), VERTEX_DATA);
+							GetDataFromFileLoop(g_pAseMaterialTokens[2], &(submaterial.get()->m_vecDiffuse), VERTEX_DATA);
+							GetDataFromFileLoop(g_pAseMaterialTokens[3], &(submaterial.get()->m_vecSpecular), VERTEX_DATA);
+							GetDataFromFileLoop(g_pAseMaterialTokens[4], &(submaterial.get()->m_szMapDiffuse), STRING_DATA);
+							
+							GetStringWeNeed(submaterial.get()->m_szMapDiffuse, submaterial.get()->m_szMapDiffuse);
 							material->m_vSubMaterial.push_back(submaterial);
 						}
 					}

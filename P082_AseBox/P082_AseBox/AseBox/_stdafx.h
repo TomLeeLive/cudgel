@@ -8,5 +8,6 @@
 #include <GParser.h>
 #include "GAseParser.h"
 #include "GAseModel.h"
+#include "GModelViewCamera.h"
 #include "Sample.h"
 #endif

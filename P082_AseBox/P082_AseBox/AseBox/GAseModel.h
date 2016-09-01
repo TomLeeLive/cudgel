@@ -84,8 +84,8 @@ public:
 	ComPtr<ID3D11SamplerState>          m_pSamplerLinear = NULL;
 
 	bool		Init();
-	bool		Frame(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* matProj);
-	bool		Render();
+	bool		Frame();
+	bool		Render(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* matProj);
 	bool		Release();
 public:
 	GAseModel() {};

@@ -296,10 +296,13 @@ bool		GAseModel::Init() {
 
 	return true;
 };
-bool		GAseModel::Frame(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* matProj) {
+bool		GAseModel::Frame() {
 
 
+	return true;
+};
 
+bool		GAseModel::Render(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* matProj) {
 
 	//
 	// Update variables
@@ -313,18 +316,10 @@ bool		GAseModel::Frame(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* ma
 		g_pImmediateContext->UpdateSubresource(m_vObj[0]->m_pConstantBuffer.Get(), 0, NULL, &cb, 0, 0);
 	}
 	else {
-		for (int i = 1; i < m_vMaterial[0]->m_iSubMaterial+1; i++) {
+		for (int i = 1; i < m_vMaterial[0]->m_iSubMaterial + 1; i++) {
 			g_pImmediateContext->UpdateSubresource(m_vObj[i]->m_pConstantBuffer.Get(), 0, NULL, &cb, 0, 0);
 		}
 	}
-
-
-
-	return true;
-};
-
-bool		GAseModel::Render() {
-
 	//
 	// Renders a triangle
 	//

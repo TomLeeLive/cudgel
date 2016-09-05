@@ -196,9 +196,12 @@ bool GAseParser::GetTrackListFromString(vector<GAnimTrack>& vTrack,
 		else if (TrackType == ROT_SAMPLE_TRACK)
 		{
 			ST_ANI_ROT stRotData;
-			GetData(&stRotData, ANI_POS_DATA);
-			//Track.qRotate = stRotData.vecRot;
-			//Track.qRotate = stRotData.iTick;
+			GetData(&stRotData, ANI_ROT_DATA);
+			Track.qRotate.x = stRotData.vecRot.x;
+			Track.qRotate.y = stRotData.vecRot.y;
+			Track.qRotate.z = stRotData.vecRot.z;
+			Track.qRotate.w = stRotData.vecRot.w;
+			Track.iTick = stRotData.iTick;
 			vTrack.push_back(Track);
 
 			//_stscanf(GetNextTokenString(), _T("%s%d%f%f%f%f"), m_pString, &Track.iTick,
@@ -206,6 +209,16 @@ bool GAseParser::GetTrackListFromString(vector<GAnimTrack>& vTrack,
 		}
 		else if (TrackType == SCL_SAMPLE_TRACK)
 		{
+			ST_ANI_SCL stSclData;
+			GetData(&stSclData, ANI_SCL_DATA);
+			Track.vecVector = stSclData.vecVec;
+			Track.qRotate.x = stSclData.vecRot.x;
+			Track.qRotate.y = stSclData.vecRot.y;
+			Track.qRotate.z = stSclData.vecRot.z;
+			Track.qRotate.w = stSclData.vecRot.w;
+			Track.iTick = stSclData.iTick;
+			vTrack.push_back(Track);
+
 			//_stscanf(GetNextTokenString(), _T("%s%d%f%f%f %f%f%f%f"), m_pString, &Track.iTick,
 			//	&Track.vVector.x, &Track.vVector.z, &Track.vVector.y,
 			//	&Track.qRotate.x, &Track.qRotate.z, &Track.qRotate.y, &Track.qRotate.w);

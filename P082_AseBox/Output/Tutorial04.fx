@@ -71,5 +71,5 @@ PS_INPUT VS( VS_INPUT input )
 float4 PS( PS_INPUT input ) : SV_Target
 {
     //return input.c;
-	return txDiffuse.Sample( samLinear, input.Tex ) * input.c;
+	return txDiffuse.Sample( samLinear, input.Tex ) ;//* input.c;
 }

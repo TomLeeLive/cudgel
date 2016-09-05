@@ -11,7 +11,7 @@ class GAseObj;
 class GAseModel;
 
 
-class GAseParser : public GParser
+class GAseParser : public GParser, public GSingleton < GAseParser >
 {
 public:
 	TCHAR* g_pAseItems[3] = { L"*SCENE",L"*MATERIAL_LIST",L"*GEOMOBJECT"/*,L"HELPEROBJECT"*/ };
@@ -58,6 +58,7 @@ public:
 	int		GetMeshDataFromFile(GAseModel* stModel);
 	int		GetObjDataFromFile(GAseModel* stModel);
 	int		GetDataFromFile(GAseModel* stModel);
+	void	GetStringWeNeed(VOID* pOutStr, VOID* pInStr);
 
 	void GAseParser::SaveFilePosition()
 	{
@@ -77,5 +78,7 @@ public:
 	GAseParser();
 	virtual ~GAseParser();
 };
+
+#define I_AseParser GAseParser::GetInstance()
 
 #endif

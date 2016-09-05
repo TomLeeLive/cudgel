@@ -1,0 +1,39 @@
+ASE가 애니메이션이 있는지? 없는지? 구분
+샘플링 애니메이션인지 키프레임 애니메이션 인지 구분
+
+TM_ANIMATION 파싱
+
+
+struct GAnimTrack 
+{ 
+int    iTick; //  시간(틱 단위) 
+D3DXQUATERNION  qRotate; ;// 임의의 축 및 벡터를 통하여 사원수로 변환
+D3DXVECTOR3  vVector; // 위치 벡터 및 스케일 값으로 활용 
+GAnimTrack*  pNext; // 다음 트랙 리스트 주소 
+GAnimTrack*  pPrev;// 이전 트랙 리스트 주소 
+}; 
+
+
+//obj 구조체에 추가..
+D3DXMATRIX    m_matWorldTrans;  // 월드이동행렬 
+D3DXMATRIX    m_matWorldRotate;  // 월드회전행렬 
+D3DXMATRIX    m_matWorldScale;  // 월드신축행렬 
+ 
+vector<GAnimTrack> m_PosTrack;// 이동트랙 
+vector<GAnimTrack> m_RotTrack;// 회전트랙 
+vector<GAnimTrack> m_SclTrack;// 신축트랙 
+
+//파싱작업
+765p
+
+시간계산
+트랙리스트검색
+애니메이션보간
+오브젝트 렌더링
+
+
+1.T 애니메이션
+2.S 애니메이션
+3.R 애니메이션
+4.싱글애니메이션 SRT
+5.멀티애니메이션(터렛)

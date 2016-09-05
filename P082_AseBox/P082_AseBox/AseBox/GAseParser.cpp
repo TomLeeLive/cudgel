@@ -1,10 +1,7 @@
 #include "_stdafx.h"
 
-
-void GetStringWeNeed(VOID* pOutStr, VOID* pInStr) {
-	//D:\test\STAGE_02\st02_sc00\st02_sc00_map\0_st02_sc00_g02.dds
-
-	//tcscpy((TCHAR*)pData, &szTexPath[1]);
+//스트링 편집하여 텍스처 파일 경로를 실제 경로로 맞춰준다.
+void GAseParser::GetStringWeNeed(VOID* pOutStr, VOID* pInStr) {
 
 	vector<TCHAR*> vString;
 
@@ -19,9 +16,9 @@ void GetStringWeNeed(VOID* pOutStr, VOID* pInStr) {
 
 	TCHAR strDir[MAX_PATH] = L"data\\";
 	_tcsncat(strDir, (TCHAR*)pOutStr, _tcsclen((TCHAR*)pOutStr));
-	/*_tcsncat((TCHAR*)pOutStr, L"data\\", sizeof(strDir));*/
+
 	_tcscpy((TCHAR*)pOutStr, strDir);
-	/*return token;*/
+
 }
 
 
@@ -48,20 +45,19 @@ int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 
 				case MESH_NUMVERTEX:
 				{
-					 GetData(&(stModel->m_vObj[0]->m_iPosCount), INT_DATA);
+					GetData(&(stModel->m_vObj[0]->m_iPosCount), INT_DATA);
 					break;
 				}
 				break;
 				case MESH_NUMFACES:
 				{
-					 GetData(&(stModel->m_vObj[0]->m_iFaceCount), INT_DATA);
+					GetData(&(stModel->m_vObj[0]->m_iFaceCount), INT_DATA);
 				}
 				break;
 				case MESH_VERTEX_LIST:
 				{
 					D3DXVECTOR3 pPos;
 					for (int i = 0; i < stModel->m_vObj[0]->m_iPosCount; i++) {
-						//pPos = new D3DXVECTOR3;
 						 GetDataFromFileLoop(L"*MESH_VERTEX", &pPos, MESH_VERTEX_DATA);
 						 stModel->m_vObj[0]->m_vPosList.push_back(pPos);
 					}
@@ -129,8 +125,15 @@ int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 				case MESH_CVERTLIST:
 				{
 					D3DXVECTOR3 vColor;
+					float fTemp;
+
 					for (int i = 0; i < stModel->m_vObj[0]->m_iColorVerCount; i++) {
 						 GetDataFromFileLoop(L"*MESH_VERTCOL", &vColor, MESH_VERTEX_DATA);
+						 
+						 fTemp = vColor.y;
+						 vColor.y = vColor.z;
+						 vColor.z = fTemp;
+
 						 stModel->m_vObj[0]->m_vColList.push_back(vColor);
 					}
 				}
@@ -167,7 +170,7 @@ int		GAseParser::GetObjDataFromFile(GAseModel* stModel) {
 		stModel->m_vObj.push_back(make_shared<GAseObj>());
 	}
 	else {
-		for (int i = 0; i< stModel->m_vMaterial[0]->m_iSubMaterial + 1; i++)   //0번 은 오리지널 데이터로 남겨놓는다.
+		for (int i = 0; i< stModel->m_vMaterial[0]->m_iSubMaterial; i++)   //0번 은 오리지널 데이터로 남겨놓는다.
 			stModel->m_vObj.push_back(make_shared<GAseObj>());
 	}
 
@@ -190,13 +193,9 @@ int		GAseParser::GetObjDataFromFile(GAseModel* stModel) {
 
 				case NODE_NAME:
 				{
-					//if (stModel->m_vMaterial[0]->m_iSubMaterial == 0) {
-						GetData(&(stModel->m_vObj[0]->m_szName), STRING_DATA);
-					//}
-					//else {
 
-					//}
-					 
+					GetData(&(stModel->m_vObj[0]->m_szName), STRING_DATA);
+
 				}
 				break;
 				case NODE_TM:
@@ -205,37 +204,25 @@ int		GAseParser::GetObjDataFromFile(GAseModel* stModel) {
 					D3DXVECTOR3 vecROW1;
 					D3DXVECTOR3 vecROW2;
 					D3DXVECTOR3 vecROW3;
-					 GetDataFromFileLoop(g_pAseNodeTmTokens[0], &vecROW0, VERTEX_DATA);
-					 GetDataFromFileLoop(g_pAseNodeTmTokens[1], &vecROW1, VERTEX_DATA);
-					 GetDataFromFileLoop(g_pAseNodeTmTokens[2], &vecROW2, VERTEX_DATA);
-					 GetDataFromFileLoop(g_pAseNodeTmTokens[3], &vecROW3, VERTEX_DATA);
 
-					 //if (stModel->m_vMaterial[0]->m_iSubMaterial == 0) {
-						 GetData(&(stModel->m_vObj[0]->m_szName), STRING_DATA);
+					GetDataFromFileLoop(g_pAseNodeTmTokens[0], &vecROW0, VERTEX_DATA);
+					GetDataFromFileLoop(g_pAseNodeTmTokens[1], &vecROW1, VERTEX_DATA);
+					GetDataFromFileLoop(g_pAseNodeTmTokens[2], &vecROW2, VERTEX_DATA);
+					GetDataFromFileLoop(g_pAseNodeTmTokens[3], &vecROW3, VERTEX_DATA);
 
-						 D3DXMatrixIdentity(&(stModel->m_vObj[0]->m_matWorld));
+					GetData(&(stModel->m_vObj[0]->m_szName), STRING_DATA);
 
-						 stModel->m_vObj[0]->m_matWorld._11 = vecROW0.x; stModel->m_vObj[0]->m_matWorld._12 = vecROW0.y; stModel->m_vObj[0]->m_matWorld._13 = vecROW0.z;
-						 stModel->m_vObj[0]->m_matWorld._31 = vecROW1.x; stModel->m_vObj[0]->m_matWorld._32 = vecROW1.y; stModel->m_vObj[0]->m_matWorld._33 = vecROW1.z;
-						 stModel->m_vObj[0]->m_matWorld._21 = vecROW2.x; stModel->m_vObj[0]->m_matWorld._22 = vecROW2.y; stModel->m_vObj[0]->m_matWorld._23 = vecROW2.z;
-						 stModel->m_vObj[0]->m_matWorld._41 = vecROW3.x; stModel->m_vObj[0]->m_matWorld._42 = vecROW3.y; stModel->m_vObj[0]->m_matWorld._43 = vecROW3.z;
-					 //}
-					 //else {
+					D3DXMatrixIdentity(&(stModel->m_vObj[0]->m_matWorld));
 
-					 //}
-
-
+					stModel->m_vObj[0]->m_matWorld._11 = vecROW0.x; stModel->m_vObj[0]->m_matWorld._12 = vecROW0.y; stModel->m_vObj[0]->m_matWorld._13 = vecROW0.z;
+					stModel->m_vObj[0]->m_matWorld._31 = vecROW1.x; stModel->m_vObj[0]->m_matWorld._32 = vecROW1.y; stModel->m_vObj[0]->m_matWorld._33 = vecROW1.z;
+					stModel->m_vObj[0]->m_matWorld._21 = vecROW2.x; stModel->m_vObj[0]->m_matWorld._22 = vecROW2.y; stModel->m_vObj[0]->m_matWorld._23 = vecROW2.z;
+					stModel->m_vObj[0]->m_matWorld._41 = vecROW3.x; stModel->m_vObj[0]->m_matWorld._42 = vecROW3.y; stModel->m_vObj[0]->m_matWorld._43 = vecROW3.z;
 				}
 				break;
 				case MESH:
 				{
-					//if (stModel->m_vMaterial[0]->m_iSubMaterial == 0) {
-						GetMeshDataFromFile(stModel);
-					//}
-					//else {
-
-					//}
-
+					GetMeshDataFromFile(stModel);
 				}
 				break;
 
@@ -292,6 +279,7 @@ int		GAseParser::GetDataFromFile(GAseModel* stModel ){
 					if (iSubMtls == 0) {
 						RestoreFilePosition();
 						GetDataFromFileLoop(g_pAseMaterialTokens[4], &(material.get()->m_szMapDiffuse), STRING_DATA);
+						GetStringWeNeed(material.get()->m_szMapDiffuse, material.get()->m_szMapDiffuse);
 						material->m_iSubMaterial = 0;
 					}
 					else {
@@ -404,7 +392,7 @@ void    GAseParser::SetPnctData(GAseModel* stModel) {
 			}
 			else {
 				int j = i / 3;
-				stModel->m_vObj[    stModel->m_vObj[0]->m_vSubMtlIndex[j]+1    ]->m_vPnctVertex.push_back(PNCT_VERTEX(vp, vn, vc, vt));
+				stModel->m_vObj[    stModel->m_vObj[0]->m_vSubMtlIndex[j]    ]->m_vPnctVertex.push_back(PNCT_VERTEX(vp, vn, vc, vt));
 			}
 		}
 

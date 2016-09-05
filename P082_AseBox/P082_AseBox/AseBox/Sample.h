@@ -6,7 +6,7 @@ public:
 	shared_ptr<GCamera > m_pMainCamera;
 
 	GAseModel	m_stModel;
-	GAseParser	m_Parser;
+
 
 	D3DXMATRIX				m_World;
 	//D3DXMATRIX				m_View;

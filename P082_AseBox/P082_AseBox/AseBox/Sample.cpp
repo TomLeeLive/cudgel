@@ -2,7 +2,11 @@
 
 //#define G_DEFINE_BOX
 //#define G_DEFINE_SHIP
-#define G_DEFINE_MULTICAMERAS
+//#define G_DEFINE_MULTICAMERAS
+#define G_DEFINE_ANI_TRANSLATE
+//#define G_DEFINE_ANI_SCALE
+//#define G_DEFINE_ANI_ROTATE
+//#define G_DEFINE_ANI_TURRET
 
 
 int Sample::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -13,7 +17,7 @@ int Sample::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	}
 	return -1;
 }
-
+   
 HRESULT Sample::CreateResource()
 {
 	HRESULT hr;
@@ -37,52 +41,61 @@ HRESULT Sample::DeleteResource()
 
 
 bool	Sample::Init() {
+
 #ifdef G_DEFINE_BOX
-	m_Parser.OpenStream(L"data/BOX.ASE");
+	m_stModel.Init(L"data/BOX.ASE", L"Tutorial04.fx");
+	//m_Parser.OpenStream(L"data/BOX.ASE");
 #endif
 #ifdef G_DEFINE_SHIP
-	m_Parser.OpenStream(L"data/st02sc00.ASE");
+	m_stModel.Init(L"data/st02sc00.ASE", L"Tutorial04.fx");
+	//m_Parser.OpenStream(L"data/st02sc00.ASE");
 #endif
 #ifdef G_DEFINE_MULTICAMERAS
-	m_Parser.OpenStream(L"data/MultiCameras.ASE");
+	m_stModel.Init(L"data/MultiCameras.ASE", L"Tutorial04.fx");
+	//m_Parser.OpenStream(L"data/MultiCameras.ASE");
 #endif
-
-	CStopwatch stopwatch;
-
-	m_Parser.GetDataFromFile(&m_stModel);
-
-	m_Parser.CloseStream();
-
-	m_Parser.SetPnctData(&m_stModel);
-
-	stopwatch.Output(L"Init()");
-
-	m_stModel.Init();
+#ifdef G_DEFINE_ANI_TRANSLATE
+		m_stModel.Init(L"data/boxtranslate.ASE", L"Tutorial04.fx");
+		//m_Parser.OpenStream(L"data/MultiCameras.ASE");
+#endif
+#ifdef G_DEFINE_ANI_SCALE
+		m_stModel.Init(L"data/scaleanimationmodel.ASE", L"Tutorial04.fx");
+		//m_Parser.OpenStream(L"data/MultiCameras.ASE");
+#endif
+#ifdef G_DEFINE_ANI_ROTATE
+		m_stModel.Init(L"data/rotanimation.ASE", L"Tutorial04.fx");
+		//m_Parser.OpenStream(L"data/MultiCameras.ASE");
+#endif
+#ifdef G_DEFINE_ANI_TURRET
+		m_stModel.Init(L"data/Turret_Deploy.ASE", L"Tutorial04.fx");
+		//m_Parser.OpenStream(L"data/MultiCameras.ASE");
+#endif
+	
 
 
 	// Initialize the world matrix
 	D3DXMatrixIdentity(&m_World);
 
 
-
-//	// Initialize the view matrix
-//#ifdef G_DEFINE_BOX
-//	D3DXVECTOR3 Eye = D3DXVECTOR3(0.0f, 1.0f, -7.0f);
-//#endif
-//#ifdef G_DEFINE_SHIP
-//	D3DXVECTOR3 Eye = D3DXVECTOR3(0.0f, 1.0f, -700.0f);
-//#endif
-//#ifdef G_DEFINE_MULTICAMERAS
-//	D3DXVECTOR3 Eye = D3DXVECTOR3(0.0f, 1.0f, -100.0f);
-//#endif
-//
-//	D3DXVECTOR3 At = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-//	D3DXVECTOR3 Up = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-//	D3DXMatrixLookAtLH(&m_View, &Eye, &At, &Up);
+	//     // Initialize the view matrix
+	//#ifdef G_DEFINE_BOX
+	//     D3DXVECTOR3 Eye = D3DXVECTOR3(0.0f, 1.0f, -7.0f);
+	//#endif
+	//#ifdef G_DEFINE_SHIP
+	//     D3DXVECTOR3 Eye = D3DXVECTOR3(0.0f, 1.0f, -700.0f);
+	//#endif
+	//#ifdef G_DEFINE_MULTICAMERAS
+	//     D3DXVECTOR3 Eye = D3DXVECTOR3(0.0f, 1.0f, -100.0f);
+	//#endif
+	//
+	//     D3DXVECTOR3 At = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	//     D3DXVECTOR3 Up = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	//     D3DXMatrixLookAtLH(&m_View, &Eye, &At, &Up);
 
 	//// Initialize the projection matrix
 	//D3DXMatrixPerspectiveFovLH(&m_Projection, XM_PIDIV2, m_iWindowWidth / (FLOAT)m_iWindowHeight, 0.01f, 10000.0f);
-	
+
+
 
 	//--------------------------------------------------------------------------------------
 	// 카메라  행렬 
@@ -100,7 +113,7 @@ bool	Sample::Frame() {
 
 
 
-
+#ifdef TESTTEST
 	// Update our time
 	static float t = 0.0f;
 	if (m_driverType == D3D_DRIVER_TYPE_REFERENCE)
@@ -120,6 +133,8 @@ bool	Sample::Frame() {
 	// Animate the cube
 	//
 	D3DXMatrixRotationY(&m_World, t);
+#endif
+
 
 	m_pMainCamera->Frame();// (g_fSecPerFrame);
 	m_World = *m_pMainCamera->GetWorldMatrix();

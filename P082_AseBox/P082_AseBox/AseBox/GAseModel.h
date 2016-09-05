@@ -33,7 +33,7 @@ struct GAseMaterial {
 class GAseObj {
 public:
 
-	ComPtr<ID3D11Buffer>			m_pConstantBuffer = NULL;
+	
 	ComPtr<ID3D11Buffer>			m_pVertexBuffer = NULL;
 	ComPtr<ID3D11Buffer>			m_pIndexBuffer = NULL;
 
@@ -74,16 +74,19 @@ public:
 
 class GAseModel {
 public:
+	//GAseParser								m_Parser;
+
 	GAseScene								m_stScene;
 	vector<shared_ptr<GAseMaterial>>		m_vMaterial;
 	vector<shared_ptr<GAseObj>>				m_vObj;
 
+	ComPtr<ID3D11Buffer>				m_pConstantBuffer = NULL;
 	ComPtr<ID3D11VertexShader>			m_pVertexShader = NULL;
 	ComPtr<ID3D11PixelShader>			m_pPixelShader = NULL;
 	ComPtr<ID3D11InputLayout>			m_pVertexLayout = NULL;
 	ComPtr<ID3D11SamplerState>          m_pSamplerLinear = NULL;
 
-	bool		Init();
+	bool		Init(TCHAR* strFileName, TCHAR* strShaderName);
 	bool		Frame();
 	bool		Render(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* matProj);
 	bool		Release();

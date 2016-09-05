@@ -151,6 +151,7 @@ int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 						 GetDataFromFileLoop(L"*MESH_VERTEXNORMAL", &vNormal, MESH_VERTEX_DATA);
 						 stModel->m_vObj[0]->m_vNorList.push_back(vNormal);
 					}
+					return 0;
 				}
 				break;
 
@@ -160,7 +161,118 @@ int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 		//fgetc( m_pStream);
 	}
 
-	return -1;
+	return 0;
+}
+
+
+bool GAseParser::GetTrackListFromString(vector<GAnimTrack>& vTrack,
+	AseTrackType TrackType)
+{
+	GAnimTrack Track;
+
+	while (!feof(m_pStream))
+	{
+		_fgetts(m_pBuffer, 256, m_pStream);
+		_stscanf(m_pBuffer, _T("%s"), m_pString);
+
+
+
+		if (!_tcsicmp(m_pString, L"}"))
+			break;
+
+		if (TrackType == POS_SAMPLE_TRACK)
+		{
+			ST_ANI_POS stPosData;
+			//GetDataFromFileLoop(L"*CONTROL_POS_SAMPLE", &stPosData, ANI_POS_DATA);
+			GetData(&stPosData, ANI_POS_DATA);
+			Track.vecVector = stPosData.vecPos;
+			Track.iTick = stPosData.iTick;
+			vTrack.push_back(Track);
+			//_stscanf(GetNextTokenString(), _T("%s%d%f%f%f"), m_pString, &Track.iTick,
+			//	&Track.vVector.x,
+			//	&Track.vVector.z,
+			//	&Track.vVector.y);
+		}
+		else if (TrackType == ROT_SAMPLE_TRACK)
+		{
+			ST_ANI_ROT stRotData;
+			GetData(&stRotData, ANI_POS_DATA);
+			//Track.qRotate = stRotData.vecRot;
+			//Track.qRotate = stRotData.iTick;
+			vTrack.push_back(Track);
+
+			//_stscanf(GetNextTokenString(), _T("%s%d%f%f%f%f"), m_pString, &Track.iTick,
+			//	&Track.qRotate.x, &Track.qRotate.z, &Track.qRotate.y, &Track.qRotate.w);
+		}
+		else if (TrackType == SCL_SAMPLE_TRACK)
+		{
+			//_stscanf(GetNextTokenString(), _T("%s%d%f%f%f %f%f%f%f"), m_pString, &Track.iTick,
+			//	&Track.vVector.x, &Track.vVector.z, &Track.vVector.y,
+			//	&Track.qRotate.x, &Track.qRotate.z, &Track.qRotate.y, &Track.qRotate.w);
+		}
+		else if (TrackType == VIS_SAMPLE_TRACK)
+		{
+			//_stscanf(GetNextTokenString(), _T("%s%d%f"),
+			//	m_pString, &Track.iTick,
+			//	&Track.vVector.x);
+		}
+		/*vTrack.push_back(Track);*/
+
+		//if (_tcsstr(m_pwcTokenData.c_str(), _T("}")) != NULL)
+		//{
+		//	break;
+		//}
+	}
+	return true;
+}
+
+int		GAseParser::GetAnimationDataFromFile(GAseModel* stModel) {
+
+
+	int iSize = sizeof(g_pAseAniDataTokens) / sizeof(g_pAseAniDataTokens[0]);
+
+	while (!feof(m_pStream))
+	{
+		_fgetts(m_pBuffer, 256, m_pStream);
+		_stscanf(m_pBuffer, _T("%s"), m_pString);
+
+		for (int i = 0; i < iSize; i++) {
+
+
+			if (!_tcsicmp(m_pString, g_pAseAniDataTokens[i]))
+			{
+				switch (i)
+				{
+				case ANI_CONTROL_POS_TCB:
+				case ANI_CONTROL_POS_BEZIER:
+				case ANI_CONTROL_POS_TRACK:
+				{
+					GetTrackListFromString(stModel->m_vObj[0].get()->m_vPosTrack, POS_SAMPLE_TRACK);
+				}
+				break;
+				case ANI_CONTROL_ROT_TCB:
+				case ANI_CONTROL_ROT_BEZIER:
+				case ANI_CONTROL_ROT_TRACK:
+				{
+					GetTrackListFromString(stModel->m_vObj[0].get()->m_vRotTrack, ROT_SAMPLE_TRACK);
+				}
+				break;
+				case ANI_CONTROL_SCALE_TCB:
+				case ANI_CONTROL_SCALE_BEZIER:
+				case ANI_CONTROL_SCALE_TRACK:
+				{
+					GetTrackListFromString(stModel->m_vObj[0].get()->m_vSclTrack, SCL_SAMPLE_TRACK);
+				}
+				break;
+
+				}
+			}
+		}
+		//fgetc( m_pStream);
+	}
+
+
+	return 0;
 }
 int		GAseParser::GetObjDataFromFile(GAseModel* stModel) {
 
@@ -185,6 +297,9 @@ int		GAseParser::GetObjDataFromFile(GAseModel* stModel) {
 
 		for (int i = 0; i < iSize; i++) {
 
+			//if (i == ANIMATION) {
+			//	SaveFilePosition()
+			//}
 
 			if (!_tcsicmp( m_pString, g_pAseObjTokens[i]))
 			{
@@ -226,6 +341,13 @@ int		GAseParser::GetObjDataFromFile(GAseModel* stModel) {
 				}
 				break;
 
+				case ANIMATION:
+				{
+					stModel->m_vObj[0]->m_bHasAniTrack = true;
+					GetAnimationDataFromFile(stModel);
+				}
+				break;
+
 				}
 			}
 		}
@@ -233,7 +355,7 @@ int		GAseParser::GetObjDataFromFile(GAseModel* stModel) {
 	}
 
 
-	return -1;
+	return 0;
 
 }
 int		GAseParser::GetDataFromFile(GAseModel* stModel ){
@@ -315,7 +437,7 @@ int		GAseParser::GetDataFromFile(GAseModel* stModel ){
 
 
 
-	return -1;
+	return 0;
 }
 
 

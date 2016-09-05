@@ -1,5 +1,13 @@
 #pragma once
 
+struct GAnimTrack
+{
+	int				iTick;		// 시간(틱 단위) 
+	D3DXQUATERNION  qRotate; ;	// 임의의 축 및 벡터를 통하여 사원수로 변환
+	D3DXVECTOR3		vecVector;	// 위치 벡터 및 스케일 값으로 활용 
+	GAnimTrack*		pNext;		// 다음 트랙 리스트 주소 
+	GAnimTrack*		pPrev;		// 이전 트랙 리스트 주소 
+};
 
 struct ConstantBuffer
 {
@@ -33,7 +41,16 @@ struct GAseMaterial {
 
 class GAseObj {
 public:
+	//for Animation [START]
+	bool				m_bHasAniTrack;		//애니메이션정보가 있으면 true;
+	D3DXMATRIX			m_matWorldTrans;	// 월드이동행렬 
+	D3DXMATRIX			m_matWorldRotate;	// 월드회전행렬 
+	D3DXMATRIX			m_matWorldScale;	// 월드신축행렬 
 
+	vector<GAnimTrack>	m_vPosTrack;		// 이동트랙 
+	vector<GAnimTrack>	m_vRotTrack;		// 회전트랙 
+	vector<GAnimTrack>	m_vSclTrack;		// 신축트랙 
+	//for Animation [END]
 	
 	ComPtr<ID3D11Buffer>			m_pVertexBuffer = NULL;
 	ComPtr<ID3D11Buffer>			m_pIndexBuffer = NULL;
@@ -58,7 +75,10 @@ public:
 	vector<int>						m_vTextureIndex;			//for Texture Index
 	vector<int>						m_vSubMtlIndex;
 
-	GAseObj() { m_iFaceCount = 0; };
+	GAseObj() { 
+		m_bHasAniTrack = false;
+		m_iFaceCount = 0; 
+	};
 	~GAseObj() {
 		m_vPosList.clear();
 		m_vNorList.clear();

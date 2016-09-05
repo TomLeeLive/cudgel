@@ -20,8 +20,8 @@ public:
 	TCHAR* g_pAseSceneTokens[5] = { L"*SCENE_FILENAME", L"*SCENE_FIRSTFRAME", L"*SCENE_LASTFRAME",L"*SCENE_FRAMESPEED",L"*SCENE_TICKSPERFRAME" };
 	TCHAR* g_pAseMaterialTokens[5] = { L"*MATERIAL_NAME",L"*MATERIAL_AMBIENT", L"*MATERIAL_DIFFUSE", L"*MATERIAL_SPECULAR",L"*BITMAP" };
 
-	TCHAR* g_pAseObjTokens[3] = { L"*NODE_NAME",L"*NODE_TM",L"*MESH" };
-	enum AseObjTokensType { NODE_NAME = 0, NODE_TM, MESH };
+	TCHAR* g_pAseObjTokens[4] = { L"*NODE_NAME",L"*NODE_TM",L"*MESH",L"*TM_ANIMATION"};
+	enum AseObjTokensType { NODE_NAME = 0, NODE_TM, MESH, ANIMATION };
 
 	TCHAR* g_pAseNodeTmTokens[4] = { L"*TM_ROW0",L"*TM_ROW1", L"*TM_ROW2", L"*TM_ROW3" };
 

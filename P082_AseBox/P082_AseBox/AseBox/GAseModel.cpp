@@ -117,7 +117,7 @@ bool		GAseModel::Init(TCHAR* strFileName, TCHAR* strShaderName) {
 
 
 	
-	if (m_vMaterial[0]->m_iSubMaterial == 0) {
+	if (m_vMaterial[0]->m_vSubMaterial.size() == 0) {
 
 
 
@@ -195,14 +195,14 @@ bool		GAseModel::Init(TCHAR* strFileName, TCHAR* strShaderName) {
 	else {
 
 
-		for (int i = 0; i < m_vMaterial[0]->m_iSubMaterial; i++) {
+		for (int i = 0; i < m_vMaterial[0]->m_vSubMaterial.size(); i++) {
 			hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, m_vMaterial[0]->m_vSubMaterial[i]->m_szMapDiffuse, NULL, NULL, m_vMaterial[0]->m_vSubMaterial[i]->m_pTextureRV.GetAddressOf(), NULL);
 			if (FAILED(hr))
 				return hr;
 		}
 
 
-		for (int i = 0; i < m_vMaterial[0]->m_iSubMaterial; i++) {
+		for (int i = 0; i < m_vMaterial[0]->m_vSubMaterial.size(); i++) {
 
 			//D3D11_BUFFER_DESC bd;
 			//ZeroMemory(&bd, sizeof(bd));
@@ -323,13 +323,13 @@ bool		GAseModel::Render(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* m
 
 
 
-	if (m_vMaterial[0]->m_iSubMaterial == 0) {
+	if (m_vMaterial[0]->m_vSubMaterial.size() == 0) {
 
 		g_pImmediateContext->PSSetShaderResources(0, 1, m_vMaterial[0]->m_pTextureRV.GetAddressOf());
 		g_pImmediateContext->DrawIndexed(m_vObj[0]->m_vPnctVertex.size(), 0, 0);
 	}
 	else {
-		for (int i = 0; i < m_vMaterial[0]->m_iSubMaterial; i++) {
+		for (int i = 0; i < m_vMaterial[0]->m_vSubMaterial.size(); i++) {
 
 			 //Set vertex buffer
 
@@ -366,7 +366,7 @@ bool		GAseModel::Release() {
 	if (m_pPixelShader.Get()) m_pPixelShader.Get()->Release();
 	if (m_pSamplerLinear.Get()) m_pSamplerLinear.Get()->Release();
 	*/
-	if (m_vMaterial[0]->m_iSubMaterial != 0) {
+	if (m_vMaterial[0]->m_vSubMaterial.size() != 0) {
 
 
 		vector<shared_ptr<GAseMaterial>>::iterator _F = m_vMaterial[0]->m_vSubMaterial.begin();
@@ -378,7 +378,7 @@ bool		GAseModel::Release() {
 		}
 		m_vMaterial[0]->m_vSubMaterial.clear();
 
-		m_vMaterial[0]->m_iSubMaterial = 0;
+		//m_vMaterial[0]->m_iSubMaterial = 0;
 	}
 
 	vector<shared_ptr<GAseMaterial>>::iterator _F = m_vMaterial.begin();

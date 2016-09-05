@@ -73,7 +73,7 @@ int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 						stModel->m_vObj[0]->m_vIndex.push_back(stMeshFace.index2);
 						stModel->m_vObj[0]->m_vIndex.push_back(stMeshFace.index3);
 
-						if (stModel->m_vMaterial[0]->m_iSubMaterial != 0)
+						if (stModel->m_vMaterial[0]->m_vSubMaterial.size() != 0)
 							stModel->m_vObj[0]->m_vSubMtlIndex.push_back(stMeshFace.index4);
 					}
 
@@ -166,11 +166,11 @@ int		GAseParser::GetObjDataFromFile(GAseModel* stModel) {
 
 	//GAseObj* aseobj = new GAseObj;
 
-	if (stModel->m_vMaterial[0]->m_iSubMaterial == 0) {
+	if (stModel->m_vMaterial[0]->m_vSubMaterial.size() == 0) {
 		stModel->m_vObj.push_back(make_shared<GAseObj>());
 	}
 	else {
-		for (int i = 0; i< stModel->m_vMaterial[0]->m_iSubMaterial; i++)   //0번 은 오리지널 데이터로 남겨놓는다.
+		for (int i = 0; i< stModel->m_vMaterial[0]->m_vSubMaterial.size(); i++)   //0번 은 오리지널 데이터로 남겨놓는다.
 			stModel->m_vObj.push_back(make_shared<GAseObj>());
 	}
 
@@ -280,11 +280,11 @@ int		GAseParser::GetDataFromFile(GAseModel* stModel ){
 						RestoreFilePosition();
 						GetDataFromFileLoop(g_pAseMaterialTokens[4], &(material.get()->m_szMapDiffuse), STRING_DATA);
 						GetStringWeNeed(material.get()->m_szMapDiffuse, material.get()->m_szMapDiffuse);
-						material->m_iSubMaterial = 0;
+						//material->m_iSubMaterial = 0;
 					}
 					else {
 						memset(&(material.get()->m_szMapDiffuse), 0, sizeof(&(material.get()->m_szMapDiffuse)));
-						material->m_iSubMaterial = iSubMtls;
+						//material->m_iSubMaterial = iSubMtls;
 
 						for (int i = 0; i < iSubMtls; i++){
 							auto submaterial = make_shared<GAseMaterial>();
@@ -387,7 +387,7 @@ void    GAseParser::SetPnctData(GAseModel* stModel) {
 
 			vt = D3DXVECTOR2(stModel->m_vObj[0]->m_vTexList[Texindices[i]].x, stModel->m_vObj[0]->m_vTexList[Texindices[i]].y);
 
-			if (stModel->m_vMaterial[0]->m_iSubMaterial == 0) {
+			if (stModel->m_vMaterial[0]->m_vSubMaterial.size() == 0) {
 				stModel->m_vObj[0]->m_vPnctVertex.push_back(PNCT_VERTEX(vp, vn, vc, vt));
 			}
 			else {

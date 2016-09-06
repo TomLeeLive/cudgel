@@ -1,12 +1,20 @@
 #pragma once
 
-struct GAnimTrack
+class GAnimTrack
 {
+public:	
 	int				iTick;		// 시간(틱 단위) 
 	D3DXQUATERNION  qRotate; ;	// 임의의 축 및 벡터를 통하여 사원수로 변환
 	D3DXVECTOR3		vecVector;	// 위치 벡터 및 스케일 값으로 활용 
 	GAnimTrack*		pNext;		// 다음 트랙 리스트 주소 
 	GAnimTrack*		pPrev;		// 이전 트랙 리스트 주소 
+	GAnimTrack() {
+		pNext = NULL;
+		pPrev = NULL;
+	}
+	~GAnimTrack() {
+
+	}
 };
 
 struct ConstantBuffer
@@ -47,9 +55,9 @@ public:
 	D3DXMATRIX			m_matWorldRotate;	// 월드회전행렬 
 	D3DXMATRIX			m_matWorldScale;	// 월드신축행렬 
 
-	vector<GAnimTrack>	m_vPosTrack;		// 이동트랙 
-	vector<GAnimTrack>	m_vRotTrack;		// 회전트랙 
-	vector<GAnimTrack>	m_vSclTrack;		// 신축트랙 
+	vector<shared_ptr<GAnimTrack>>	m_vPosTrack;		// 이동트랙 
+	vector<shared_ptr<GAnimTrack>>	m_vRotTrack;		// 회전트랙 
+	vector<shared_ptr<GAnimTrack>>	m_vSclTrack;		// 신축트랙 
 	//for Animation [END]
 	
 	ComPtr<ID3D11Buffer>			m_pVertexBuffer = NULL;
@@ -76,6 +84,10 @@ public:
 	vector<int>						m_vSubMtlIndex;
 
 	GAseObj() { 
+		D3DXMatrixIdentity(&m_matWorldTrans);
+		D3DXMatrixIdentity(&m_matWorldRotate);
+		D3DXMatrixIdentity(&m_matWorldScale);
+
 		m_bHasAniTrack = false;
 		m_iFaceCount = 0; 
 	};
@@ -95,7 +107,10 @@ public:
 
 class GAseModel {
 public:
-	//GAseParser							m_Parser;
+	float									m_fLastFrame;
+	float									m_fTickFrame;
+	float									m_fFrameSpeed;
+	float									m_fTickPerFrame;
 
 	GAseScene								m_stScene;
 	vector<shared_ptr<GAseMaterial>>		m_vMaterial;
@@ -107,11 +122,17 @@ public:
 	ComPtr<ID3D11InputLayout>				m_pVertexLayout = NULL;
 	ComPtr<ID3D11SamplerState>				m_pSamplerLinear = NULL;
 
+	void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack, GAnimTrack** pEndTrack);
 	bool		Init(TCHAR* strFileName, TCHAR* strShaderName);
 	bool		Frame();
 	bool		Render(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* matProj);
 	bool		Release();
 public:
-	GAseModel() {};
+	GAseModel() {
+		m_fLastFrame	= 0.0f;
+		m_fTickFrame	= 0.0f;
+		m_fFrameSpeed	= 0.0f;
+		m_fTickPerFrame = 0.0f;
+	};
 	~GAseModel() {};
 };

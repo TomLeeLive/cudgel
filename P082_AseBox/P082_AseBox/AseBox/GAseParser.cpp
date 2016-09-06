@@ -165,10 +165,11 @@ int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 }
 
 
-bool GAseParser::GetTrackListFromString(vector<GAnimTrack>& vTrack,
+bool GAseParser::GetTrackListFromString(vector<shared_ptr<GAnimTrack>>& vTrack,
 	AseTrackType TrackType)
 {
-	GAnimTrack Track;
+	//GAnimTrack Track;
+
 
 	while (!feof(m_pStream))
 	{
@@ -182,49 +183,80 @@ bool GAseParser::GetTrackListFromString(vector<GAnimTrack>& vTrack,
 
 		if (TrackType == POS_SAMPLE_TRACK)
 		{
+			auto pTrack = make_shared<GAnimTrack>();
 			ST_ANI_POS stPosData;
 			//GetDataFromFileLoop(L"*CONTROL_POS_SAMPLE", &stPosData, ANI_POS_DATA);
 			GetData(&stPosData, ANI_POS_DATA);
-			Track.vecVector = stPosData.vecPos;
-			Track.iTick = stPosData.iTick;
-			vTrack.push_back(Track);
+			pTrack.get()->vecVector = stPosData.vecPos;
+			pTrack.get()->iTick = stPosData.iTick;
+			vTrack.push_back(pTrack);
 			//_stscanf(GetNextTokenString(), _T("%s%d%f%f%f"), m_pString, &Track.iTick,
 			//	&Track.vVector.x,
 			//	&Track.vVector.z,
 			//	&Track.vVector.y);
+			if (vTrack.size() > 1) {
+				vTrack[vTrack.size() - 1].get()->pPrev = vTrack[vTrack.size() - 2].get();
+				vTrack[vTrack.size() - 2].get()->pNext = vTrack[vTrack.size() - 1].get();
+				vTrack[vTrack.size() - 1].get()->pNext = NULL;
+			}
+			else if (vTrack.size() <= 1) {
+				vTrack[vTrack.size() - 1].get()->pPrev = NULL;
+				vTrack[vTrack.size() - 1].get()->pNext = NULL;
+			}
 		}
 		else if (TrackType == ROT_SAMPLE_TRACK)
 		{
+			auto pTrack = make_shared<GAnimTrack>();
 			ST_ANI_ROT stRotData;
 			GetData(&stRotData, ANI_ROT_DATA);
-			Track.qRotate.x = stRotData.vecRot.x;
-			Track.qRotate.y = stRotData.vecRot.y;
-			Track.qRotate.z = stRotData.vecRot.z;
-			Track.qRotate.w = stRotData.vecRot.w;
-			Track.iTick = stRotData.iTick;
-			vTrack.push_back(Track);
+			pTrack.get()->qRotate.x = stRotData.vecRot.x;
+			pTrack.get()->qRotate.y = stRotData.vecRot.y;
+			pTrack.get()->qRotate.z = stRotData.vecRot.z;
+			pTrack.get()->qRotate.w = stRotData.vecRot.w;
+			pTrack.get()->iTick = stRotData.iTick;
+			vTrack.push_back(pTrack);
 
+			if (vTrack.size() > 1) {
+				vTrack[vTrack.size() - 1].get()->pPrev = vTrack[vTrack.size() - 2].get();
+				vTrack[vTrack.size() - 2].get()->pNext = vTrack[vTrack.size() - 1].get();
+				vTrack[vTrack.size() - 1].get()->pNext = NULL;
+			}
+			else if(vTrack.size() <=1 ){
+				vTrack[vTrack.size() - 1].get()->pPrev = NULL;
+				vTrack[vTrack.size() - 1].get()->pNext = NULL;
+			}
 			//_stscanf(GetNextTokenString(), _T("%s%d%f%f%f%f"), m_pString, &Track.iTick,
 			//	&Track.qRotate.x, &Track.qRotate.z, &Track.qRotate.y, &Track.qRotate.w);
 		}
 		else if (TrackType == SCL_SAMPLE_TRACK)
 		{
+			auto pTrack = make_shared<GAnimTrack>();
 			ST_ANI_SCL stSclData;
 			GetData(&stSclData, ANI_SCL_DATA);
-			Track.vecVector = stSclData.vecVec;
-			Track.qRotate.x = stSclData.vecRot.x;
-			Track.qRotate.y = stSclData.vecRot.y;
-			Track.qRotate.z = stSclData.vecRot.z;
-			Track.qRotate.w = stSclData.vecRot.w;
-			Track.iTick = stSclData.iTick;
-			vTrack.push_back(Track);
+			pTrack.get()->vecVector = stSclData.vecVec;
+			pTrack.get()->qRotate.x = stSclData.vecRot.x;
+			pTrack.get()->qRotate.y = stSclData.vecRot.y;
+			pTrack.get()->qRotate.z = stSclData.vecRot.z;
+			pTrack.get()->qRotate.w = stSclData.vecRot.w;
+			pTrack.get()->iTick = stSclData.iTick;
+			vTrack.push_back(pTrack);
 
+			if (vTrack.size() > 1) {
+				vTrack[vTrack.size() - 1].get()->pPrev = vTrack[vTrack.size() - 2].get();
+				vTrack[vTrack.size() - 2].get()->pNext = vTrack[vTrack.size() - 1].get();
+				vTrack[vTrack.size() - 1].get()->pNext = NULL;
+			}
+			else if (vTrack.size() <= 1) {
+				vTrack[vTrack.size() - 1].get()->pPrev = NULL;
+				vTrack[vTrack.size() - 1].get()->pNext = NULL;
+			}
 			//_stscanf(GetNextTokenString(), _T("%s%d%f%f%f %f%f%f%f"), m_pString, &Track.iTick,
 			//	&Track.vVector.x, &Track.vVector.z, &Track.vVector.y,
 			//	&Track.qRotate.x, &Track.qRotate.z, &Track.qRotate.y, &Track.qRotate.w);
 		}
 		else if (TrackType == VIS_SAMPLE_TRACK)
 		{
+
 			//_stscanf(GetNextTokenString(), _T("%s%d%f"),
 			//	m_pString, &Track.iTick,
 			//	&Track.vVector.x);
@@ -357,6 +389,9 @@ int		GAseParser::GetObjDataFromFile(GAseModel* stModel) {
 				case ANIMATION:
 				{
 					stModel->m_vObj[0]->m_bHasAniTrack = true;
+					stModel->m_fFrameSpeed = stModel->m_stScene.m_iFrameSpeed;
+					stModel->m_fTickPerFrame = stModel->m_stScene.m_iTicksPerFrame;
+					stModel->m_fLastFrame = stModel->m_stScene.m_iLastFrame;
 					GetAnimationDataFromFile(stModel);
 				}
 				break;

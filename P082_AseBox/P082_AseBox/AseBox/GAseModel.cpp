@@ -294,7 +294,71 @@ bool		GAseModel::Init(TCHAR* strFileName, TCHAR* strShaderName) {
 
 	return true;
 };
+void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack, GAnimTrack** pEndTrack) {
+
+
+	for (int j = 0; j< m_vObj[0].get()->m_vPosTrack.size(); j++) {
+		if (m_fTickFrame >= m_vObj[0].get()->m_vPosTrack[j].get()->iTick
+			&& m_fTickFrame < m_vObj[0].get()->m_vPosTrack[j].get()->pNext->iTick)
+		{
+			*pStartTrack = m_vObj[0].get()->m_vPosTrack[j].get();
+			*pEndTrack = m_vObj[0].get()->m_vPosTrack[j].get()->pNext;
+			break;
+		}
+	}
+}
 bool		GAseModel::Frame() {
+
+
+
+	if (m_vObj[0].get()->m_bHasAniTrack) {
+
+
+
+		m_fTickFrame += g_fSecPerFrame * m_fFrameSpeed *m_fTickPerFrame;
+		if (m_fTickFrame >= m_fLastFrame * m_fTickPerFrame /*마지막 프레임 틱수*/)
+		{
+			m_fTickFrame = 0.0f;
+		}
+
+
+		//Translation
+		if (m_vObj[0].get()->m_vPosTrack.size() != 0) {
+
+			GAnimTrack* pStartTrack = NULL;
+			GAnimTrack* pEndTrack = NULL;
+
+			//현재 Tick이 어디인지 찾자.
+			GetAnimationTrack(m_fTickFrame, &pStartTrack, &pEndTrack);
+			
+			//애니메이션 보간.
+			D3DXVECTOR3 vResultVector;
+			D3DXVECTOR3 vP1 = pStartTrack->vecVector;
+			D3DXVECTOR3 vP2 = pEndTrack->vecVector;
+
+			float fTValue = (m_fTickFrame - pStartTrack->iTick ) / (pEndTrack->iTick - pStartTrack->iTick);
+
+			D3DXVec3Lerp(&vResultVector, &vP1, &vP2, fTValue);
+
+			//T행렬 값 대입
+			m_vObj[0].get()->m_matWorldTrans._41 = vResultVector.x;
+			m_vObj[0].get()->m_matWorldTrans._42 = vResultVector.y;
+			m_vObj[0].get()->m_matWorldTrans._43 = vResultVector.z;
+			
+
+		}
+
+		//Rotation
+		if (m_vObj[0].get()->m_vRotTrack.size() != 0) {
+
+		}
+
+		//Scale
+		if (m_vObj[0].get()->m_vSclTrack.size() != 0) {
+
+		}
+	}
+
 
 
 	return true;
@@ -306,7 +370,12 @@ bool		GAseModel::Render(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* m
 	// Update variables
 	//
 	ConstantBuffer cb;
-	D3DXMatrixTranspose(&cb.mWorld, matWorld);
+	
+	D3DXMATRIX	  matTemp;
+	D3DXMatrixIdentity(&matTemp);
+	matTemp = m_vObj[0].get()->m_matWorldTrans * *matWorld;
+
+	D3DXMatrixTranspose(&cb.mWorld, &matTemp);
 	D3DXMatrixTranspose(&cb.mView, matView);
 	D3DXMatrixTranspose(&cb.mProjection, matProj);
 

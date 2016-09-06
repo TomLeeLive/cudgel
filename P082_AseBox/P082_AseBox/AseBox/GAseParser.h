@@ -98,7 +98,7 @@ public:
 	fpos_t		m_FilePosition;
 	
 	void    SetPnctData(GAseModel* stModel);
-	bool	GetTrackListFromString(vector<GAnimTrack>& vTrack, AseTrackType TrackType);
+	bool	GetTrackListFromString(vector<shared_ptr<GAnimTrack>>& vTrack, AseTrackType TrackType);
 	int		GetAnimationDataFromFile(GAseModel* stModel);
 	int		GetMeshDataFromFile(GAseModel* stModel);
 	int		GetObjDataFromFile(GAseModel* stModel);

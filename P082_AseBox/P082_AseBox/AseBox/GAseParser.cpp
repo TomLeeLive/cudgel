@@ -209,11 +209,18 @@ bool GAseParser::GetTrackListFromString(vector<shared_ptr<GAnimTrack>>& vTrack,
 			auto pTrack = make_shared<GAnimTrack>();
 			ST_ANI_ROT stRotData;
 			GetData(&stRotData, ANI_ROT_DATA);
-			pTrack.get()->qRotate.x = stRotData.vecRot.x;
-			pTrack.get()->qRotate.y = stRotData.vecRot.y;
-			pTrack.get()->qRotate.z = stRotData.vecRot.z;
-			pTrack.get()->qRotate.w = stRotData.vecRot.w;
+			//pTrack.get()->qRotate.x = stRotData.vecRot.x;
+			//pTrack.get()->qRotate.y = stRotData.vecRot.y;
+			//pTrack.get()->qRotate.z = stRotData.vecRot.z;
+			//pTrack.get()->qRotate.w = stRotData.vecRot.w;
+
 			pTrack.get()->iTick = stRotData.iTick;
+
+			// 임의의 축과 각을 쿼터니언으로 변환
+			D3DXQuaternionRotationAxis(&pTrack.get()->qRotate, &D3DXVECTOR3(stRotData.vecRot.x, stRotData.vecRot.y, stRotData.vecRot.z), stRotData.vecRot.w);
+
+
+
 			vTrack.push_back(pTrack);
 
 			if (vTrack.size() > 1) {
@@ -225,6 +232,14 @@ bool GAseParser::GetTrackListFromString(vector<shared_ptr<GAnimTrack>>& vTrack,
 				vTrack[vTrack.size() - 1].get()->pPrev = NULL;
 				vTrack[vTrack.size() - 1].get()->pNext = NULL;
 			}
+
+			// 이전트랙의 쿼터니온과 누적시킴.
+			if (pTrack->pPrev != NULL)
+			{
+				D3DXQuaternionMultiply(&pTrack->qRotate, &pTrack->pPrev->qRotate, &pTrack->qRotate);
+			}
+
+
 			//_stscanf(GetNextTokenString(), _T("%s%d%f%f%f%f"), m_pString, &Track.iTick,
 			//	&Track.qRotate.x, &Track.qRotate.z, &Track.qRotate.y, &Track.qRotate.w);
 		}
@@ -369,6 +384,35 @@ int		GAseParser::GetObjDataFromFile(GAseModel* stModel) {
 					GetDataFromFileLoop(g_pAseNodeTmTokens[1], &vecROW1, VERTEX_DATA);
 					GetDataFromFileLoop(g_pAseNodeTmTokens[2], &vecROW2, VERTEX_DATA);
 					GetDataFromFileLoop(g_pAseNodeTmTokens[3], &vecROW3, VERTEX_DATA);
+					GetDataFromFileLoop(g_pAseNodeTmTokens[4], &stModel->m_vObj[0]->m_vecTM_POS, VERTEX_DATA);
+					GetDataFromFileLoop(g_pAseNodeTmTokens[5], &stModel->m_vObj[0]->m_vecTM_ROTAXIS, VERTEX_DATA);
+					GetDataFromFileLoop(g_pAseNodeTmTokens[6], &stModel->m_vObj[0]->m_fTM_ROTANGLE, FLOAT_DATA);
+					GetDataFromFileLoop(g_pAseNodeTmTokens[7], &stModel->m_vObj[0]->m_vecTM_SCALE, VERTEX_DATA);
+					GetDataFromFileLoop(g_pAseNodeTmTokens[8], &stModel->m_vObj[0]->m_vecTM_SCALE_AXIS, VERTEX_DATA);
+					GetDataFromFileLoop(g_pAseNodeTmTokens[9], &stModel->m_vObj[0]->m_fTM_SCALEAXISANG, FLOAT_DATA);
+
+					// 임의의 축과 각을 쿼터니언으로 변환
+					//D3DXQUATERNION qRotation;
+					D3DXQuaternionRotationAxis(&stModel->m_vObj[0]->m_qRotation, &stModel->m_vObj[0]->m_vecTM_ROTAXIS, stModel->m_vObj[0]->m_fTM_ROTANGLE);
+					D3DXMatrixRotationQuaternion(&stModel->m_vObj[0]->m_matWorldRotate, &stModel->m_vObj[0]->m_qRotation);
+
+					//스케일축을 중심으로 회전하는 값이 스테일 값이므로 
+					//스케일축의 회전만큼을 먼저 반대로 회전한 이후
+					//스케일값을 적용시키고 그 다음에 
+					//다시 스케일축만큼을 회전시켜 원상복귀 시킨다.
+					D3DXMatrixScaling(&stModel->m_vObj[0]->m_matWorldScale, stModel->m_vObj[0]->m_vecTM_SCALE.x, stModel->m_vObj[0]->m_vecTM_SCALE.y, stModel->m_vObj[0]->m_vecTM_SCALE.z);
+
+
+					// 스케일축의 행렬과 그 역행렬을 구한다.
+					D3DXMATRIX matRotation, matRotationInv;
+					D3DXMatrixRotationAxis(&matRotation, &stModel->m_vObj[0]->m_vecTM_SCALE_AXIS, stModel->m_vObj[0]->m_fTM_SCALEAXISANG);
+					D3DXMatrixInverse(&matRotationInv, NULL, &matRotation);
+
+					//스케일 최종.
+					stModel->m_vObj[0]->m_matWorldScale = matRotationInv * stModel->m_vObj[0]->m_matWorldScale  * matRotation;
+
+
+
 
 					GetData(&(stModel->m_vObj[0]->m_szName), STRING_DATA);
 

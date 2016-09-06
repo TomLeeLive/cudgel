@@ -294,18 +294,70 @@ bool		GAseModel::Init(TCHAR* strFileName, TCHAR* strShaderName) {
 
 	return true;
 };
-void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack, GAnimTrack** pEndTrack) {
+void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack, GAnimTrack** pEndTrack, ANITRACK_TYPE nTrackType) {
 
-
-	for (int j = 0; j< m_vObj[0].get()->m_vPosTrack.size(); j++) {
-		if (m_fTickFrame >= m_vObj[0].get()->m_vPosTrack[j].get()->iTick
-			&& m_fTickFrame < m_vObj[0].get()->m_vPosTrack[j].get()->pNext->iTick)
+	switch (nTrackType) {
+		case ANITRACK_TYPE_POS:
 		{
-			*pStartTrack = m_vObj[0].get()->m_vPosTrack[j].get();
-			*pEndTrack = m_vObj[0].get()->m_vPosTrack[j].get()->pNext;
-			break;
+			for (int j = 0; j< m_vObj[0].get()->m_vPosTrack.size(); j++) {
+				if (m_fTickFrame >= m_vObj[0].get()->m_vPosTrack[j].get()->iTick
+					&& m_fTickFrame < m_vObj[0].get()->m_vPosTrack[j].get()->pNext->iTick)
+				{
+					*pStartTrack = m_vObj[0].get()->m_vPosTrack[j].get();
+					*pEndTrack = m_vObj[0].get()->m_vPosTrack[j].get()->pNext;
+					break;
+				}
+			}
 		}
+		break;
+		case ANITRACK_TYPE_ROT:
+		{
+			for (int j = 0; j< m_vObj[0].get()->m_vRotTrack.size(); j++) {
+				if (m_fTickFrame >= m_vObj[0].get()->m_vRotTrack[j].get()->iTick
+					&& m_fTickFrame < m_vObj[0].get()->m_vRotTrack[j].get()->pNext->iTick)
+				{
+					*pStartTrack = m_vObj[0].get()->m_vRotTrack[j].get();
+					*pEndTrack = m_vObj[0].get()->m_vRotTrack[j].get()->pNext;
+					break;
+				}
+				else if (m_fTickFrame < m_vObj[0].get()->m_vRotTrack[j].get()->iTick) {
+					*pStartTrack = NULL;
+					*pEndTrack = m_vObj[0].get()->m_vRotTrack[j].get();
+					break;
+				}
+				else if (m_fTickFrame >= m_vObj[0].get()->m_vRotTrack[j].get()->pNext->iTick) {
+					*pStartTrack = m_vObj[0].get()->m_vRotTrack[j].get()->pNext;
+					*pEndTrack = NULL;
+					break;
+				}
+			}
+		}
+		break;
+		case ANITRACK_TYPE_SCL:
+		{
+			for (int j = 0; j< m_vObj[0].get()->m_vSclTrack.size(); j++) {
+				if (m_fTickFrame >= m_vObj[0].get()->m_vSclTrack[j].get()->iTick
+					&& m_fTickFrame < m_vObj[0].get()->m_vSclTrack[j].get()->pNext->iTick)
+				{
+					*pStartTrack = m_vObj[0].get()->m_vSclTrack[j].get();
+					*pEndTrack = m_vObj[0].get()->m_vSclTrack[j].get()->pNext;
+					break;
+				}
+				else if (m_fTickFrame < m_vObj[0].get()->m_vSclTrack[j].get()->iTick) {
+					*pStartTrack = NULL;
+					*pEndTrack = m_vObj[0].get()->m_vSclTrack[j].get();
+					break;
+				}
+				else if (m_fTickFrame >= m_vObj[0].get()->m_vSclTrack[j].get()->pNext->iTick) {
+					*pStartTrack = m_vObj[0].get()->m_vSclTrack[j].get()->pNext;
+					*pEndTrack = NULL;
+					break;
+				}
+			}
+		}
+		break;
 	}
+
 }
 bool		GAseModel::Frame() {
 
@@ -329,7 +381,7 @@ bool		GAseModel::Frame() {
 			GAnimTrack* pEndTrack = NULL;
 
 			//현재 Tick이 어디인지 찾자.
-			GetAnimationTrack(m_fTickFrame, &pStartTrack, &pEndTrack);
+			GetAnimationTrack(m_fTickFrame, &pStartTrack, &pEndTrack, ANITRACK_TYPE_POS);
 			
 			//애니메이션 보간.
 			D3DXVECTOR3 vResultVector;
@@ -344,18 +396,47 @@ bool		GAseModel::Frame() {
 			m_vObj[0].get()->m_matWorldTrans._41 = vResultVector.x;
 			m_vObj[0].get()->m_matWorldTrans._42 = vResultVector.y;
 			m_vObj[0].get()->m_matWorldTrans._43 = vResultVector.z;
-			
-
 		}
 
 		//Rotation
 		if (m_vObj[0].get()->m_vRotTrack.size() != 0) {
+			GAnimTrack* pStartTrack = NULL;
+			GAnimTrack* pEndTrack = NULL;
+			D3DXQUATERNION qR;
 
+			//현재 Tick이 어디인지 찾자.
+			GetAnimationTrack(m_fTickFrame, &pStartTrack, &pEndTrack, ANITRACK_TYPE_ROT);
+ 
+
+			//사원수간의 보간..
+			if (pStartTrack == NULL) {
+				qR = m_vObj[0].get()->m_qRotation;
+				float fTValue = (m_fTickFrame - 0) / (pEndTrack->iTick - 0);
+				D3DXQuaternionSlerp(&qR, &qR, &pEndTrack->qRotate, fTValue);
+			}
+			else if (pEndTrack == NULL) {
+				qR = m_vObj[0].get()->m_vRotTrack[ m_vObj[0].get()->m_vRotTrack.size() - 1 ].get()->qRotate;
+				float fTValue = ((m_fTickFrame - pStartTrack->iTick) / (m_fFrameSpeed*m_fTickPerFrame));
+				D3DXQuaternionSlerp(&qR, &qR, &qR, fTValue);
+			}else {
+				qR = pStartTrack->qRotate;
+				float fTValue = (m_fTickFrame - pStartTrack->iTick) / (pEndTrack->iTick - pStartTrack->iTick);
+				D3DXQuaternionSlerp(&qR, &qR, &pEndTrack->qRotate, fTValue);
+			}
+
+			//사원수에서 행렬로 변환.
+			D3DXMatrixIdentity(&m_vObj[0].get()->m_matWorldRotate);
+
+			D3DXMatrixRotationQuaternion(&m_vObj[0].get()->m_matWorldRotate, &qR);// 사원수에서 행렬로 변환
 		}
 
 		//Scale
 		if (m_vObj[0].get()->m_vSclTrack.size() != 0) {
+			GAnimTrack* pStartTrack = NULL;
+			GAnimTrack* pEndTrack = NULL;
 
+			//현재 Tick이 어디인지 찾자.
+			GetAnimationTrack(m_fTickFrame, &pStartTrack, &pEndTrack, ANITRACK_TYPE_SCL);
 		}
 	}
 
@@ -373,7 +454,7 @@ bool		GAseModel::Render(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* m
 	
 	D3DXMATRIX	  matTemp;
 	D3DXMatrixIdentity(&matTemp);
-	matTemp = m_vObj[0].get()->m_matWorldTrans * *matWorld;
+	matTemp = m_vObj[0].get()->m_matWorldRotate * m_vObj[0].get()->m_matWorldTrans * *matWorld;
 
 	D3DXMatrixTranspose(&cb.mWorld, &matTemp);
 	D3DXMatrixTranspose(&cb.mView, matView);

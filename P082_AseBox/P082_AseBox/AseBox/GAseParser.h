@@ -23,7 +23,7 @@ public:
 	TCHAR* g_pAseObjTokens[4] = { L"*NODE_NAME",L"*NODE_TM",L"*MESH",L"*TM_ANIMATION"};
 	enum AseObjTokensType { NODE_NAME = 0, NODE_TM, MESH, ANIMATION };
 
-	TCHAR* g_pAseNodeTmTokens[4] = { L"*TM_ROW0",L"*TM_ROW1", L"*TM_ROW2", L"*TM_ROW3" };
+	TCHAR* g_pAseNodeTmTokens[10] = { L"*TM_ROW0",L"*TM_ROW1", L"*TM_ROW2", L"*TM_ROW3", L"*TM_POS",L"*TM_ROTAXIS",L"*TM_ROTANGLE",L"*TM_SCALE",L"*TM_SCALEAXIS",L"*TM_SCALEAXISANG" };
 
 	TCHAR* g_pAseMeshTokens[11] = { 
 		L"*MESH_NUMVERTEX",

@@ -65,6 +65,16 @@ public:
 
 	TCHAR							m_szName[MAX_PATH];			//*NODE_NAME "Box01"
 	D3DXMATRIX						m_matWorld;					//월드행렬
+
+	D3DXQUATERNION					m_qRotation;				//For Animation.
+
+	D3DXVECTOR3						m_vecTM_POS;				//For Animation.
+	D3DXVECTOR3						m_vecTM_ROTAXIS;			//For Animation.
+	float							m_fTM_ROTANGLE;				//For Animation.
+	D3DXVECTOR3						m_vecTM_SCALE;				//For Animation.
+	D3DXVECTOR3						m_vecTM_SCALE_AXIS;			//For Animation.
+	float							m_fTM_SCALEAXISANG;			//For Animation.
+
 	int								m_iPosCount;				//Vertex 카운트
 	int								m_iFaceCount;				//Face 카운트
 	int								m_iTexVerCount;				//Texture vertex 카운트   MESH_NUMTVERTEX
@@ -122,7 +132,13 @@ public:
 	ComPtr<ID3D11InputLayout>				m_pVertexLayout = NULL;
 	ComPtr<ID3D11SamplerState>				m_pSamplerLinear = NULL;
 
-	void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack, GAnimTrack** pEndTrack);
+	enum ANITRACK_TYPE {
+		ANITRACK_TYPE_POS = 0,
+		ANITRACK_TYPE_ROT,
+		ANITRACK_TYPE_SCL
+	};
+
+	void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack, GAnimTrack** pEndTrack, ANITRACK_TYPE nTrackType);
 	bool		Init(TCHAR* strFileName, TCHAR* strShaderName);
 	bool		Frame();
 	bool		Render(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* matProj);

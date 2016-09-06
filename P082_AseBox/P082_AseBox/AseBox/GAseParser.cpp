@@ -546,17 +546,18 @@ void    GAseParser::SetPnctData(GAseModel* stModel) {
 	WORD* indices;
 	indices = (WORD *)malloc(sizeof(WORD) * stModel->m_vObj[0]->m_iFaceCount * 3);
 
+	if(stModel->m_vObj[0]->m_vIndex.size() != 0){
+		for (int i = 0; i < stModel->m_vObj[0]->m_iFaceCount * 3; i++) {
 
-	for (int i = 0; i < stModel->m_vObj[0]->m_iFaceCount * 3; i++) {
-
-		if (i == 0 || i % 3 == 0) {
-			indices[i] = { (WORD)(stModel->m_vObj[0]->m_vIndex[i]) };
-		}
-		else if (i == 1 || i % 3 == 1) {
-			indices[i] = { (WORD)(stModel->m_vObj[0]->m_vIndex[i + 1]) };
-		}
-		else if (i == 2 || i % 3 == 2) {
-			indices[i] = { (WORD)(stModel->m_vObj[0]->m_vIndex[i - 1]) };
+			if (i == 0 || i % 3 == 0) {
+				indices[i] = { (WORD)(stModel->m_vObj[0]->m_vIndex[i]) };
+			}
+			else if (i == 1 || i % 3 == 1) {
+				indices[i] = { (WORD)(stModel->m_vObj[0]->m_vIndex[i + 1]) };
+			}
+			else if (i == 2 || i % 3 == 2) {
+				indices[i] = { (WORD)(stModel->m_vObj[0]->m_vIndex[i - 1]) };
+			}
 		}
 	}
 
@@ -565,19 +566,20 @@ void    GAseParser::SetPnctData(GAseModel* stModel) {
 	Texindices = (WORD *)malloc(sizeof(WORD) * stModel->m_vObj[0]->m_iFaceCount * 3);
 
 
-	for (int i = 0; i < stModel->m_vObj[0]->m_iFaceCount * 3; i++) {
+	if(stModel->m_vObj[0]->m_vTextureIndex.size() !=0 ){
+		for (int i = 0; i < stModel->m_vObj[0]->m_iFaceCount * 3; i++) {
 
-		if (i == 0 || i % 3 == 0) {
-			Texindices[i] = { (WORD)(stModel->m_vObj[0]->m_vTextureIndex[i]) };
-		}
-		else if (i == 1 || i % 3 == 1) {
-			Texindices[i] = { (WORD)(stModel->m_vObj[0]->m_vTextureIndex[i + 1]) };
-		}
-		else if (i == 2 || i % 3 == 2) {
-			Texindices[i] = { (WORD)(stModel->m_vObj[0]->m_vTextureIndex[i - 1]) };
+			if (i == 0 || i % 3 == 0) {
+				Texindices[i] = { (WORD)(stModel->m_vObj[0]->m_vTextureIndex[i]) };
+			}
+			else if (i == 1 || i % 3 == 1) {
+				Texindices[i] = { (WORD)(stModel->m_vObj[0]->m_vTextureIndex[i + 1]) };
+			}
+			else if (i == 2 || i % 3 == 2) {
+				Texindices[i] = { (WORD)(stModel->m_vObj[0]->m_vTextureIndex[i - 1]) };
+			}
 		}
 	}
-
 
 	D3DXMatrixInverse(&matWorldInverse, NULL, &stModel->m_vObj[0]->m_matWorld);
 
@@ -592,14 +594,20 @@ void    GAseParser::SetPnctData(GAseModel* stModel) {
 
 			D3DXVec3TransformCoord(&vp, &vp, &matWorldInverse);
 
-			vn = stModel->m_vObj[0]->m_vNorList[indices[i]];
+			if (stModel->m_vObj[0]->m_vNorList.size() != 0)
+				vn = stModel->m_vObj[0]->m_vNorList[indices[i]];
+			else
+				vn = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
 
-			if (stModel->m_vObj[0]->m_iColorVerCount != 0)
+			if (stModel->m_vObj[0]->m_vColList.size() != 0)
 				vc = D3DXVECTOR4(stModel->m_vObj[0]->m_vColList[indices[i]].x, stModel->m_vObj[0]->m_vColList[indices[i]].y, stModel->m_vObj[0]->m_vColList[indices[i]].z, 1.0f);
 			else
 				vc = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
 
-			vt = D3DXVECTOR2(stModel->m_vObj[0]->m_vTexList[Texindices[i]].x, stModel->m_vObj[0]->m_vTexList[Texindices[i]].y);
+			if (stModel->m_vObj[0]->m_vTextureIndex.size() != 0)
+				vt = D3DXVECTOR2(stModel->m_vObj[0]->m_vTexList[Texindices[i]].x, stModel->m_vObj[0]->m_vTexList[Texindices[i]].y);
+			else
+				vt = D3DXVECTOR2(1.0f, 1.0f);
 
 			if (stModel->m_vMaterial[0]->m_vSubMaterial.size() == 0) {
 				stModel->m_vObj[0]->m_vPnctVertex.push_back(PNCT_VERTEX(vp, vn, vc, vt));

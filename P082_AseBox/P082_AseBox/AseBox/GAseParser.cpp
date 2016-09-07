@@ -165,11 +165,10 @@ int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 }
 
 
-bool GAseParser::GetTrackListFromString(vector<shared_ptr<GAnimTrack>>& vTrack,
-	AseTrackType TrackType)
+bool GAseParser::GetTrackListFromString(GAseModel* stModel, AseTrackType TrackType)
 {
 	//GAnimTrack Track;
-
+	
 
 	while (!feof(m_pStream))
 	{
@@ -183,6 +182,7 @@ bool GAseParser::GetTrackListFromString(vector<shared_ptr<GAnimTrack>>& vTrack,
 
 		if (TrackType == POS_SAMPLE_TRACK)
 		{
+			vector<shared_ptr<GAnimTrack>>& vTrack = stModel->m_vObj[0].get()->m_vPosTrack;
 			auto pTrack = make_shared<GAnimTrack>();
 			ST_ANI_POS stPosData;
 			//GetDataFromFileLoop(L"*CONTROL_POS_SAMPLE", &stPosData, ANI_POS_DATA);
@@ -206,6 +206,7 @@ bool GAseParser::GetTrackListFromString(vector<shared_ptr<GAnimTrack>>& vTrack,
 		}
 		else if (TrackType == ROT_SAMPLE_TRACK)
 		{
+			vector<shared_ptr<GAnimTrack>>& vTrack = stModel->m_vObj[0].get()->m_vRotTrack;
 			auto pTrack = make_shared<GAnimTrack>();
 			ST_ANI_ROT stRotData;
 			GetData(&stRotData, ANI_ROT_DATA);
@@ -228,12 +229,15 @@ bool GAseParser::GetTrackListFromString(vector<shared_ptr<GAnimTrack>>& vTrack,
 				vTrack[vTrack.size() - 2].get()->pNext = vTrack[vTrack.size() - 1].get();
 				vTrack[vTrack.size() - 1].get()->pNext = NULL;
 			}
-			else if(vTrack.size() <=1 ){
+			else if(vTrack.size() ==1 ){
 				vTrack[vTrack.size() - 1].get()->pPrev = NULL;
 				vTrack[vTrack.size() - 1].get()->pNext = NULL;
+
+				D3DXQuaternionMultiply(&pTrack->qRotate, &stModel->m_vObj[0]->m_qRotation, &pTrack->qRotate);
 			}
 
 			// 이전트랙의 쿼터니온과 누적시킴.
+			
 			if (pTrack->pPrev != NULL)
 			{
 				D3DXQuaternionMultiply(&pTrack->qRotate, &pTrack->pPrev->qRotate, &pTrack->qRotate);
@@ -245,6 +249,7 @@ bool GAseParser::GetTrackListFromString(vector<shared_ptr<GAnimTrack>>& vTrack,
 		}
 		else if (TrackType == SCL_SAMPLE_TRACK)
 		{
+			vector<shared_ptr<GAnimTrack>>& vTrack = stModel->m_vObj[0].get()->m_vSclTrack;
 			auto pTrack = make_shared<GAnimTrack>();
 			ST_ANI_SCL stSclData;
 			GetData(&stSclData, ANI_SCL_DATA);
@@ -307,21 +312,21 @@ int		GAseParser::GetAnimationDataFromFile(GAseModel* stModel) {
 				case ANI_CONTROL_POS_BEZIER:
 				case ANI_CONTROL_POS_TRACK:
 				{
-					GetTrackListFromString(stModel->m_vObj[0].get()->m_vPosTrack, POS_SAMPLE_TRACK);
+					GetTrackListFromString(stModel, POS_SAMPLE_TRACK);
 				}
 				break;
 				case ANI_CONTROL_ROT_TCB:
 				case ANI_CONTROL_ROT_BEZIER:
 				case ANI_CONTROL_ROT_TRACK:
 				{
-					GetTrackListFromString(stModel->m_vObj[0].get()->m_vRotTrack, ROT_SAMPLE_TRACK);
+					GetTrackListFromString(stModel, ROT_SAMPLE_TRACK);
 				}
 				break;
 				case ANI_CONTROL_SCALE_TCB:
 				case ANI_CONTROL_SCALE_BEZIER:
 				case ANI_CONTROL_SCALE_TRACK:
 				{
-					GetTrackListFromString(stModel->m_vObj[0].get()->m_vSclTrack, SCL_SAMPLE_TRACK);
+					GetTrackListFromString(stModel, SCL_SAMPLE_TRACK);
 				}
 				break;
 

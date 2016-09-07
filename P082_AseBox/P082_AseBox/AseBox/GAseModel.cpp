@@ -313,6 +313,17 @@ void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack,
 		case ANITRACK_TYPE_ROT:
 		{
 			for (int j = 0; j< m_vObj[0].get()->m_vRotTrack.size(); j++) {
+				if (m_fTickFrame < m_vObj[0].get()->m_vRotTrack[0].get()->iTick) {
+					*pStartTrack = NULL;
+					*pEndTrack = m_vObj[0].get()->m_vRotTrack[j].get();
+					break;
+				}
+				else if (m_fTickFrame >= m_vObj[0].get()->m_vRotTrack[  m_vObj[0].get()->m_vRotTrack.size() - 1  ].get()->iTick) {
+					*pStartTrack = m_vObj[0].get()->m_vRotTrack[j].get()->pNext;
+					*pEndTrack = NULL;
+					break;
+				}
+
 				if (m_fTickFrame >= m_vObj[0].get()->m_vRotTrack[j].get()->iTick
 					&& m_fTickFrame < m_vObj[0].get()->m_vRotTrack[j].get()->pNext->iTick)
 				{
@@ -320,16 +331,8 @@ void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack,
 					*pEndTrack = m_vObj[0].get()->m_vRotTrack[j].get()->pNext;
 					break;
 				}
-				else if (m_fTickFrame < m_vObj[0].get()->m_vRotTrack[j].get()->iTick) {
-					*pStartTrack = NULL;
-					*pEndTrack = m_vObj[0].get()->m_vRotTrack[j].get();
-					break;
-				}
-				else if (m_fTickFrame >= m_vObj[0].get()->m_vRotTrack[j].get()->pNext->iTick) {
-					*pStartTrack = m_vObj[0].get()->m_vRotTrack[j].get()->pNext;
-					*pEndTrack = NULL;
-					break;
-				}
+
+
 			}
 		}
 		break;

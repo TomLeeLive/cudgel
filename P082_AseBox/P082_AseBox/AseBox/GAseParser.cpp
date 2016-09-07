@@ -45,21 +45,21 @@ int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 
 				case MESH_NUMVERTEX:
 				{
-					GetData(&(stModel->m_vObj[0]->m_iPosCount), INT_DATA);
+					GetData(&m_iPosCount, INT_DATA);
 					break;
 				}
 				break;
 				case MESH_NUMFACES:
 				{
-					GetData(&(stModel->m_vObj[0]->m_iFaceCount), INT_DATA);
+					GetData(&m_iFaceCount, INT_DATA);
 				}
 				break;
 				case MESH_VERTEX_LIST:
 				{
 					D3DXVECTOR3 pPos;
-					for (int i = 0; i < stModel->m_vObj[0]->m_iPosCount; i++) {
+					for (int i = 0; i < m_iPosCount; i++) {
 						 GetDataFromFileLoop(L"*MESH_VERTEX", &pPos, MESH_VERTEX_DATA);
-						 stModel->m_vObj[0]->m_vPosList.push_back(pPos);
+						 m_vPosList.push_back(pPos);
 					}
 				}
 				break;
@@ -67,14 +67,14 @@ int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 				{
 					ST_INT_FOUR stMeshFace;
 
-					for (int i = 0; i < stModel->m_vObj[0]->m_iFaceCount; i++) {
+					for (int i = 0; i < m_iFaceCount; i++) {
 						GetDataFromFileLoop(L"*MESH_FACE", &stMeshFace, MESH_FACE_DATA);
-						stModel->m_vObj[0]->m_vIndex.push_back(stMeshFace.index1);
-						stModel->m_vObj[0]->m_vIndex.push_back(stMeshFace.index2);
-						stModel->m_vObj[0]->m_vIndex.push_back(stMeshFace.index3);
+						m_vIndex.push_back(stMeshFace.index1);
+						m_vIndex.push_back(stMeshFace.index2);
+						m_vIndex.push_back(stMeshFace.index3);
 
 						if (stModel->m_vMaterial[0]->m_vSubMaterial.size() != 0)
-							stModel->m_vObj[0]->m_vSubMtlIndex.push_back(stMeshFace.index4);
+							m_vSubMtlIndex.push_back(stMeshFace.index4);
 					}
 
 
@@ -82,13 +82,13 @@ int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 				break;
 				case MESH_NUMTVERTEX:
 				{
-					 GetData(&(stModel->m_vObj[0]->m_iTexVerCount), INT_DATA);
+					 GetData(&m_iTexVerCount, INT_DATA);
 				}
 				break;
 				case MESH_TVERTLIST:
 				{
 					D3DXVECTOR3 vUVData; float fTemp;
-					for (int i = 0; i < stModel->m_vObj[0]->m_iTexVerCount; i++) {
+					for (int i = 0; i < m_iTexVerCount; i++) {
 						 GetDataFromFileLoop(L"*MESH_TVERT", &vUVData, MESH_VERTEX_DATA);
 
 						fTemp = vUVData.z;
@@ -97,29 +97,29 @@ int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 
 						vUVData.y = 1.0f - vUVData.y;
 
-						stModel->m_vObj[0]->m_vTexList.push_back(vUVData);
+						m_vTexList.push_back(vUVData);
 					}
 				}
 				break;
 				case MESH_NUMTVFACES:
 				{
-					 GetData(&(stModel->m_vObj[0]->m_iTexFaceCount), INT_DATA);
+					 GetData(&m_iTexFaceCount, INT_DATA);
 				}
 				break;
 				case MESH_TFACELIST:
 				{
 					ST_INT_THREE stFaceList;
-					for (int i = 0; i < stModel->m_vObj[0]->m_iTexFaceCount; i++) {
+					for (int i = 0; i < m_iTexFaceCount; i++) {
 						 GetDataFromFileLoop(L"*MESH_TFACE", &stFaceList, FACE_DATA);
-						 stModel->m_vObj[0]->m_vTextureIndex.push_back(stFaceList.index1);
-						 stModel->m_vObj[0]->m_vTextureIndex.push_back(stFaceList.index2);
-						 stModel->m_vObj[0]->m_vTextureIndex.push_back(stFaceList.index3);
+						 m_vTextureIndex.push_back(stFaceList.index1);
+						 m_vTextureIndex.push_back(stFaceList.index2);
+						 m_vTextureIndex.push_back(stFaceList.index3);
 					}
 				}
 				break;
 				case MESH_NUMCVERTEX:
 				{
-					 GetData(&(stModel->m_vObj[0]->m_iColorVerCount), INT_DATA);
+					 GetData(&m_iColorVerCount, INT_DATA);
 				}
 				break;
 				case MESH_CVERTLIST:
@@ -127,29 +127,29 @@ int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 					D3DXVECTOR3 vColor;
 					float fTemp;
 
-					for (int i = 0; i < stModel->m_vObj[0]->m_iColorVerCount; i++) {
+					for (int i = 0; i < m_iColorVerCount; i++) {
 						 GetDataFromFileLoop(L"*MESH_VERTCOL", &vColor, MESH_VERTEX_DATA);
 						 
 						 fTemp = vColor.y;
 						 vColor.y = vColor.z;
 						 vColor.z = fTemp;
 
-						 stModel->m_vObj[0]->m_vColList.push_back(vColor);
+						 m_vColList.push_back(vColor);
 					}
 				}
 				break;
 				case MESH_NORMALS:
 				{
 					D3DXVECTOR3 vNormal;
-					for (int i = 0; i < stModel->m_vObj[0]->m_iTexFaceCount; i++) {
+					for (int i = 0; i < m_iTexFaceCount; i++) {
 						 GetDataFromFileLoop(L"*MESH_FACENORMAL", &vNormal, MESH_VERTEX_DATA);
-						 stModel->m_vObj[0]->m_vFaceNormal.push_back(vNormal);
+						 m_vFaceNormal.push_back(vNormal);
 						 GetDataFromFileLoop(L"*MESH_VERTEXNORMAL", &vNormal, MESH_VERTEX_DATA);
-						 stModel->m_vObj[0]->m_vNorList.push_back(vNormal);
+						 m_vNorList.push_back(vNormal);
 						 GetDataFromFileLoop(L"*MESH_VERTEXNORMAL", &vNormal, MESH_VERTEX_DATA);
-						 stModel->m_vObj[0]->m_vNorList.push_back(vNormal);
+						 m_vNorList.push_back(vNormal);
 						 GetDataFromFileLoop(L"*MESH_VERTEXNORMAL", &vNormal, MESH_VERTEX_DATA);
-						 stModel->m_vObj[0]->m_vNorList.push_back(vNormal);
+						 m_vNorList.push_back(vNormal);
 					}
 					return 0;
 				}
@@ -571,39 +571,39 @@ void    GAseParser::SetPnctData(GAseModel* stModel) {
 
 	// Create index buffer
 	WORD* indices;
-	indices = (WORD *)malloc(sizeof(WORD) * stModel->m_vObj[0]->m_iFaceCount * 3);
+	indices = (WORD *)malloc(sizeof(WORD) * m_iFaceCount * 3);
 
-	if(stModel->m_vObj[0]->m_vIndex.size() != 0){
-		for (int i = 0; i < stModel->m_vObj[0]->m_iFaceCount * 3; i++) {
+	if(m_vIndex.size() != 0){
+		for (int i = 0; i < m_iFaceCount * 3; i++) {
 
 			if (i == 0 || i % 3 == 0) {
-				indices[i] = { (WORD)(stModel->m_vObj[0]->m_vIndex[i]) };
+				indices[i] = { (WORD)(m_vIndex[i]) };
 			}
 			else if (i == 1 || i % 3 == 1) {
-				indices[i] = { (WORD)(stModel->m_vObj[0]->m_vIndex[i + 1]) };
+				indices[i] = { (WORD)(m_vIndex[i + 1]) };
 			}
 			else if (i == 2 || i % 3 == 2) {
-				indices[i] = { (WORD)(stModel->m_vObj[0]->m_vIndex[i - 1]) };
+				indices[i] = { (WORD)(m_vIndex[i - 1]) };
 			}
 		}
 	}
 
 
 	WORD* Texindices;
-	Texindices = (WORD *)malloc(sizeof(WORD) * stModel->m_vObj[0]->m_iFaceCount * 3);
+	Texindices = (WORD *)malloc(sizeof(WORD) * m_iFaceCount * 3);
 
 
-	if(stModel->m_vObj[0]->m_vTextureIndex.size() !=0 ){
-		for (int i = 0; i < stModel->m_vObj[0]->m_iFaceCount * 3; i++) {
+	if(m_vTextureIndex.size() !=0 ){
+		for (int i = 0; i < m_iFaceCount * 3; i++) {
 
 			if (i == 0 || i % 3 == 0) {
-				Texindices[i] = { (WORD)(stModel->m_vObj[0]->m_vTextureIndex[i]) };
+				Texindices[i] = { (WORD)(m_vTextureIndex[i]) };
 			}
 			else if (i == 1 || i % 3 == 1) {
-				Texindices[i] = { (WORD)(stModel->m_vObj[0]->m_vTextureIndex[i + 1]) };
+				Texindices[i] = { (WORD)(m_vTextureIndex[i + 1]) };
 			}
 			else if (i == 2 || i % 3 == 2) {
-				Texindices[i] = { (WORD)(stModel->m_vObj[0]->m_vTextureIndex[i - 1]) };
+				Texindices[i] = { (WORD)(m_vTextureIndex[i - 1]) };
 			}
 		}
 	}
@@ -615,24 +615,24 @@ void    GAseParser::SetPnctData(GAseModel* stModel) {
 
 
 
-		for (int i = 0; i < stModel->m_vObj[0]->m_iFaceCount * 3; i++) {
+		for (int i = 0; i < m_iFaceCount * 3; i++) {
 
-			vp = stModel->m_vObj[0]->m_vPosList[indices[i]];
+			vp = m_vPosList[indices[i]];
 
 			D3DXVec3TransformCoord(&vp, &vp, &matWorldInverse);
 
-			if (stModel->m_vObj[0]->m_vNorList.size() != 0)
-				vn = stModel->m_vObj[0]->m_vNorList[indices[i]];
+			if (m_vNorList.size() != 0)
+				vn = m_vNorList[indices[i]];
 			else
 				vn = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
 
-			if (stModel->m_vObj[0]->m_vColList.size() != 0)
-				vc = D3DXVECTOR4(stModel->m_vObj[0]->m_vColList[indices[i]].x, stModel->m_vObj[0]->m_vColList[indices[i]].y, stModel->m_vObj[0]->m_vColList[indices[i]].z, 1.0f);
+			if (m_vColList.size() != 0)
+				vc = D3DXVECTOR4(m_vColList[indices[i]].x, m_vColList[indices[i]].y, m_vColList[indices[i]].z, 1.0f);
 			else
 				vc = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
 
-			if (stModel->m_vObj[0]->m_vTextureIndex.size() != 0)
-				vt = D3DXVECTOR2(stModel->m_vObj[0]->m_vTexList[Texindices[i]].x, stModel->m_vObj[0]->m_vTexList[Texindices[i]].y);
+			if (m_vTextureIndex.size() != 0)
+				vt = D3DXVECTOR2(m_vTexList[Texindices[i]].x, m_vTexList[Texindices[i]].y);
 			else
 				vt = D3DXVECTOR2(1.0f, 1.0f);
 
@@ -641,7 +641,7 @@ void    GAseParser::SetPnctData(GAseModel* stModel) {
 			}
 			else {
 				int j = i / 3;
-				stModel->m_vObj[    stModel->m_vObj[0]->m_vSubMtlIndex[j]    ]->m_vPnctVertex.push_back(PNCT_VERTEX(vp, vn, vc, vt));
+				stModel->m_vObj[    m_vSubMtlIndex[j]    ]->m_vPnctVertex.push_back(PNCT_VERTEX(vp, vn, vc, vt));
 			}
 		}
 
@@ -654,9 +654,11 @@ void    GAseParser::SetPnctData(GAseModel* stModel) {
 
 GAseParser::GAseParser()
 {
+	ResetVariables();
 }
 
 
 GAseParser::~GAseParser()
 {
+	ResetVariables();
 }

@@ -97,6 +97,40 @@ public:
 
 	fpos_t		m_FilePosition;
 	
+	vector<D3DXVECTOR3>				m_vPosList;					// P
+	vector<D3DXVECTOR3>				m_vNorList;					// N
+	vector<D3DXVECTOR3>				m_vColList;					// C
+	vector<D3DXVECTOR3>				m_vTexList;					// T
+
+	vector<D3DXVECTOR3>				m_vFaceNormal;				// Face Normal;
+	vector<int>						m_vIndex;					//for IB
+	vector<int>						m_vTextureIndex;			//for Texture Index
+	vector<int>						m_vSubMtlIndex;
+
+	int								m_iPosCount;				//Vertex 카운트
+	int								m_iFaceCount;				//Face 카운트
+	int								m_iTexVerCount;				//Texture vertex 카운트   MESH_NUMTVERTEX
+	int								m_iTexFaceCount;			//Texture Face 카운트     MESH_NUMTVFACES
+	int								m_iColorVerCount;			//MESH_NUMCVERTEX
+
+	void	ResetVariables() {
+
+		m_vPosList.clear();
+		m_vNorList.clear();
+		m_vColList.clear();
+		m_vTexList.clear();
+		m_vFaceNormal.clear();
+		m_vIndex.clear();
+		m_vTextureIndex.clear();
+		m_vSubMtlIndex.clear();
+
+		m_iPosCount      = 0;
+		m_iFaceCount	 = 0;
+		m_iTexVerCount	 = 0;
+		m_iTexFaceCount  = 0;
+		m_iColorVerCount = 0;
+	}
+
 	void    SetPnctData(GAseModel* stModel);
 	bool	GetTrackListFromString(GAseModel* stModel /*vector<shared_ptr<GAnimTrack>>& vTrack*/, AseTrackType TrackType);
 	int		GetAnimationDataFromFile(GAseModel* stModel);

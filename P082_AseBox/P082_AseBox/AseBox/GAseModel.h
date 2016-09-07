@@ -49,68 +49,42 @@ struct GAseMaterial {
 
 class GAseObj {
 public:
-	//for Animation [START]
-	bool				m_bHasAniTrack;		//애니메이션정보가 있으면 true;
-	D3DXMATRIX			m_matWorldTrans;	// 월드이동행렬 
-	D3DXMATRIX			m_matWorldRotate;	// 월드회전행렬 
-	D3DXMATRIX			m_matWorldScale;	// 월드신축행렬 
-
-	vector<shared_ptr<GAnimTrack>>	m_vPosTrack;		// 이동트랙 
-	vector<shared_ptr<GAnimTrack>>	m_vRotTrack;		// 회전트랙 
-	vector<shared_ptr<GAnimTrack>>	m_vSclTrack;		// 신축트랙 
-	//for Animation [END]
-	
-	ComPtr<ID3D11Buffer>			m_pVertexBuffer = NULL;
-	ComPtr<ID3D11Buffer>			m_pIndexBuffer = NULL;
-
 	TCHAR							m_szName[MAX_PATH];			//*NODE_NAME "Box01"
 	D3DXMATRIX						m_matWorld;					//월드행렬
 
-	D3DXQUATERNION					m_qRotation;				//For Animation.
+	vector<PNCT_VERTEX>				m_vPnctVertex;				//for VB
+	ComPtr<ID3D11Buffer>			m_pVertexBuffer = NULL;
+	ComPtr<ID3D11Buffer>			m_pIndexBuffer = NULL;
 
-	D3DXVECTOR3						m_vecTM_POS;				//For Animation.
-	D3DXVECTOR3						m_vecTM_ROTAXIS;			//For Animation.
-	float							m_fTM_ROTANGLE;				//For Animation.
-	D3DXVECTOR3						m_vecTM_SCALE;				//For Animation.
-	D3DXVECTOR3						m_vecTM_SCALE_AXIS;			//For Animation.
-	float							m_fTM_SCALEAXISANG;			//For Animation.
+	//for Animation [START]
+	bool							m_bHasAniTrack;				//애니메이션정보가 있으면 true;
+	D3DXMATRIX						m_matWorldTrans;			// 월드이동행렬 
+	D3DXMATRIX						m_matWorldRotate;			// 월드회전행렬 
+	D3DXMATRIX						m_matWorldScale;			// 월드신축행렬 
 
-	int								m_iPosCount;				//Vertex 카운트
-	int								m_iFaceCount;				//Face 카운트
-	int								m_iTexVerCount;				//Texture vertex 카운트   MESH_NUMTVERTEX
-	int								m_iTexFaceCount;			//Texture Face 카운트     MESH_NUMTVFACES
-	int								m_iColorVerCount;			//MESH_NUMCVERTEX
+	vector<shared_ptr<GAnimTrack>>	m_vPosTrack;				// 이동트랙 
+	vector<shared_ptr<GAnimTrack>>	m_vRotTrack;				// 회전트랙 
+	vector<shared_ptr<GAnimTrack>>	m_vSclTrack;				// 신축트랙 
 
-	vector<D3DXVECTOR3>				m_vPosList;					// P
-	vector<D3DXVECTOR3>				m_vNorList;					// N
-	vector<D3DXVECTOR3>				m_vColList;					// C
-	vector<D3DXVECTOR3>				m_vTexList;					// T
+	D3DXQUATERNION					m_qRotation;				
 
-	vector<D3DXVECTOR3>				m_vFaceNormal;				// Face Normal;
-
-	vector<PNCT_VERTEX>				m_vPnctVertex;				//VB
-	vector<int>						m_vIndex;					//for IB
-	vector<int>						m_vTextureIndex;			//for Texture Index
-	vector<int>						m_vSubMtlIndex;
-
+	D3DXVECTOR3						m_vecTM_POS;				
+	D3DXVECTOR3						m_vecTM_ROTAXIS;			
+	float							m_fTM_ROTANGLE;				
+	D3DXVECTOR3						m_vecTM_SCALE;				
+	D3DXVECTOR3						m_vecTM_SCALE_AXIS;			
+	float							m_fTM_SCALEAXISANG;			
+	//for Animation [END]
+	
 	GAseObj() { 
 		D3DXMatrixIdentity(&m_matWorldTrans);
 		D3DXMatrixIdentity(&m_matWorldRotate);
 		D3DXMatrixIdentity(&m_matWorldScale);
 
 		m_bHasAniTrack = false;
-		m_iFaceCount = 0; 
 	};
 	~GAseObj() {
-		m_vPosList.clear();
-		m_vNorList.clear();
-		m_vColList.clear();
-		m_vTexList.clear();
-		m_vFaceNormal.clear();
 		m_vPnctVertex.clear();
-		m_vIndex.clear();
-		m_vTextureIndex.clear();
-		m_vSubMtlIndex.clear();
 	};
 
 };
@@ -138,7 +112,8 @@ public:
 		ANITRACK_TYPE_SCL
 	};
 
-	void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack, GAnimTrack** pEndTrack, ANITRACK_TYPE nTrackType);
+	void		AniFrame();
+	void		GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack, GAnimTrack** pEndTrack, ANITRACK_TYPE nTrackType);
 	bool		Init(TCHAR* strFileName, TCHAR* strShaderName);
 	bool		Frame();
 	bool		Render(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* matProj);

@@ -4,10 +4,10 @@
 //#define G_DEFINE_SHIP
 //#define G_DEFINE_MULTICAMERAS
 //#define G_DEFINE_ANI_TRANSLATE
-#define G_DEFINE_ANI_SCALE
-//#define G_DEFINE_ANI_ROTATE
-//#define G_DEFINE_ANI_TURRET
+//#define G_DEFINE_ANI_SCALE
+#define G_DEFINE_ANI_TURRET
 
+//#define G_DEFINE_ANI_ROTATE
 
 int Sample::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -63,7 +63,7 @@ bool	Sample::Init() {
 		//m_Parser.OpenStream(L"data/MultiCameras.ASE");
 #endif
 #ifdef G_DEFINE_ANI_ROTATE
-		m_stModel.Init(L"data/box3.ASE", L"Tutorial04.fx");
+		m_stModel.Init(L"data/rotanimation.ASE", L"Tutorial04.fx");
 		//m_Parser.OpenStream(L"data/MultiCameras.ASE");
 #endif
 #ifdef G_DEFINE_ANI_TURRET

@@ -365,10 +365,7 @@ void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack,
 	}
 
 }
-bool		GAseModel::Frame() {
-
-
-
+void		GAseModel::AniFrame() {
 	if (m_vObj[0].get()->m_bHasAniTrack) {
 
 
@@ -388,13 +385,13 @@ bool		GAseModel::Frame() {
 
 			//현재 Tick이 어디인지 찾자.
 			GetAnimationTrack(m_fTickFrame, &pStartTrack, &pEndTrack, ANITRACK_TYPE_POS);
-			
+
 			//애니메이션 보간.
 			D3DXVECTOR3 vResultVector;
 			D3DXVECTOR3 vP1 = pStartTrack->vecVector;
 			D3DXVECTOR3 vP2 = pEndTrack->vecVector;
 
-			float fTValue = (m_fTickFrame - pStartTrack->iTick ) / (pEndTrack->iTick - pStartTrack->iTick);
+			float fTValue = (m_fTickFrame - pStartTrack->iTick) / (pEndTrack->iTick - pStartTrack->iTick);
 
 			D3DXVec3Lerp(&vResultVector, &vP1, &vP2, fTValue);
 
@@ -412,7 +409,7 @@ bool		GAseModel::Frame() {
 
 			//현재 Tick이 어디인지 찾자.
 			GetAnimationTrack(m_fTickFrame, &pStartTrack, &pEndTrack, ANITRACK_TYPE_ROT);
- 
+
 
 			//사원수간의 보간..
 			if (pStartTrack == NULL) {
@@ -421,10 +418,11 @@ bool		GAseModel::Frame() {
 				D3DXQuaternionSlerp(&qR, &qR, &pEndTrack->qRotate, fTValue);
 			}
 			else if (pEndTrack == NULL) {
-				qR = m_vObj[0].get()->m_vRotTrack[ m_vObj[0].get()->m_vRotTrack.size() - 1 ].get()->qRotate;
+				qR = m_vObj[0].get()->m_vRotTrack[m_vObj[0].get()->m_vRotTrack.size() - 1].get()->qRotate;
 				float fTValue = ((m_fTickFrame - pStartTrack->iTick) / (m_fFrameSpeed*m_fTickPerFrame));
 				D3DXQuaternionSlerp(&qR, &qR, &qR, fTValue);
-			}else {
+			}
+			else {
 				qR = pStartTrack->qRotate;
 				float fTValue = (m_fTickFrame - pStartTrack->iTick) / (pEndTrack->iTick - pStartTrack->iTick);
 				D3DXQuaternionSlerp(&qR, &qR, &pEndTrack->qRotate, fTValue);
@@ -477,7 +475,7 @@ bool		GAseModel::Frame() {
 				fStartTick = pStartTrack->iTick;
 				fEndTick = pEndTrack->iTick;
 
-				
+
 			}
 			float fTValue = (m_fTickFrame - fStartTick) / (fEndTick - fStartTick);
 
@@ -495,6 +493,12 @@ bool		GAseModel::Frame() {
 
 		}
 	}
+}
+bool		GAseModel::Frame() {
+
+
+
+	AniFrame();
 
 
 

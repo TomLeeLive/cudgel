@@ -14,16 +14,58 @@ class GAseModel;
 class GAseParser : public GParser, public GSingleton < GAseParser >
 {
 public:
-	TCHAR* g_pAseItems[3] = { L"*SCENE",L"*MATERIAL_LIST",L"*GEOMOBJECT"/*,L"HELPEROBJECT"*/ };
-	enum AseItemsType { SCENE = 0, MATERIALLIST, GEOMOBJECT, /*HELPEROBJECT, */ };
+	TCHAR* g_pAseItems[4] = { 
+		L"*SCENE",
+		L"*MATERIAL_LIST",
+		L"*GEOMOBJECT",
+		L"HELPEROBJECT" };
+	enum AseItemsType { 
+		SCENE = 0, 
+		MATERIALLIST, 
+		GEOMOBJECT, 
+		HELPEROBJECT };
 
-	TCHAR* g_pAseSceneTokens[5] = { L"*SCENE_FILENAME", L"*SCENE_FIRSTFRAME", L"*SCENE_LASTFRAME",L"*SCENE_FRAMESPEED",L"*SCENE_TICKSPERFRAME" };
-	TCHAR* g_pAseMaterialTokens[5] = { L"*MATERIAL_NAME",L"*MATERIAL_AMBIENT", L"*MATERIAL_DIFFUSE", L"*MATERIAL_SPECULAR",L"*BITMAP" };
+	TCHAR* g_pAseSceneTokens[5] = { 
+		L"*SCENE_FILENAME", 
+		L"*SCENE_FIRSTFRAME",
+		L"*SCENE_LASTFRAME",
+		L"*SCENE_FRAMESPEED",
+		L"*SCENE_TICKSPERFRAME" };
 
-	TCHAR* g_pAseObjTokens[4] = { L"*NODE_NAME",L"*NODE_TM",L"*MESH",L"*TM_ANIMATION"};
-	enum AseObjTokensType { NODE_NAME = 0, NODE_TM, MESH, ANIMATION };
+	TCHAR* g_pAseMaterialTokens[5] = { 
+		L"*MATERIAL_NAME",
+		L"*MATERIAL_AMBIENT",
+		L"*MATERIAL_DIFFUSE", 
+		L"*MATERIAL_SPECULAR",
+		L"*BITMAP" };
 
-	TCHAR* g_pAseNodeTmTokens[10] = { L"*TM_ROW0",L"*TM_ROW1", L"*TM_ROW2", L"*TM_ROW3", L"*TM_POS",L"*TM_ROTAXIS",L"*TM_ROTANGLE",L"*TM_SCALE",L"*TM_SCALEAXIS",L"*TM_SCALEAXISANG" };
+	TCHAR* g_pAseGeomObjectTokens[6] = { 
+		L"*NODE_PARENT",
+		L"*NODE_NAME",
+		L"*NODE_TM",
+		L"*MESH",
+		L"*TM_ANIMATION",
+		L"*MATERIAL_REF"};
+
+	enum AseGeomObjectTokensType { 
+		NODE_PARENT = 0,
+		NODE_NAME, 
+		NODE_TM, 
+		MESH, 
+		TM_ANIMATION,
+		MATERIAL_REF};
+
+	TCHAR* g_pAseNodeTmTokens[10] = { 
+		L"*TM_ROW0",
+		L"*TM_ROW1", 
+		L"*TM_ROW2", 
+		L"*TM_ROW3", 
+		L"*TM_POS",
+		L"*TM_ROTAXIS",
+		L"*TM_ROTANGLE",
+		L"*TM_SCALE",
+		L"*TM_SCALEAXIS",
+		L"*TM_SCALEAXISANG" };
 
 	TCHAR* g_pAseMeshTokens[11] = { 
 		L"*MESH_NUMVERTEX",
@@ -91,7 +133,10 @@ public:
 	};
 	
 	enum AseTrackType {
-		POS_SAMPLE_TRACK = 40, ROT_SAMPLE_TRACK, SCL_SAMPLE_TRACK, VIS_SAMPLE_TRACK
+		POS_SAMPLE_TRACK = 40, 
+		ROT_SAMPLE_TRACK, 
+		SCL_SAMPLE_TRACK, 
+		VIS_SAMPLE_TRACK
 	};
 	
 
@@ -131,6 +176,7 @@ public:
 		m_iColorVerCount = 0;
 	}
 
+	void	CountGeomObjFromFile(GAseModel* stModel);
 	void	InitAseModel(TCHAR* strFile, GAseModel* stModel);
 	void    SetPnctData(GAseModel* stModel);
 	bool	GetTrackListFromString(GAseModel* stModel /*vector<shared_ptr<GAnimTrack>>& vTrack*/, AseTrackType TrackType);

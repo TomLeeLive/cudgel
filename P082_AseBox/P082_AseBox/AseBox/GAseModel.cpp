@@ -120,53 +120,53 @@ bool		GAseModel::Init(TCHAR* strFileName, TCHAR* strShaderName) {
 
 		// Create vertex buffer
 		PNCT_VERTEX* vertices;
-		vertices = (PNCT_VERTEX *)malloc(sizeof(PNCT_VERTEX) * m_vObj[0]->m_vPnctVertex.size());
+		vertices = (PNCT_VERTEX *)malloc(sizeof(PNCT_VERTEX) * m_vGeomObj[0].get()->m_vObj[0]->m_vPnctVertex.size());
 
-		for (int j = 0; j < m_vObj[0]->m_vPnctVertex.size(); ++j) {
+		for (int j = 0; j < m_vGeomObj[0].get()->m_vObj[0]->m_vPnctVertex.size(); ++j) {
 
-			vertices[j] = m_vObj[0]->m_vPnctVertex[j];
+			vertices[j] = m_vGeomObj[0].get()->m_vObj[0]->m_vPnctVertex[j];
 
 		}
 
 		//D3D11_BUFFER_DESC bd;
 		ZeroMemory(&bd, sizeof(bd));
 		bd.Usage = D3D11_USAGE_DEFAULT;
-		bd.ByteWidth = sizeof(PNCT_VERTEX) * m_vObj[0]->m_vPnctVertex.size();//m_iPosCount;
+		bd.ByteWidth = sizeof(PNCT_VERTEX) * m_vGeomObj[0].get()->m_vObj[0]->m_vPnctVertex.size();//m_iPosCount;
 		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		bd.CPUAccessFlags = 0;
 		D3D11_SUBRESOURCE_DATA InitData;
 		ZeroMemory(&InitData, sizeof(InitData));
 		InitData.pSysMem = vertices;
-		hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, m_vObj[0]->m_pVertexBuffer.GetAddressOf());
+		hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, m_vGeomObj[0].get()->m_vObj[0]->m_pVertexBuffer.GetAddressOf());
 		if (FAILED(hr))
 			return hr;
 
 		// Set vertex buffer
 		UINT stride = sizeof(PNCT_VERTEX);
 		UINT offset = 0;
-		g_pImmediateContext->IASetVertexBuffers(0, 1, m_vObj[0]->m_pVertexBuffer.GetAddressOf(), &stride, &offset);
+		g_pImmediateContext->IASetVertexBuffers(0, 1, m_vGeomObj[0].get()->m_vObj[0]->m_pVertexBuffer.GetAddressOf(), &stride, &offset);
 
 
 		// Create index buffer
 		WORD* indices;
-		indices = (WORD *)malloc(sizeof(WORD) * m_vObj[0]->m_vPnctVertex.size());
+		indices = (WORD *)malloc(sizeof(WORD) * m_vGeomObj[0].get()->m_vObj[0]->m_vPnctVertex.size());
 
-		for (int j = 0; j < m_vObj[0]->m_vPnctVertex.size(); j++) {
+		for (int j = 0; j < m_vGeomObj[0].get()->m_vObj[0]->m_vPnctVertex.size(); j++) {
 			indices[j] = j;
 		}
 
 
 		bd.Usage = D3D11_USAGE_DEFAULT;
-		bd.ByteWidth = sizeof(WORD) * m_vObj[0]->m_vPnctVertex.size();        // 36 vertices needed for 12 triangles in a triangle list
+		bd.ByteWidth = sizeof(WORD) * m_vGeomObj[0].get()->m_vObj[0]->m_vPnctVertex.size();        // 36 vertices needed for 12 triangles in a triangle list
 		bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		bd.CPUAccessFlags = 0;
 		InitData.pSysMem = indices;
-		hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, m_vObj[0]->m_pIndexBuffer.GetAddressOf());
+		hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, m_vGeomObj[0].get()->m_vObj[0]->m_pIndexBuffer.GetAddressOf());
 		if (FAILED(hr))
 			return hr;
 
 		// Set index buffer
-		g_pImmediateContext->IASetIndexBuffer(m_vObj[0]->m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+		g_pImmediateContext->IASetIndexBuffer(m_vGeomObj[0].get()->m_vObj[0]->m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
 		// Set primitive topology
 		g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -219,54 +219,54 @@ bool		GAseModel::Init(TCHAR* strFileName, TCHAR* strShaderName) {
 
 			// Create vertex buffer
 			PNCT_VERTEX* vertices;
-			vertices = (PNCT_VERTEX *)malloc(sizeof(PNCT_VERTEX) * m_vObj[i]->m_vPnctVertex.size());
+			vertices = (PNCT_VERTEX *)malloc(sizeof(PNCT_VERTEX) * m_vGeomObj[0].get()->m_vObj[i]->m_vPnctVertex.size());
 
-			for (int j = 0; j < m_vObj[i]->m_vPnctVertex.size(); ++j) {
+			for (int j = 0; j < m_vGeomObj[0].get()->m_vObj[i]->m_vPnctVertex.size(); ++j) {
 
-				vertices[j] = m_vObj[i]->m_vPnctVertex[j];
+				vertices[j] = m_vGeomObj[0].get()->m_vObj[i]->m_vPnctVertex[j];
 
 			}
 
 			//D3D11_BUFFER_DESC bd;
 			ZeroMemory(&bd, sizeof(bd));
 			bd.Usage = D3D11_USAGE_DEFAULT;
-			bd.ByteWidth = sizeof(PNCT_VERTEX) * m_vObj[i]->m_vPnctVertex.size();//m_iPosCount;
+			bd.ByteWidth = sizeof(PNCT_VERTEX) * m_vGeomObj[0].get()->m_vObj[i]->m_vPnctVertex.size();//m_iPosCount;
 			bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 			bd.CPUAccessFlags = 0;
 			D3D11_SUBRESOURCE_DATA InitData;
 			ZeroMemory(&InitData, sizeof(InitData));
 			InitData.pSysMem = vertices;
-			hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, m_vObj[i]->m_pVertexBuffer.GetAddressOf());
+			hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, m_vGeomObj[0].get()->m_vObj[i]->m_pVertexBuffer.GetAddressOf());
 			if (FAILED(hr))
 				return hr;
 
 			// Set vertex buffer
 			UINT stride = sizeof(PNCT_VERTEX);
 			UINT offset = 0;
-			g_pImmediateContext->IASetVertexBuffers(0, 1, m_vObj[i]->m_pVertexBuffer.GetAddressOf(), &stride, &offset);
+			g_pImmediateContext->IASetVertexBuffers(0, 1, m_vGeomObj[0].get()->m_vObj[i]->m_pVertexBuffer.GetAddressOf(), &stride, &offset);
 
 
 			// Create index buffer
 			WORD* indices;
-			indices = (WORD *)malloc(sizeof(WORD) * m_vObj[i]->m_vPnctVertex.size());
+			indices = (WORD *)malloc(sizeof(WORD) * m_vGeomObj[0].get()->m_vObj[i]->m_vPnctVertex.size());
 
-			for (int j = 0; j < m_vObj[i]->m_vPnctVertex.size(); j++) {
+			for (int j = 0; j < m_vGeomObj[0].get()->m_vObj[i]->m_vPnctVertex.size(); j++) {
 				indices[j] = j;
 			}
 
 
 			bd.Usage = D3D11_USAGE_DEFAULT;
-			bd.ByteWidth = sizeof(WORD) * m_vObj[i]->m_vPnctVertex.size();        // 36 vertices needed for 12 triangles in a triangle list
+			bd.ByteWidth = sizeof(WORD) * m_vGeomObj[0].get()->m_vObj[i]->m_vPnctVertex.size();        // 36 vertices needed for 12 triangles in a triangle list
 			bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 			bd.CPUAccessFlags = 0;
 			ZeroMemory(&InitData, sizeof(InitData));
 			InitData.pSysMem = indices;
-			hr = g_pd3dDevice->CreateBuffer(&bd, &InitData,m_vObj[i]->m_pIndexBuffer.GetAddressOf());
+			hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, m_vGeomObj[0].get()->m_vObj[i]->m_pIndexBuffer.GetAddressOf());
 			if (FAILED(hr))
 				return hr;
 
 			// Set index buffer
-			g_pImmediateContext->IASetIndexBuffer(m_vObj[i]->m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+			g_pImmediateContext->IASetIndexBuffer(m_vGeomObj[0].get()->m_vObj[i]->m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
 			// Set primitive topology
 			g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -291,12 +291,12 @@ void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack,
 	switch (nTrackType) {
 		case ANITRACK_TYPE_POS:
 		{
-			for (int j = 0; j< m_vObj[0].get()->m_vPosTrack.size(); j++) {
-				if (m_fTickFrame >= m_vObj[0].get()->m_vPosTrack[j].get()->iTick
-					&& m_fTickFrame < m_vObj[0].get()->m_vPosTrack[j].get()->pNext->iTick)
+			for (int j = 0; j< m_vGeomObj[0].get()->m_vPosTrack.size(); j++) {
+				if (m_fTickFrame >= m_vGeomObj[0].get()->m_vPosTrack[j].get()->iTick
+					&& m_fTickFrame < m_vGeomObj[0].get()->m_vPosTrack[j].get()->pNext->iTick)
 				{
-					*pStartTrack = m_vObj[0].get()->m_vPosTrack[j].get();
-					*pEndTrack = m_vObj[0].get()->m_vPosTrack[j].get()->pNext;
+					*pStartTrack = m_vGeomObj[0].get()->m_vPosTrack[j].get();
+					*pEndTrack = m_vGeomObj[0].get()->m_vPosTrack[j].get()->pNext;
 					break;
 				}
 			}
@@ -304,23 +304,23 @@ void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack,
 		break;
 		case ANITRACK_TYPE_ROT:
 		{
-			for (int j = 0; j< m_vObj[0].get()->m_vRotTrack.size(); j++) {
-				if (m_fTickFrame < m_vObj[0].get()->m_vRotTrack[0].get()->iTick) {
+			for (int j = 0; j< m_vGeomObj[0].get()->m_vRotTrack.size(); j++) {
+				if (m_fTickFrame < m_vGeomObj[0].get()->m_vRotTrack[0].get()->iTick) {
 					*pStartTrack = NULL;
-					*pEndTrack = m_vObj[0].get()->m_vRotTrack[0].get();
+					*pEndTrack = m_vGeomObj[0].get()->m_vRotTrack[0].get();
 					break;
 				}
-				else if (m_fTickFrame >= m_vObj[0].get()->m_vRotTrack[  m_vObj[0].get()->m_vRotTrack.size() - 1  ].get()->iTick) {
-					*pStartTrack = m_vObj[0].get()->m_vRotTrack[ m_vObj[0].get()->m_vRotTrack.size() - 1 ].get()->pNext;
+				else if (m_fTickFrame >= m_vGeomObj[0].get()->m_vRotTrack[  m_vGeomObj[0].get()->m_vRotTrack.size() - 1  ].get()->iTick) {
+					*pStartTrack = m_vGeomObj[0].get()->m_vRotTrack[  m_vGeomObj[0].get()->m_vRotTrack.size() - 1 ].get()->pNext;
 					*pEndTrack = NULL;
 					break;
 				}
 
-				if (m_fTickFrame >= m_vObj[0].get()->m_vRotTrack[j].get()->iTick
-					&& m_fTickFrame < m_vObj[0].get()->m_vRotTrack[j].get()->pNext->iTick)
+				if (m_fTickFrame >= m_vGeomObj[0].get()->m_vRotTrack[j].get()->iTick
+					&& m_fTickFrame < m_vGeomObj[0].get()->m_vRotTrack[j].get()->pNext->iTick)
 				{
-					*pStartTrack = m_vObj[0].get()->m_vRotTrack[j].get();
-					*pEndTrack = m_vObj[0].get()->m_vRotTrack[j].get()->pNext;
+					*pStartTrack = m_vGeomObj[0].get()->m_vRotTrack[j].get();
+					*pEndTrack = m_vGeomObj[0].get()->m_vRotTrack[j].get()->pNext;
 					break;
 				}
 
@@ -330,24 +330,24 @@ void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack,
 		break;
 		case ANITRACK_TYPE_SCL:
 		{
-			for (int j = 0; j< m_vObj[0].get()->m_vSclTrack.size(); j++) {
+			for (int j = 0; j< m_vGeomObj[0].get()->m_vSclTrack.size(); j++) {
 
-				if (m_fTickFrame < m_vObj[0].get()->m_vSclTrack[0].get()->iTick) {
+				if (m_fTickFrame < m_vGeomObj[0].get()->m_vSclTrack[0].get()->iTick) {
 					*pStartTrack = NULL;
-					*pEndTrack = m_vObj[0].get()->m_vSclTrack[0].get();
+					*pEndTrack = m_vGeomObj[0].get()->m_vSclTrack[0].get();
 					break;
 				}
-				else if (m_fTickFrame >= m_vObj[0].get()->m_vSclTrack[ m_vObj[0].get()->m_vSclTrack.size() - 1 ].get()->iTick) {
-					*pStartTrack = m_vObj[0].get()->m_vSclTrack[ m_vObj[0].get()->m_vSclTrack.size() - 1 ].get()->pNext;
+				else if (m_fTickFrame >= m_vGeomObj[0].get()->m_vSclTrack[m_vGeomObj[0].get()->m_vSclTrack.size() - 1 ].get()->iTick) {
+					*pStartTrack = m_vGeomObj[0].get()->m_vSclTrack[m_vGeomObj[0].get()->m_vSclTrack.size() - 1 ].get()->pNext;
 					*pEndTrack = NULL;
 					break;
 				}
 
-				if (m_fTickFrame >= m_vObj[0].get()->m_vSclTrack[j].get()->iTick
-					&& m_fTickFrame < m_vObj[0].get()->m_vSclTrack[j].get()->pNext->iTick)
+				if (m_fTickFrame >= m_vGeomObj[0].get()->m_vSclTrack[j].get()->iTick
+					&& m_fTickFrame < m_vGeomObj[0].get()->m_vSclTrack[j].get()->pNext->iTick)
 				{
-					*pStartTrack = m_vObj[0].get()->m_vSclTrack[j].get();
-					*pEndTrack = m_vObj[0].get()->m_vSclTrack[j].get()->pNext;
+					*pStartTrack = m_vGeomObj[0].get()->m_vSclTrack[j].get();
+					*pEndTrack = m_vGeomObj[0].get()->m_vSclTrack[j].get()->pNext;
 					break;
 				}
 
@@ -358,7 +358,7 @@ void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack,
 
 }
 void		GAseModel::AniFrame() {
-	if (m_vObj[0].get()->m_bHasAniTrack) {
+	if (m_vGeomObj[0].get()->m_bHasAniTrack) {
 
 
 
@@ -370,7 +370,7 @@ void		GAseModel::AniFrame() {
 
 
 		//Translation
-		if (m_vObj[0].get()->m_vPosTrack.size() != 0) {
+		if (m_vGeomObj[0].get()->m_vPosTrack.size() != 0) {
 
 			GAnimTrack* pStartTrack = NULL;
 			GAnimTrack* pEndTrack = NULL;
@@ -388,13 +388,13 @@ void		GAseModel::AniFrame() {
 			D3DXVec3Lerp(&vResultVector, &vP1, &vP2, fTValue);
 
 			//T행렬 값 대입
-			m_vObj[0].get()->m_matWorldTrans._41 = vResultVector.x;
-			m_vObj[0].get()->m_matWorldTrans._42 = vResultVector.y;
-			m_vObj[0].get()->m_matWorldTrans._43 = vResultVector.z;
+			m_vGeomObj[0].get()->m_matWorldTrans._41 = vResultVector.x;
+			m_vGeomObj[0].get()->m_matWorldTrans._42 = vResultVector.y;
+			m_vGeomObj[0].get()->m_matWorldTrans._43 = vResultVector.z;
 		}
 
 		//Rotation
-		if (m_vObj[0].get()->m_vRotTrack.size() != 0) {
+		if (m_vGeomObj[0].get()->m_vRotTrack.size() != 0) {
 			GAnimTrack* pStartTrack = NULL;
 			GAnimTrack* pEndTrack = NULL;
 			D3DXQUATERNION qR;
@@ -405,12 +405,12 @@ void		GAseModel::AniFrame() {
 
 			//사원수간의 보간..
 			if (pStartTrack == NULL) {
-				qR = m_vObj[0].get()->m_qRotation;
+				qR = m_vGeomObj[0].get()->m_qRotation;
 				float fTValue = (m_fTickFrame - 0) / (pEndTrack->iTick - 0);
 				D3DXQuaternionSlerp(&qR, &qR, &pEndTrack->qRotate, fTValue);
 			}
 			else if (pEndTrack == NULL) {
-				qR = m_vObj[0].get()->m_vRotTrack[m_vObj[0].get()->m_vRotTrack.size() - 1].get()->qRotate;
+				qR = m_vGeomObj[0].get()->m_vRotTrack[m_vGeomObj[0].get()->m_vRotTrack.size() - 1].get()->qRotate;
 				float fTValue = ((m_fTickFrame - pStartTrack->iTick) / (m_fFrameSpeed*m_fTickPerFrame));
 				D3DXQuaternionSlerp(&qR, &qR, &qR, fTValue);
 			}
@@ -421,13 +421,13 @@ void		GAseModel::AniFrame() {
 			}
 
 			//사원수에서 행렬로 변환.
-			D3DXMatrixIdentity(&m_vObj[0].get()->m_matWorldRotate);
+			D3DXMatrixIdentity(&m_vGeomObj[0].get()->m_matWorldRotate);
 
-			D3DXMatrixRotationQuaternion(&m_vObj[0].get()->m_matWorldRotate, &qR);// 사원수에서 행렬로 변환
+			D3DXMatrixRotationQuaternion(&m_vGeomObj[0].get()->m_matWorldRotate, &qR);// 사원수에서 행렬로 변환
 		}
 
 		//Scale
-		if (m_vObj[0].get()->m_vSclTrack.size() != 0) {
+		if (m_vGeomObj[0].get()->m_vSclTrack.size() != 0) {
 
 			GAnimTrack* pStartTrack = NULL;
 			GAnimTrack* pEndTrack = NULL;
@@ -438,16 +438,16 @@ void		GAseModel::AniFrame() {
 
 			D3DXQUATERNION qS;
 			float fStartTick = 0.0f, fEndTick = 0.0f;
-			D3DXVECTOR3 vScale(m_vObj[0].get()->m_matWorldScale._11, m_vObj[0].get()->m_matWorldScale._22, m_vObj[0].get()->m_matWorldScale._33);
+			D3DXVECTOR3 vScale(m_vGeomObj[0].get()->m_matWorldScale._11, m_vGeomObj[0].get()->m_matWorldScale._22, m_vGeomObj[0].get()->m_matWorldScale._33);
 
 			//현재 Tick이 어디인지 찾자.
 			GetAnimationTrack(m_fTickFrame, &pStartTrack, &pEndTrack, ANITRACK_TYPE_SCL);
 
 			//신축트랙 보간
 			if (pStartTrack == NULL) {
-				vScale = m_vObj[0]->m_vecTM_SCALE;
+				vScale = m_vGeomObj[0].get()->m_vecTM_SCALE;
 
-				D3DXQuaternionRotationAxis(&qS, &m_vObj[0]->m_vecTM_SCALE_AXIS, m_vObj[0]->m_fTM_SCALEAXISANG);
+				D3DXQuaternionRotationAxis(&qS, &m_vGeomObj[0].get()->m_vecTM_SCALE_AXIS, m_vGeomObj[0].get()->m_fTM_SCALEAXISANG);
 
 				fStartTick = 0.0f;
 				fEndTick = pEndTrack->iTick;
@@ -475,11 +475,11 @@ void		GAseModel::AniFrame() {
 			D3DXQuaternionSlerp(&qS, &qS, &pEndTrack->qRotate, fTValue);
 
 			//사원수 -> 행렬로 변환등...
-			D3DXMatrixScaling(&m_vObj[0].get()->m_matWorldScale, vScale.x, vScale.y, vScale.z);
+			D3DXMatrixScaling(&m_vGeomObj[0].get()->m_matWorldScale, vScale.x, vScale.y, vScale.z);
 			D3DXMatrixRotationQuaternion(&matScaleRot, &qS);
 			D3DXMatrixInverse(&matInvScaleRot, NULL, &matScaleRot);
 
-			m_vObj[0].get()->m_matWorldScale = matInvScaleRot * m_vObj[0].get()->m_matWorldScale * matScaleRot;
+			m_vGeomObj[0].get()->m_matWorldScale = matInvScaleRot * m_vGeomObj[0].get()->m_matWorldScale * matScaleRot;
 
 
 
@@ -506,7 +506,7 @@ bool		GAseModel::Render(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* m
 	
 	D3DXMATRIX	  matTemp;
 	D3DXMatrixIdentity(&matTemp);
-	matTemp = m_vObj[0].get()->m_matWorldScale * m_vObj[0].get()->m_matWorldRotate * m_vObj[0].get()->m_matWorldTrans * *matWorld;
+	matTemp = m_vGeomObj[0].get()->m_matWorldScale * m_vGeomObj[0].get()->m_matWorldRotate * m_vGeomObj[0].get()->m_matWorldTrans * *matWorld;
 
 	D3DXMatrixTranspose(&cb.mWorld, &matTemp);
 	D3DXMatrixTranspose(&cb.mView, matView);
@@ -528,7 +528,7 @@ bool		GAseModel::Render(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* m
 	if (m_vMaterial[0]->m_vSubMaterial.size() == 0) {
 
 		g_pImmediateContext->PSSetShaderResources(0, 1, m_vMaterial[0]->m_pTextureRV.GetAddressOf());
-		g_pImmediateContext->DrawIndexed(m_vObj[0]->m_vPnctVertex.size(), 0, 0);
+		g_pImmediateContext->DrawIndexed(m_vGeomObj[0].get()->m_vObj[0]->m_vPnctVertex.size(), 0, 0);
 	}
 	else {
 		for (int i = 0; i < m_vMaterial[0]->m_vSubMaterial.size(); i++) {
@@ -537,10 +537,10 @@ bool		GAseModel::Render(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* m
 
 			UINT stride = sizeof(PNCT_VERTEX);
 			UINT offset = 0;
-			g_pImmediateContext->IASetVertexBuffers(0, 1, m_vObj[i]->m_pVertexBuffer.GetAddressOf(), &stride, &offset);
+			g_pImmediateContext->IASetVertexBuffers(0, 1, m_vGeomObj[0].get()->m_vObj[i]->m_pVertexBuffer.GetAddressOf(), &stride, &offset);
 			g_pImmediateContext->PSSetShaderResources(0, 1, m_vMaterial[0]->m_vSubMaterial[i]->m_pTextureRV.GetAddressOf());
-			g_pImmediateContext->IASetIndexBuffer(m_vObj[i]->m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
-			g_pImmediateContext->DrawIndexed(m_vObj[i]->m_vPnctVertex.size(), 0, 0);
+			g_pImmediateContext->IASetIndexBuffer(m_vGeomObj[0].get()->m_vObj[i]->m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+			g_pImmediateContext->DrawIndexed(m_vGeomObj[0].get()->m_vObj[i]->m_vPnctVertex.size(), 0, 0);
 			//g_pImmediateContext->Draw(m_vObj[i]->m_vPnctVertex.size(), 0);
 		}
 	}
@@ -558,16 +558,17 @@ bool		GAseModel::Release() {
 	//	m_vMaterial[0]->m_vSubMaterial[4]->m_pTextureRV.Get()->Release();
 
 	//}
-/*	if (m_vObj[0]->m_pVertexBuffer.Get()) m_vObj[0]->m_pVertexBuffer.Get()->Release();
-	if (m_vObj[0]->m_pIndexBuffer.Get()) m_vObj[0]->m_pIndexBuffer.Get()->Release();
+/*	if (m_vGeomObj[0].get()->m_vObj[0]->m_pVertexBuffer.Get()) m_vGeomObj[0].get()->m_vObj[0]->m_pVertexBuffer.Get()->Release();
+	if (m_vGeomObj[0].get()->m_vObj[0]->m_pIndexBuffer.Get()) m_vGeomObj[0].get()->m_vObj[0]->m_pIndexBuffer.Get()->Release();
 	if (m_vMaterial[0]->m_pTextureRV.Get()) m_vMaterial[0]->m_pTextureRV.Get()->Release();
 
-	if (m_vObj[0]->m_pConstantBuffer.Get()) m_vObj[0]->m_pConstantBuffer.Get()->Release();
+	if (m_vGeomObj[0].get()->m_vObj[0]->m_pConstantBuffer.Get()) m_vGeomObj[0].get()->m_vObj[0]->m_pConstantBuffer.Get()->Release();
 	if (m_pVertexLayout.Get()) m_pVertexLayout.Get()->Release();
 	if (m_pVertexShader.Get()) m_pVertexShader.Get()->Release();
 	if (m_pPixelShader.Get()) m_pPixelShader.Get()->Release();
 	if (m_pSamplerLinear.Get()) m_pSamplerLinear.Get()->Release();
 	*/
+	/*
 	if (m_vMaterial[0]->m_vSubMaterial.size() != 0) {
 
 
@@ -592,14 +593,14 @@ bool		GAseModel::Release() {
 	}
 	m_vMaterial.clear();
 
-	vector<shared_ptr<GAseObj>>::iterator _B = m_vObj.begin();
-	vector<shared_ptr<GAseObj>>::iterator _E = m_vObj.end();
+	vector<shared_ptr<GAseObj>>::iterator _B = m_vGeomObj[0].get()->m_vObj.begin();
+	vector<shared_ptr<GAseObj>>::iterator _E = m_vGeomObj[0].get()->m_vObj.end();
 
 	for (; _B != _E; ++_B)
 	{
 		(*_B).reset();
 	}
-	m_vObj.clear();
-
+	m_vGeomObj[0].get()->m_vObj.clear();
+	*/
 	return true;
 };

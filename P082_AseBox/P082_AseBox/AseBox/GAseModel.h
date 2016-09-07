@@ -56,6 +56,18 @@ public:
 	ComPtr<ID3D11Buffer>			m_pVertexBuffer = NULL;
 	ComPtr<ID3D11Buffer>			m_pIndexBuffer = NULL;
 
+	GAseObj() {};
+	~GAseObj() { m_vPnctVertex.clear();};
+
+};
+class GAseGeom {
+public:
+	int										m_iType;			//0:Geom 1:Helper
+	GAseGeom*								m_pParentObj;
+	vector<GAseGeom*>  						m_pChildObj;
+	vector<shared_ptr<GAseObj>>				m_vObj;
+
+
 	//for Animation [START]
 	bool							m_bHasAniTrack;				//애니메이션정보가 있으면 true;
 	D3DXMATRIX						m_matWorldTrans;			// 월드이동행렬 
@@ -66,31 +78,32 @@ public:
 	vector<shared_ptr<GAnimTrack>>	m_vRotTrack;				// 회전트랙 
 	vector<shared_ptr<GAnimTrack>>	m_vSclTrack;				// 신축트랙 
 
-	D3DXQUATERNION					m_qRotation;				
+	D3DXQUATERNION					m_qRotation;
 
-	D3DXVECTOR3						m_vecTM_POS;				
-	D3DXVECTOR3						m_vecTM_ROTAXIS;			
-	float							m_fTM_ROTANGLE;				
-	D3DXVECTOR3						m_vecTM_SCALE;				
-	D3DXVECTOR3						m_vecTM_SCALE_AXIS;			
-	float							m_fTM_SCALEAXISANG;			
+	D3DXVECTOR3						m_vecTM_POS;
+	D3DXVECTOR3						m_vecTM_ROTAXIS;
+	float							m_fTM_ROTANGLE;
+	D3DXVECTOR3						m_vecTM_SCALE;
+	D3DXVECTOR3						m_vecTM_SCALE_AXIS;
+	float							m_fTM_SCALEAXISANG;
 	//for Animation [END]
-	
-	GAseObj() { 
+	GAseGeom(){
 		D3DXMatrixIdentity(&m_matWorldTrans);
 		D3DXMatrixIdentity(&m_matWorldRotate);
 		D3DXMatrixIdentity(&m_matWorldScale);
 
 		m_bHasAniTrack = false;
-	};
-	~GAseObj() {
-		m_vPnctVertex.clear();
-	};
+
+		m_iType = 0;
+	}
+	~GAseGeom(){}
 
 };
 
 class GAseModel {
 public:
+
+
 	float									m_fLastFrame;
 	float									m_fTickFrame;
 	float									m_fFrameSpeed;
@@ -98,7 +111,7 @@ public:
 
 	GAseScene								m_stScene;
 	vector<shared_ptr<GAseMaterial>>		m_vMaterial;
-	vector<shared_ptr<GAseObj>>				m_vObj;
+	vector<shared_ptr<GAseGeom>>			m_vGeomObj;
 
 	ComPtr<ID3D11Buffer>					m_pConstantBuffer = NULL;
 	ComPtr<ID3D11VertexShader>				m_pVertexShader = NULL;

@@ -131,6 +131,7 @@ public:
 		m_iColorVerCount = 0;
 	}
 
+	void	InitAseModel(TCHAR* strFile, GAseModel* stModel);
 	void    SetPnctData(GAseModel* stModel);
 	bool	GetTrackListFromString(GAseModel* stModel /*vector<shared_ptr<GAnimTrack>>& vTrack*/, AseTrackType TrackType);
 	int		GetAnimationDataFromFile(GAseModel* stModel);

@@ -11,15 +11,7 @@ bool		GAseModel::Init(TCHAR* strFileName, TCHAR* strShaderName) {
 
 
 	//I_AseParser
-	I_AseParser.OpenStream(strFileName);
-
-	I_AseParser.GetDataFromFile(this);
-
-	I_AseParser.CloseStream();
-
-	I_AseParser.SetPnctData(this);
-
-
+	I_AseParser.InitAseModel(strFileName, this);
 
 	//필요한 처리 끝.
 	stopwatch.Output(L"Init()");

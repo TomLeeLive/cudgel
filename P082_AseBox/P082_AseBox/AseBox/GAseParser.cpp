@@ -1,5 +1,14 @@
 #include "_stdafx.h"
 
+void	GAseParser::InitAseModel(TCHAR* strFile, GAseModel* stModel) {
+	OpenStream(strFile);
+
+	GetDataFromFile(stModel);
+
+	CloseStream();
+
+	SetPnctData(stModel);
+}
 //스트링 편집하여 텍스처 파일 경로를 실제 경로로 맞춰준다.
 void GAseParser::GetStringWeNeed(VOID* pOutStr, VOID* pInStr) {
 

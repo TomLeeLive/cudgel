@@ -101,7 +101,7 @@ bool	Sample::Init() {
 	// 카메라  행렬 
 	//--------------------------------------------------------------------------------------	
 	m_pMainCamera = make_shared<GCamera>();
-	m_pMainCamera->SetViewMatrix(D3DXVECTOR3(0.0f, 0.0f, -5.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	m_pMainCamera->SetViewMatrix(D3DXVECTOR3(0.0f, 100.0f, -100.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 	float fAspectRatio = m_iWindowWidth / (FLOAT)m_iWindowHeight;
 	m_pMainCamera->SetProjMatrix(D3DX_PI / 4, fAspectRatio, 0.1f, 10000.0f);

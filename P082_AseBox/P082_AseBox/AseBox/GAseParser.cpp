@@ -254,11 +254,16 @@ bool GAseParser::GetTrackListFromString(GAseModel* stModel, AseTrackType TrackTy
 			ST_ANI_SCL stSclData;
 			GetData(&stSclData, ANI_SCL_DATA);
 			pTrack.get()->vecVector = stSclData.vecVec;
-			pTrack.get()->qRotate.x = stSclData.vecRot.x;
-			pTrack.get()->qRotate.y = stSclData.vecRot.y;
-			pTrack.get()->qRotate.z = stSclData.vecRot.z;
-			pTrack.get()->qRotate.w = stSclData.vecRot.w;
+			//pTrack.get()->qRotate.x = stSclData.vecRot.x;
+			//pTrack.get()->qRotate.y = stSclData.vecRot.y;
+			//pTrack.get()->qRotate.z = stSclData.vecRot.z;
+			//pTrack.get()->qRotate.w = stSclData.vecRot.w;
 			pTrack.get()->iTick = stSclData.iTick;
+
+			// 임의의 축과 각을 쿼터니언으로 변환
+			D3DXQuaternionRotationAxis(&pTrack.get()->qRotate, &D3DXVECTOR3(stSclData.vecRot.x, stSclData.vecRot.y, stSclData.vecRot.z), stSclData.vecRot.w);
+
+
 			vTrack.push_back(pTrack);
 
 			if (vTrack.size() > 1) {
@@ -266,10 +271,27 @@ bool GAseParser::GetTrackListFromString(GAseModel* stModel, AseTrackType TrackTy
 				vTrack[vTrack.size() - 2].get()->pNext = vTrack[vTrack.size() - 1].get();
 				vTrack[vTrack.size() - 1].get()->pNext = NULL;
 			}
-			else if (vTrack.size() <= 1) {
+			else if (vTrack.size() == 1) {
 				vTrack[vTrack.size() - 1].get()->pPrev = NULL;
 				vTrack[vTrack.size() - 1].get()->pNext = NULL;
+
+
+
+//				D3DXQuaternionMultiply(&pTrack->qRotate, &stModel->m_vObj[0]->m_qRotation, &pTrack->qRotate);
+
+
 			}
+
+			// 이전트랙의 쿼터니온과 누적시킴.
+
+			//if (pTrack->pPrev != NULL)
+			//{
+			//	D3DXQuaternionMultiply(&pTrack->qRotate, &pTrack->pPrev->qRotate, &pTrack->qRotate);
+			//}
+
+
+
+
 			//_stscanf(GetNextTokenString(), _T("%s%d%f%f%f %f%f%f%f"), m_pString, &Track.iTick,
 			//	&Track.vVector.x, &Track.vVector.z, &Track.vVector.y,
 			//	&Track.qRotate.x, &Track.qRotate.z, &Track.qRotate.y, &Track.qRotate.w);

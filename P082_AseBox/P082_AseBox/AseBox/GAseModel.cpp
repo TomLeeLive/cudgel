@@ -315,11 +315,11 @@ void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack,
 			for (int j = 0; j< m_vObj[0].get()->m_vRotTrack.size(); j++) {
 				if (m_fTickFrame < m_vObj[0].get()->m_vRotTrack[0].get()->iTick) {
 					*pStartTrack = NULL;
-					*pEndTrack = m_vObj[0].get()->m_vRotTrack[j].get();
+					*pEndTrack = m_vObj[0].get()->m_vRotTrack[0].get();
 					break;
 				}
 				else if (m_fTickFrame >= m_vObj[0].get()->m_vRotTrack[  m_vObj[0].get()->m_vRotTrack.size() - 1  ].get()->iTick) {
-					*pStartTrack = m_vObj[0].get()->m_vRotTrack[j].get()->pNext;
+					*pStartTrack = m_vObj[0].get()->m_vRotTrack[ m_vObj[0].get()->m_vRotTrack.size() - 1 ].get()->pNext;
 					*pEndTrack = NULL;
 					break;
 				}
@@ -339,6 +339,18 @@ void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack,
 		case ANITRACK_TYPE_SCL:
 		{
 			for (int j = 0; j< m_vObj[0].get()->m_vSclTrack.size(); j++) {
+
+				if (m_fTickFrame < m_vObj[0].get()->m_vSclTrack[0].get()->iTick) {
+					*pStartTrack = NULL;
+					*pEndTrack = m_vObj[0].get()->m_vSclTrack[0].get();
+					break;
+				}
+				else if (m_fTickFrame >= m_vObj[0].get()->m_vSclTrack[ m_vObj[0].get()->m_vSclTrack.size() - 1 ].get()->iTick) {
+					*pStartTrack = m_vObj[0].get()->m_vSclTrack[ m_vObj[0].get()->m_vSclTrack.size() - 1 ].get()->pNext;
+					*pEndTrack = NULL;
+					break;
+				}
+
 				if (m_fTickFrame >= m_vObj[0].get()->m_vSclTrack[j].get()->iTick
 					&& m_fTickFrame < m_vObj[0].get()->m_vSclTrack[j].get()->pNext->iTick)
 				{
@@ -346,16 +358,7 @@ void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack,
 					*pEndTrack = m_vObj[0].get()->m_vSclTrack[j].get()->pNext;
 					break;
 				}
-				else if (m_fTickFrame < m_vObj[0].get()->m_vSclTrack[j].get()->iTick) {
-					*pStartTrack = NULL;
-					*pEndTrack = m_vObj[0].get()->m_vSclTrack[j].get();
-					break;
-				}
-				else if (m_fTickFrame >= m_vObj[0].get()->m_vSclTrack[j].get()->pNext->iTick) {
-					*pStartTrack = m_vObj[0].get()->m_vSclTrack[j].get()->pNext;
-					*pEndTrack = NULL;
-					break;
-				}
+
 			}
 		}
 		break;
@@ -435,11 +438,61 @@ bool		GAseModel::Frame() {
 
 		//Scale
 		if (m_vObj[0].get()->m_vSclTrack.size() != 0) {
+
 			GAnimTrack* pStartTrack = NULL;
 			GAnimTrack* pEndTrack = NULL;
 
+			D3DXMATRIX matScaleRot, matInvScaleRot;
+			D3DXMatrixIdentity(&matScaleRot);
+			D3DXMatrixIdentity(&matInvScaleRot);
+
+			D3DXQUATERNION qS;
+			float fStartTick = 0.0f, fEndTick = 0.0f;
+			D3DXVECTOR3 vScale(m_vObj[0].get()->m_matWorldScale._11, m_vObj[0].get()->m_matWorldScale._22, m_vObj[0].get()->m_matWorldScale._33);
+
 			//현재 Tick이 어디인지 찾자.
 			GetAnimationTrack(m_fTickFrame, &pStartTrack, &pEndTrack, ANITRACK_TYPE_SCL);
+
+			//신축트랙 보간
+			if (pStartTrack == NULL) {
+				vScale = m_vObj[0]->m_vecTM_SCALE;
+
+				D3DXQuaternionRotationAxis(&qS, &m_vObj[0]->m_vecTM_SCALE_AXIS, m_vObj[0]->m_fTM_SCALEAXISANG);
+
+				fStartTick = 0.0f;
+				fEndTick = pEndTrack->iTick;
+			}
+			else if (pEndTrack == NULL) {
+				vScale = pStartTrack->vecVector;
+				qS = pStartTrack->qRotate;
+
+				fStartTick = pStartTrack->iTick;
+
+				fEndTick = pStartTrack->iTick + (m_fFrameSpeed*m_fTickPerFrame);
+			}
+			else {
+				vScale = pStartTrack->vecVector;
+				qS = pStartTrack->qRotate;
+
+				fStartTick = pStartTrack->iTick;
+				fEndTick = pEndTrack->iTick;
+
+				
+			}
+			float fTValue = (m_fTickFrame - fStartTick) / (fEndTick - fStartTick);
+
+			D3DXVec3Lerp(&vScale, &vScale, &pEndTrack->vecVector, fTValue);
+			D3DXQuaternionSlerp(&qS, &qS, &pEndTrack->qRotate, fTValue);
+
+			//사원수 -> 행렬로 변환등...
+			D3DXMatrixScaling(&m_vObj[0].get()->m_matWorldScale, vScale.x, vScale.y, vScale.z);
+			D3DXMatrixRotationQuaternion(&matScaleRot, &qS);
+			D3DXMatrixInverse(&matInvScaleRot, NULL, &matScaleRot);
+
+			m_vObj[0].get()->m_matWorldScale = matInvScaleRot * m_vObj[0].get()->m_matWorldScale * matScaleRot;
+
+
+
 		}
 	}
 
@@ -457,7 +510,7 @@ bool		GAseModel::Render(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* m
 	
 	D3DXMATRIX	  matTemp;
 	D3DXMatrixIdentity(&matTemp);
-	matTemp = m_vObj[0].get()->m_matWorldRotate * m_vObj[0].get()->m_matWorldTrans * *matWorld;
+	matTemp = m_vObj[0].get()->m_matWorldScale * m_vObj[0].get()->m_matWorldRotate * m_vObj[0].get()->m_matWorldTrans * *matWorld;
 
 	D3DXMatrixTranspose(&cb.mWorld, &matTemp);
 	D3DXMatrixTranspose(&cb.mView, matView);

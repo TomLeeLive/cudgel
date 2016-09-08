@@ -32,12 +32,14 @@ public:
 		L"*SCENE_FRAMESPEED",
 		L"*SCENE_TICKSPERFRAME" };
 
-	TCHAR* g_pAseMaterialTokens[5] = { 
+	TCHAR* g_pAseMaterialTokens[6] = { 
 		L"*MATERIAL_NAME",
 		L"*MATERIAL_AMBIENT",
 		L"*MATERIAL_DIFFUSE", 
 		L"*MATERIAL_SPECULAR",
-		L"*BITMAP" };
+		L"*MAP_SUBNO",
+		L"*BITMAP"
+	};
 
 	TCHAR* g_pAseGeomObjectTokens[8] = { 
 		L"*NODE_PARENT",
@@ -187,6 +189,7 @@ public:
 
 	void	CountGeomObjFromFile(GAseModel* stModel);
 	void	InitAseModel(TCHAR* strFile, GAseModel* stModel);
+	void	SetPnctMultiObjData(GAseModel* stModel,int iObjNum = 0);
 	void    SetPnctData(GAseModel* stModel, int iObjNum = 0);
 	bool	GetTrackListFromString(GAseModel* stModel /*vector<shared_ptr<GAnimTrack>>& vTrack*/, AseTrackType TrackType);
 	int		GetAnimationDataFromFile(GAseModel* stModel);

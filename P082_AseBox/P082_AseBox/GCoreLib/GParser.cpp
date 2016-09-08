@@ -65,7 +65,10 @@ BOOL GParser::GetData(VOID* pData, INT DataType)
 		break;
 		case MESH_FACE_DATA:
 		{
-			int iTemp;
+			int iTemp; int iTemp2 = -1;
+			//ST_INT_FOUR stTemp;
+			//memset(&stTemp, 0, sizeof(stTemp));
+
 			//%s %d %s %d %s %d %s %d %s %d
 			_stscanf(m_pBuffer, _T("%s %s%s %d %s %d %s %d %s %d %s %d %s %d %s %d %s %d"),
 				m_pString, m_pString, m_pString,
@@ -74,8 +77,26 @@ BOOL GParser::GetData(VOID* pData, INT DataType)
 				m_pString, &iTemp,
 				m_pString, &iTemp,
 				m_pString, &iTemp,
-				m_pString, &((ST_INT_FOUR*)pData)->index4
+				m_pString, &iTemp2
 				);
+
+			if (iTemp2 == -1) {
+				_stscanf(m_pBuffer, _T("%s %s%s %d %s %d %s %d %s %d %s %d %s %d %s %s %d"),
+					m_pString, m_pString, m_pString,
+					&((ST_INT_FOUR*)pData)->index1, m_pString, &((ST_INT_FOUR*)pData)->index2, m_pString, &((ST_INT_FOUR*)pData)->index3,
+					m_pString, &iTemp,
+					m_pString, &iTemp,
+					m_pString, &iTemp,
+					m_pString, 
+					m_pString, &iTemp2
+					);
+
+				((ST_INT_FOUR*)pData)->index4 = iTemp2;
+			}
+			else {
+				((ST_INT_FOUR*)pData)->index4 = iTemp2;
+			}
+			
 		}
 		break;
 		case MESH_VERTEX_DATA:

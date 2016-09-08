@@ -24,16 +24,26 @@ struct ConstantBuffer
 	D3DXMATRIX mProjection;
 };
 
-struct GAseScene {
+class GAseScene {
+public:
 	// Scene정보들..
 	TCHAR				m_szName[MAX_PATH];				//*SCENE_FILENAME "Box.max"
 	int					m_iFrame;						//*SCENE_FIRSTFRAME 0
 	int					m_iLastFrame;					//*SCENE_LASTFRAME 100
 	int					m_iFrameSpeed;					//*SCENE_FRAMESPEED 30
 	int					m_iTicksPerFrame;				//*SCENE_TICKSPERFRAME 160
+	GAseScene() {
+		memset(m_szName, 0, sizeof(m_szName));
+	}
+	~GAseScene() {}
 };
 
-struct GAseMaterial {
+class GAseMaterial {
+public:
+	//int	m_iType;		// 1: diffuse 9:reflect
+	bool  m_iDiffuse;
+	bool  m_iReflect;
+
 	vector<shared_ptr<GAseMaterial>>				m_vSubMaterial;
 	//int												m_iSubMaterial;				//0이면 SubMaterial 없는 걸로 처리. 0이 아니면 Submaterial 있음.
 	TCHAR											m_szName[MAX_PATH];			//*MATERIAL_NAME "01 - Default"
@@ -41,8 +51,14 @@ struct GAseMaterial {
 	D3DXVECTOR3										m_vecDiffuse;				//*MATERIAL_DIFFUSE 0.5882	0.5882	0.5882
 	D3DXVECTOR3										m_vecSpecular;				//*MATERIAL_SPECULAR 0.9000	0.9000	0.9000
 	TCHAR											m_szMapDiffuse[MAX_PATH];	//*BITMAP "C:\TBasis200\Data\object\textures\flagstone.bmp"
+	TCHAR											m_szMapReflect[MAX_PATH];
 	ComPtr<ID3D11ShaderResourceView>				m_pTextureRV = NULL;
 	GAseMaterial() { //m_iSubMaterial = 0; 
+		m_iDiffuse = 0;
+		m_iReflect = 0;
+		//m_iType = 0;
+		memset(m_szMapDiffuse, 0, sizeof(m_szMapDiffuse));
+		memset(m_szMapReflect, 0, sizeof(m_szMapReflect));
 	};
 	~GAseMaterial() {};
 };
@@ -98,6 +114,9 @@ public:
 	float							m_fTM_SCALEAXISANG;
 	//for Animation [END]
 	GAseGeom(){
+		memset(m_szName, 0, sizeof(m_szName));
+		memset(m_szParentName, 0, sizeof(m_szParentName));
+
 		D3DXMatrixIdentity(&m_matWorldTrans);
 		D3DXMatrixIdentity(&m_matWorldRotate);
 		D3DXMatrixIdentity(&m_matWorldScale);

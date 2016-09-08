@@ -488,11 +488,8 @@ void		GAseModel::AniFrame() {
 }
 bool		GAseModel::Frame() {
 
-
-
-	AniFrame();
-
-
+	if(m_vGeomObj.size() ==1)
+		AniFrame();
 
 	return true;
 };
@@ -514,6 +511,9 @@ bool		GAseModel::Render(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* m
 
 	g_pImmediateContext->UpdateSubresource(m_pConstantBuffer.Get(), 0, NULL, &cb, 0, 0);
 
+
+	if (m_vGeomObj.size() > 1)
+		return false;
 	//
 	// Renders a triangle
 	//

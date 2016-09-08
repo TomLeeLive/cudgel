@@ -85,6 +85,7 @@ void GAseParser::GetStringWeNeed(VOID* pOutStr, VOID* pInStr) {
 
 int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 
+	int iFaceCountSubtract = 0;
 
 	int iSize = sizeof(g_pAseMeshTokens) / sizeof(g_pAseMeshTokens[0]);
 
@@ -144,6 +145,12 @@ int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 
 					for (int i = 0; i < m_iFaceCount; i++) {
 						GetDataFromFileLoop(L"*MESH_FACE", &stMeshFace, MESH_FACE_DATA);
+
+						if (stMeshFace.index4 == 255){
+							iFaceCountSubtract++;
+							continue;
+						}
+
 						m_vIndex.push_back(stMeshFace.index1);
 						m_vIndex.push_back(stMeshFace.index2);
 						m_vIndex.push_back(stMeshFace.index3);
@@ -226,6 +233,14 @@ int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 						 GetDataFromFileLoop(L"*MESH_VERTEXNORMAL", &vNormal, MESH_VERTEX_DATA);
 						 m_vNorList.push_back(vNormal);
 					}
+
+					m_iFaceCount -= iFaceCountSubtract;
+					//multiobj일 경우 ... SetPnctData를 호출해서 해당 obj의 pnct vector에 push back을 한다.
+					if (stModel->m_vGeomObj.size() > 1) //멀티 오브젝트일 경우..
+					{
+						SetPnctData(stModel,m_iObjCount);
+						ResetVariables();
+					}
 					return 0;
 				}
 				break;
@@ -236,13 +251,99 @@ int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 		//fgetc( m_pStream);
 	}
 
-	//multiobj일 경우 ... SetPnctData를 호출해서 해당 obj의 pnct vector에 push back을 한다.
-	if (stModel->m_vGeomObj.size() > 1) //멀티 오브젝트일 경우..
-		SetPnctData(stModel);
+
 	
 	return 0;
 }
+void GAseParser::SetPnctMultiObjData(GAseModel* stModel, int iObjNum) {
+	D3DXVECTOR3		vp;
+	D3DXVECTOR3		vn;
+	D3DXVECTOR4		vc;
+	D3DXVECTOR2     vt;
+	D3DXMATRIX		matWorldInverse;
 
+
+	// Create index buffer
+	WORD* indices;
+	indices = (WORD *)malloc(sizeof(WORD) * m_iFaceCount * 3);
+
+	if (m_vIndex.size() != 0) {
+		for (int i = 0; i < m_iFaceCount * 3; i++) {
+
+			if (i == 0 || i % 3 == 0) {
+				indices[i] = { (WORD)(m_vIndex[i]) };
+			}
+			else if (i == 1 || i % 3 == 1) {
+				indices[i] = { (WORD)(m_vIndex[i + 1]) };
+			}
+			else if (i == 2 || i % 3 == 2) {
+				indices[i] = { (WORD)(m_vIndex[i - 1]) };
+			}
+		}
+	}
+
+
+	WORD* Texindices;
+	Texindices = (WORD *)malloc(sizeof(WORD) * m_iFaceCount * 3);
+
+
+	if (m_vTextureIndex.size() != 0) {
+		for (int i = 0; i < m_iFaceCount * 3; i++) {
+
+			if (i == 0 || i % 3 == 0) {
+				Texindices[i] = { (WORD)(m_vTextureIndex[i]) };
+			}
+			else if (i == 1 || i % 3 == 1) {
+				Texindices[i] = { (WORD)(m_vTextureIndex[i + 1]) };
+			}
+			else if (i == 2 || i % 3 == 2) {
+				Texindices[i] = { (WORD)(m_vTextureIndex[i - 1]) };
+			}
+		}
+	}
+
+	D3DXMatrixInverse(&matWorldInverse, NULL, &stModel->m_vGeomObj[iObjNum].get()->m_matWorld);
+
+
+
+
+
+
+	for (int i = 0; i < m_iFaceCount * 3; i++) {
+
+		vp = m_vPosList[indices[i]];
+
+		D3DXVec3TransformCoord(&vp, &vp, &matWorldInverse);
+
+		if (m_vNorList.size() != 0)
+			vn = m_vNorList[indices[i]];
+		else
+			vn = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
+
+		if (m_vColList.size() != 0)
+			vc = D3DXVECTOR4(m_vColList[indices[i]].x, m_vColList[indices[i]].y, m_vColList[indices[i]].z, 1.0f);
+		else
+			vc = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
+
+		if (m_vTextureIndex.size() != 0)
+			vt = D3DXVECTOR2(m_vTexList[Texindices[i]].x, m_vTexList[Texindices[i]].y);
+		else
+			vt = D3DXVECTOR2(1.0f, 1.0f);
+
+		if (stModel->m_vMaterial[0]->m_vSubMaterial.size() == 0) {
+			stModel->m_vGeomObj[iObjNum].get()->m_vObj[0].get()->m_vPnctVertex.push_back(PNCT_VERTEX(vp, vn, vc, vt));
+		}
+		else {
+			int j = i / 3;
+			stModel->m_vGeomObj[iObjNum].get()->m_vObj[m_vSubMtlIndex[j]]->m_vPnctVertex.push_back(PNCT_VERTEX(vp, vn, vc, vt));
+		}
+	}
+
+
+
+	delete[] Texindices;
+	delete[] indices;
+}
 
 bool GAseParser::GetTrackListFromString(GAseModel* stModel, AseTrackType TrackType)
 {
@@ -688,7 +789,7 @@ int		GAseParser::GetDataFromFile(GAseModel* stModel ){
 				case MATERIALLIST:
 				{
 					int iMaterialCount = 0;
-					int iSubMtls = 0;
+					int iSubMtls = -1;
 
 					GetDataFromFileLoop(L"*MATERIAL_COUNT", &iMaterialCount, INT_DATA);
 
@@ -704,22 +805,39 @@ int		GAseParser::GetDataFromFile(GAseModel* stModel ){
 
 						SaveFilePosition();
 
-						GetDataFromFileLoop(L"*NUMSUBMTLS", &iSubMtls, INT_DATA);
+						//GetDataFromFileLoop(L"*NUMSUBMTLS", &iSubMtls, INT_DATA);
 
-						if (iSubMtls == 0) {
+						while (_tcsicmp(m_pString, L"{")) {
+							_fgetts(m_pBuffer, 256, m_pStream);
+							_stscanf(m_pBuffer, _T("%s"), m_pString);
+							if (!_tcsicmp(m_pString, L"*NUMSUBMTLS")){
+								GetData(&iSubMtls, INT_DATA);
+								break;
+							}
+						}
+
+
+
+
+
+
+
+						if (iSubMtls == -1) {
 							RestoreFilePosition();
-							GetDataFromFileLoop(g_pAseMaterialTokens[4], &(material.get()->m_szMapDiffuse), STRING_DATA);
-							GetStringWeNeed(material.get()->m_szMapDiffuse, material.get()->m_szMapDiffuse);
+							GetDataFromFileLoop(g_pAseMaterialTokens[4], &(material.get()->m_iDiffuse), INT_DATA);
+
+							if (material.get()->m_iDiffuse == 1) {
+								GetDataFromFileLoop(g_pAseMaterialTokens[5], &(material.get()->m_szMapDiffuse), STRING_DATA);
+								GetStringWeNeed(material.get()->m_szMapDiffuse, material.get()->m_szMapDiffuse);
+							}
+							
 
 						}
 						else {
-							memset(&(material.get()->m_szMapDiffuse), 0, sizeof(&(material.get()->m_szMapDiffuse)));
 
 
 							for (int i = 0; i < iSubMtls; i++) {
 								auto submaterial = make_shared<GAseMaterial>();
-
-								memset(&(submaterial.get()->m_szMapDiffuse), 0, sizeof(&(submaterial.get()->m_szMapDiffuse)));
 
 								GetDataFromFileLoop(g_pAseMaterialTokens[0], &(submaterial.get()->m_szName), STRING_DATA);
 								GetDataFromFileLoop(g_pAseMaterialTokens[1], &(submaterial.get()->m_vecAmbient), VERTEX_DATA);
@@ -737,8 +855,12 @@ int		GAseParser::GetDataFromFile(GAseModel* stModel ){
 
 									if(!_tcsicmp(m_pString, g_pAseMaterialTokens[4])){
 
-										GetData(&(submaterial.get()->m_szMapDiffuse), STRING_DATA);
-										GetStringWeNeed(submaterial.get()->m_szMapDiffuse, submaterial.get()->m_szMapDiffuse);
+										GetData(&(material.get()->m_iDiffuse), INT_DATA);
+
+										if (material.get()->m_iDiffuse == 1) {
+											GetDataFromFileLoop(g_pAseMaterialTokens[5], &(submaterial.get()->m_szMapDiffuse), STRING_DATA);
+											GetStringWeNeed(submaterial.get()->m_szMapDiffuse, submaterial.get()->m_szMapDiffuse);
+										}
 										break;
 									}
 								}

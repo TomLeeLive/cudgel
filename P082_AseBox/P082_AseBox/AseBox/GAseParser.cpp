@@ -47,7 +47,8 @@ void	GAseParser::InitAseModel(TCHAR* strFile, GAseModel* stModel) {
 
 	CloseStream();
 
-	SetPnctData(stModel);
+	if(stModel->m_vGeomObj.size() == 1) //멀티 오브젝트가 아닐때...
+		SetPnctData(stModel);
 
 
 	//To-Do:상속관계구축
@@ -235,6 +236,10 @@ int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 		//fgetc( m_pStream);
 	}
 
+	//multiobj일 경우 ... SetPnctData를 호출해서 해당 obj의 pnct vector에 push back을 한다.
+	if (stModel->m_vGeomObj.size() > 1) //멀티 오브젝트일 경우..
+		SetPnctData(stModel);
+	
 	return 0;
 }
 
@@ -499,13 +504,32 @@ int		GAseParser::GetAnimationDataFromFile(GAseModel* stModel) {
 int		GAseParser::GetGeomObjDataFromFile(GAseModel* stModel) {
 
 	bool	bLoop = true;
-	//GAseObj* aseobj = new GAseObj;
+
+	
+	if (_tcsicmp(m_pString, L"*HELPEROBJECT")) {
+		SaveFilePosition();
+
+		while (!feof(m_pStream))
+		{
+			_fgetts(m_pBuffer, 256, m_pStream);
+			_stscanf(m_pBuffer, _T("%s"), m_pString);
+
+			if (!_tcsicmp(m_pString, L"*MATERIAL_REF")){
+				GetData(&stModel->m_vGeomObj[m_iObjCount].get()->m_iMaterial_Ref, INT_DATA);
+				break;
+			}
+			
+		}
+		RestoreFilePosition();
+	}
+
+
 
 	if (stModel->m_vMaterial[0]->m_vSubMaterial.size() == 0) {
 		stModel->m_vGeomObj[m_iObjCount].get()->m_vObj.push_back(make_shared<GAseObj>());
 	}
-	else {
-		for (int i = 0; i< stModel->m_vMaterial[0]->m_vSubMaterial.size(); i++)   //0번 은 오리지널 데이터로 남겨놓는다.
+	else if(_tcsicmp(m_pString, L"*HELPEROBJECT")) {
+		for (int i = 0; i< stModel->m_vMaterial[    stModel->m_vGeomObj[m_iObjCount].get()->m_iMaterial_Ref     ]->m_vSubMaterial.size(); i++)
 			stModel->m_vGeomObj[m_iObjCount].get()->m_vObj.push_back(make_shared<GAseObj>());
 	}
 
@@ -583,12 +607,12 @@ int		GAseParser::GetGeomObjDataFromFile(GAseModel* stModel) {
 
 					//GetData(&(stModel->m_vGeomObj[m_iObjCount].get()->m_vObj[0].get()->m_szName), STRING_DATA);
 
-					D3DXMatrixIdentity(&(stModel->m_vGeomObj[m_iObjCount].get()->m_vObj[0].get()->m_matWorld));
+					D3DXMatrixIdentity(&(stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld));
 
-					stModel->m_vGeomObj[m_iObjCount].get()->m_vObj[0].get()->m_matWorld._11 = vecROW0.x; stModel->m_vGeomObj[m_iObjCount].get()->m_vObj[0].get()->m_matWorld._12 = vecROW0.y; stModel->m_vGeomObj[m_iObjCount].get()->m_vObj[0].get()->m_matWorld._13 = vecROW0.z;
-					stModel->m_vGeomObj[m_iObjCount].get()->m_vObj[0].get()->m_matWorld._31 = vecROW1.x; stModel->m_vGeomObj[m_iObjCount].get()->m_vObj[0].get()->m_matWorld._32 = vecROW1.y; stModel->m_vGeomObj[m_iObjCount].get()->m_vObj[0].get()->m_matWorld._33 = vecROW1.z;
-					stModel->m_vGeomObj[m_iObjCount].get()->m_vObj[0].get()->m_matWorld._21 = vecROW2.x; stModel->m_vGeomObj[m_iObjCount].get()->m_vObj[0].get()->m_matWorld._22 = vecROW2.y; stModel->m_vGeomObj[m_iObjCount].get()->m_vObj[0].get()->m_matWorld._23 = vecROW2.z;
-					stModel->m_vGeomObj[m_iObjCount].get()->m_vObj[0].get()->m_matWorld._41 = vecROW3.x; stModel->m_vGeomObj[m_iObjCount].get()->m_vObj[0].get()->m_matWorld._42 = vecROW3.y; stModel->m_vGeomObj[m_iObjCount].get()->m_vObj[0].get()->m_matWorld._43 = vecROW3.z;
+					stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._11 = vecROW0.x; stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._12 = vecROW0.y; stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._13 = vecROW0.z;
+					stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._31 = vecROW1.x; stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._32 = vecROW1.y; stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._33 = vecROW1.z;
+					stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._21 = vecROW2.x; stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._22 = vecROW2.y; stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._23 = vecROW2.z;
+					stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._41 = vecROW3.x; stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._42 = vecROW3.y; stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._43 = vecROW3.z;
 				}
 				break;
 				case MESH:
@@ -608,7 +632,7 @@ int		GAseParser::GetGeomObjDataFromFile(GAseModel* stModel) {
 				break;
 				case MATERIAL_REF:
 				{
-					GetData(&stModel->m_vGeomObj[m_iObjCount].get()->m_iMaterial_Ref, INT_DATA);
+					//GetData(&stModel->m_vGeomObj[m_iObjCount].get()->m_iMaterial_Ref, INT_DATA);
 					bLoop = false;
 					m_iObjCount++;
 				}
@@ -705,15 +729,13 @@ int		GAseParser::GetDataFromFile(GAseModel* stModel ){
 								//GetDataFromFileLoop(g_pAseMaterialTokens[4], &(submaterial.get()->m_szMapDiffuse), STRING_DATA);
 								//GetStringWeNeed(submaterial.get()->m_szMapDiffuse, submaterial.get()->m_szMapDiffuse);
 
-								while (!feof(m_pStream))
+								
+								while (_tcsicmp(m_pString, L"}"))
 								{
 									_fgetts(m_pBuffer, 256, m_pStream);
 									_stscanf(m_pBuffer, _T("%s"), m_pString);
 
-									if (!_tcsicmp(m_pString, L"}")) {
-
-										break;
-									}else if(!_tcsicmp(m_pString, g_pAseMaterialTokens[4])){
+									if(!_tcsicmp(m_pString, g_pAseMaterialTokens[4])){
 
 										GetData(&(submaterial.get()->m_szMapDiffuse), STRING_DATA);
 										GetStringWeNeed(submaterial.get()->m_szMapDiffuse, submaterial.get()->m_szMapDiffuse);
@@ -801,7 +823,7 @@ void    GAseParser::SetPnctData(GAseModel* stModel, int iObjNum) {
 		}
 	}
 
-	D3DXMatrixInverse(&matWorldInverse, NULL, &stModel->m_vGeomObj[iObjNum].get()->m_vObj[0].get()->m_matWorld);
+	D3DXMatrixInverse(&matWorldInverse, NULL, &stModel->m_vGeomObj[iObjNum].get()->m_matWorld);
 
 
 

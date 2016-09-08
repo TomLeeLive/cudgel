@@ -18,7 +18,7 @@ public:
 		L"*SCENE",
 		L"*MATERIAL_LIST",
 		L"*GEOMOBJECT",
-		L"HELPEROBJECT" };
+		L"*HELPEROBJECT" };
 	enum AseItemsType { 
 		SCENE = 0, 
 		MATERIALLIST, 
@@ -39,13 +39,16 @@ public:
 		L"*MATERIAL_SPECULAR",
 		L"*BITMAP" };
 
-	TCHAR* g_pAseGeomObjectTokens[6] = { 
+	TCHAR* g_pAseGeomObjectTokens[8] = { 
 		L"*NODE_PARENT",
 		L"*NODE_NAME",
 		L"*NODE_TM",
 		L"*MESH",
 		L"*TM_ANIMATION",
-		L"*MATERIAL_REF"};
+		L"*MATERIAL_REF",
+		L"*BOUNDINGBOX_MIN",
+		L"*BOUNDINGBOX_MAX"
+	};
 
 	enum AseGeomObjectTokensType { 
 		NODE_PARENT = 0,
@@ -69,8 +72,6 @@ public:
 		L"*TM_SCALE",
 		L"*TM_SCALEAXIS",
 		L"*TM_SCALEAXISANG", 
-		L"*BOUNDINGBOX_MIN",
-		L"*BOUNDINGBOX_MAX"
 	};
 
 	TCHAR* g_pAseMeshTokens[11] = { 

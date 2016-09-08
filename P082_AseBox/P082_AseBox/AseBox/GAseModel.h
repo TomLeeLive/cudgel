@@ -50,7 +50,7 @@ struct GAseMaterial {
 class GAseObj {
 public:
 	
-	D3DXMATRIX						m_matWorld;					//월드행렬
+	
 
 	vector<PNCT_VERTEX>				m_vPnctVertex;				//for VB
 	ComPtr<ID3D11Buffer>			m_pVertexBuffer = NULL;
@@ -62,6 +62,8 @@ public:
 };
 class GAseGeom {
 public:
+	D3DXMATRIX						m_matWorld;					//월드행렬
+
 	int										m_iType;			//0:Geom 1:Helper
 
 	TCHAR									m_szName[MAX_PATH];			//*NODE_NAME "Box01"

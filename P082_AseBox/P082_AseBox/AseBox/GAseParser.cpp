@@ -2,6 +2,7 @@
 
 void GAseParser::CountGeomObjFromFile(GAseModel* stModel) {
 
+	m_iObjCount = 0;
 	//To-Do: 현재 읽은 ASE 파일이 Multi Object Animation인지 판정하여 
 	//vector<shared_ptr<GAseGeom>>			m_vGeomObj; 에 GAseGeom 객체를 생성하여 push 한다.(Geomobject 갯수 만큼)
 	while (!feof(m_pStream))
@@ -85,7 +86,7 @@ void GAseParser::GetStringWeNeed(VOID* pOutStr, VOID* pInStr) {
 
 int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 
-	int iFaceCountSubtract = 0;
+	//int iFaceCountSubtract = 0;
 
 	int iSize = sizeof(g_pAseMeshTokens) / sizeof(g_pAseMeshTokens[0]);
 
@@ -146,10 +147,10 @@ int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 					for (int i = 0; i < m_iFaceCount; i++) {
 						GetDataFromFileLoop(L"*MESH_FACE", &stMeshFace, MESH_FACE_DATA);
 
-						if (stMeshFace.index4 == 255){
-							iFaceCountSubtract++;
-							continue;
-						}
+						//if (stMeshFace.index4 == 255){
+						//	iFaceCountSubtract++;
+						//	continue;
+						//}
 
 						m_vIndex.push_back(stMeshFace.index1);
 						m_vIndex.push_back(stMeshFace.index2);
@@ -234,7 +235,8 @@ int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 						 m_vNorList.push_back(vNormal);
 					}
 
-					m_iFaceCount -= iFaceCountSubtract;
+					//m_iFaceCount -= iFaceCountSubtract;
+
 					//multiobj일 경우 ... SetPnctData를 호출해서 해당 obj의 pnct vector에 push back을 한다.
 					if (stModel->m_vGeomObj.size() > 1) //멀티 오브젝트일 경우..
 					{
@@ -255,6 +257,7 @@ int		GAseParser::GetMeshDataFromFile(GAseModel* stModel) {
 	
 	return 0;
 }
+/*
 void GAseParser::SetPnctMultiObjData(GAseModel* stModel, int iObjNum) {
 	D3DXVECTOR3		vp;
 	D3DXVECTOR3		vn;
@@ -344,7 +347,7 @@ void GAseParser::SetPnctMultiObjData(GAseModel* stModel, int iObjNum) {
 	delete[] Texindices;
 	delete[] indices;
 }
-
+*/
 bool GAseParser::GetTrackListFromString(GAseModel* stModel, AseTrackType TrackType)
 {
 	//GAnimTrack Track;
@@ -978,6 +981,10 @@ void    GAseParser::SetPnctData(GAseModel* stModel, int iObjNum) {
 			}
 			else {
 				int j = i / 3;
+
+				if (m_vSubMtlIndex[j] == 255)
+					continue;
+
 				stModel->m_vGeomObj[iObjNum].get()->m_vObj[    m_vSubMtlIndex[j]    ]->m_vPnctVertex.push_back(PNCT_VERTEX(vp, vn, vc, vt));
 			}
 		}

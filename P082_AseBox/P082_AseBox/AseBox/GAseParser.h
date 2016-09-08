@@ -179,7 +179,7 @@ public:
 		m_vTextureIndex.clear();
 		m_vSubMtlIndex.clear();
 
-		m_iObjCount		 = 0;
+		//m_iObjCount		 = 0;
 		m_iPosCount      = 0;
 		m_iFaceCount	 = 0;
 		m_iTexVerCount	 = 0;
@@ -189,7 +189,7 @@ public:
 
 	void	CountGeomObjFromFile(GAseModel* stModel);
 	void	InitAseModel(TCHAR* strFile, GAseModel* stModel);
-	void	SetPnctMultiObjData(GAseModel* stModel,int iObjNum = 0);
+	//void	SetPnctMultiObjData(GAseModel* stModel,int iObjNum = 0);
 	void    SetPnctData(GAseModel* stModel, int iObjNum = 0);
 	bool	GetTrackListFromString(GAseModel* stModel /*vector<shared_ptr<GAnimTrack>>& vTrack*/, AseTrackType TrackType);
 	int		GetAnimationDataFromFile(GAseModel* stModel);

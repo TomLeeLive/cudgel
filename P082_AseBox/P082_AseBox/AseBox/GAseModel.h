@@ -154,10 +154,15 @@ public:
 		ANITRACK_TYPE_SCL
 	};
 
-	void		AniFrame();
-	void		GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack, GAnimTrack** pEndTrack, ANITRACK_TYPE nTrackType);
+	bool		SingleModelInit();
+	void		SingleAniFrame();
+	bool		MultiModelInit();
+	void		MultiAniFrame();
+	void		GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack, GAnimTrack** pEndTrack, ANITRACK_TYPE nTrackType,int iGeomNum = 0);
 	bool		Init(TCHAR* strFileName, TCHAR* strShaderName);
 	bool		Frame();
+	bool		SingleRender(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* matProj);
+	bool		MultiRender(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* matProj);
 	bool		Render(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* matProj);
 	bool		Release();
 public:

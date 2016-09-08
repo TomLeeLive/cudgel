@@ -49,7 +49,7 @@ struct GAseMaterial {
 
 class GAseObj {
 public:
-	TCHAR							m_szName[MAX_PATH];			//*NODE_NAME "Box01"
+	
 	D3DXMATRIX						m_matWorld;					//월드행렬
 
 	vector<PNCT_VERTEX>				m_vPnctVertex;				//for VB
@@ -63,6 +63,14 @@ public:
 class GAseGeom {
 public:
 	int										m_iType;			//0:Geom 1:Helper
+
+	TCHAR									m_szName[MAX_PATH];			//*NODE_NAME "Box01"
+	TCHAR									m_szParentName[MAX_PATH];	//*NODE_PARENT "Dummy01"
+	int										m_iMaterial_Ref;
+	D3DXVECTOR3								m_vecBoundingboxMin;
+	D3DXVECTOR3								m_vecBoundingboxMax;
+
+
 	GAseGeom*								m_pParentObj;
 	vector<GAseGeom*>  						m_pChildObj;
 	vector<shared_ptr<GAseObj>>				m_vObj;

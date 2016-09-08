@@ -53,9 +53,12 @@ public:
 		NODE_TM, 
 		MESH, 
 		TM_ANIMATION,
-		MATERIAL_REF};
+		MATERIAL_REF,
+		BOUNDINGBOX_MIN,	//Helperobject의 경우 bounding box가 있다.
+		BOUNDINGBOX_MAX
+	};
 
-	TCHAR* g_pAseNodeTmTokens[10] = { 
+	TCHAR* g_pAseNodeTmTokens[12] = { 
 		L"*TM_ROW0",
 		L"*TM_ROW1", 
 		L"*TM_ROW2", 
@@ -65,7 +68,10 @@ public:
 		L"*TM_ROTANGLE",
 		L"*TM_SCALE",
 		L"*TM_SCALEAXIS",
-		L"*TM_SCALEAXISANG" };
+		L"*TM_SCALEAXISANG", 
+		L"*BOUNDINGBOX_MIN",
+		L"*BOUNDINGBOX_MAX"
+	};
 
 	TCHAR* g_pAseMeshTokens[11] = { 
 		L"*MESH_NUMVERTEX",
@@ -139,7 +145,7 @@ public:
 		VIS_SAMPLE_TRACK
 	};
 	
-
+	int			m_iObjCount;
 	fpos_t		m_FilePosition;
 	
 	vector<D3DXVECTOR3>				m_vPosList;					// P
@@ -159,6 +165,7 @@ public:
 	int								m_iColorVerCount;			//MESH_NUMCVERTEX
 
 	void	ResetVariables() {
+		
 
 		m_vPosList.clear();
 		m_vNorList.clear();
@@ -169,6 +176,7 @@ public:
 		m_vTextureIndex.clear();
 		m_vSubMtlIndex.clear();
 
+		m_iObjCount		 = 0;
 		m_iPosCount      = 0;
 		m_iFaceCount	 = 0;
 		m_iTexVerCount	 = 0;
@@ -178,11 +186,12 @@ public:
 
 	void	CountGeomObjFromFile(GAseModel* stModel);
 	void	InitAseModel(TCHAR* strFile, GAseModel* stModel);
-	void    SetPnctData(GAseModel* stModel);
+	void    SetPnctData(GAseModel* stModel, int iObjNum = 0);
 	bool	GetTrackListFromString(GAseModel* stModel /*vector<shared_ptr<GAnimTrack>>& vTrack*/, AseTrackType TrackType);
 	int		GetAnimationDataFromFile(GAseModel* stModel);
 	int		GetMeshDataFromFile(GAseModel* stModel);
-	int		GetObjDataFromFile(GAseModel* stModel);
+	//int		GetHelperObjDataFromFile(GAseModel* stModel);
+	int		GetGeomObjDataFromFile(GAseModel* stModel);
 	int		GetDataFromFile(GAseModel* stModel);
 	void	GetStringWeNeed(VOID* pOutStr, VOID* pInStr);
 

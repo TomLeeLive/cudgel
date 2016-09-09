@@ -829,44 +829,54 @@ bool		GAseModel::SingleRender(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMAT
 	return true;
 }
 bool		GAseModel::MultiRender(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* matProj) {
+	//
+	// Update variables
+	//
+
+	ConstantBuffer cb;
+	D3DXMatrixTranspose(&cb.mView, matView);
+	D3DXMatrixTranspose(&cb.mProjection, matProj);
+
+	
+
+
+	//
+	// Renders a triangle
+	//
+
+	g_pImmediateContext->VSSetShader(m_pVertexShader.Get(), NULL, 0);
+	g_pImmediateContext->VSSetConstantBuffers(0, 1, m_pConstantBuffer.GetAddressOf());
+	g_pImmediateContext->PSSetShader(m_pPixelShader.Get(), NULL, 0);
+	g_pImmediateContext->PSSetSamplers(0, 1, m_pSamplerLinear.GetAddressOf());
 
 	for (int i = 0; i < m_vGeomObj.size(); i++) {
 
+		D3DXMATRIX	  matTemp;
+		D3DXMatrixIdentity(&matTemp);
+		//matTemp = m_vGeomObj[i].get()->m_matWorldScale * m_vGeomObj[i].get()->m_matWorldRotate * m_vGeomObj[i].get()->m_matWorldTrans * *matWorld;
+		matTemp = m_vGeomObj[i].get()->m_matWorld * *matWorld;
+
+		D3DXMatrixTranspose(&cb.mWorld, &matTemp);
+		g_pImmediateContext->UpdateSubresource(m_pConstantBuffer.Get(), 0, NULL, &cb, 0, 0);
+
+
+
+
 		for (int j = 0; j < m_vGeomObj[i]->m_vObj.size(); j++) {
 
-			//
-			// Update variables
-			//
-			ConstantBuffer cb;
-
-			D3DXMATRIX	  matTemp;
-			D3DXMatrixIdentity(&matTemp);
-			//matTemp = m_vGeomObj[i].get()->m_matWorldScale * m_vGeomObj[i].get()->m_matWorldRotate * m_vGeomObj[i].get()->m_matWorldTrans * *matWorld;
-			matTemp = m_vGeomObj[i].get()->m_matWorld * *matWorld;
-
-			D3DXMatrixTranspose(&cb.mWorld, &matTemp);
-			D3DXMatrixTranspose(&cb.mView, matView);
-			D3DXMatrixTranspose(&cb.mProjection, matProj);
-
-			g_pImmediateContext->UpdateSubresource(m_pConstantBuffer.Get(), 0, NULL, &cb, 0, 0);
-
-
-
-			//
-			// Renders a triangle
-			//
-
-			g_pImmediateContext->VSSetShader(m_pVertexShader.Get(), NULL, 0);
-			g_pImmediateContext->VSSetConstantBuffers(0, 1, m_pConstantBuffer.GetAddressOf());
-			g_pImmediateContext->PSSetShader(m_pPixelShader.Get(), NULL, 0);
-			g_pImmediateContext->PSSetSamplers(0, 1, m_pSamplerLinear.GetAddressOf());
 
 
 
 
 
-			for (int k = 0; k < m_vMaterial.size(); k++) {
-				for (int l = 0; l < m_vMaterial[k]->m_vSubMaterial.size(); l++) {
+
+
+
+
+			//for (int k = 0; k < m_vMaterial.size(); k++) {
+			//	for (int l = 0; l < m_vMaterial[k]->m_vSubMaterial.size(); l++) {
+
+
 					//Set vertex buffer
 
 					UINT stride = sizeof(PNCT_VERTEX);
@@ -876,8 +886,10 @@ bool		GAseModel::MultiRender(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATR
 					g_pImmediateContext->IASetIndexBuffer(m_vGeomObj[i].get()->m_vObj[j]->m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 					//g_pImmediateContext->DrawIndexed(m_vGeomObj[0].get()->m_vObj[i]->m_vPnctVertex.size(), 0, 0);
 					g_pImmediateContext->Draw(m_vGeomObj[i].get()->m_vObj[j]->m_vPnctVertex.size(), 0);
-				}
-			}
+
+
+			//	}
+			//}
 
 				//for (int i = 0; i < m_vMaterial[i]->m_vSubMaterial.size(); i++) {
 

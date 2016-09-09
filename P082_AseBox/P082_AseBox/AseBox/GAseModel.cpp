@@ -771,8 +771,8 @@ bool		GAseModel::Frame() {
 
 	if (m_vGeomObj.size() == 1)
 		SingleAniFrame();
-	else
-		MultiAniFrame();
+	//else
+	//	MultiAniFrame();
 
 	return true;
 };
@@ -841,7 +841,8 @@ bool		GAseModel::MultiRender(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATR
 
 			D3DXMATRIX	  matTemp;
 			D3DXMatrixIdentity(&matTemp);
-			matTemp = m_vGeomObj[i].get()->m_matWorldScale * m_vGeomObj[i].get()->m_matWorldRotate * m_vGeomObj[i].get()->m_matWorldTrans * *matWorld;
+			//matTemp = m_vGeomObj[i].get()->m_matWorldScale * m_vGeomObj[i].get()->m_matWorldRotate * m_vGeomObj[i].get()->m_matWorldTrans * *matWorld;
+			matTemp = m_vGeomObj[i].get()->m_matWorld * *matWorld;
 
 			D3DXMatrixTranspose(&cb.mWorld, &matTemp);
 			D3DXMatrixTranspose(&cb.mView, matView);
@@ -871,7 +872,7 @@ bool		GAseModel::MultiRender(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATR
 					UINT stride = sizeof(PNCT_VERTEX);
 					UINT offset = 0;
 					g_pImmediateContext->IASetVertexBuffers(0, 1, m_vGeomObj[i].get()->m_vObj[j]->m_pVertexBuffer.GetAddressOf(), &stride, &offset);
-					g_pImmediateContext->PSSetShaderResources(0, 1, m_vMaterial[k]->m_vSubMaterial[l]->m_pTextureRV.GetAddressOf());
+					g_pImmediateContext->PSSetShaderResources(0, 1, m_vMaterial[m_vGeomObj[i].get()->m_iMaterial_Ref]->m_vSubMaterial[j]->m_pTextureRV.GetAddressOf());
 					g_pImmediateContext->IASetIndexBuffer(m_vGeomObj[i].get()->m_vObj[j]->m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 					//g_pImmediateContext->DrawIndexed(m_vGeomObj[0].get()->m_vObj[i]->m_vPnctVertex.size(), 0, 0);
 					g_pImmediateContext->Draw(m_vGeomObj[i].get()->m_vObj[j]->m_vPnctVertex.size(), 0);

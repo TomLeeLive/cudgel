@@ -68,6 +68,7 @@ bool	Sample::Init() {
 #endif
 #ifdef G_DEFINE_ANI_TURRET
 		m_stModel.Init(L"data/Turret_Deploy.ASE", L"Tutorial04.fx");
+		//m_stModel.Init(L"data/mong.ASE", L"Tutorial04.fx");
 		//m_Parser.OpenStream(L"data/MultiCameras.ASE");
 #endif
 	

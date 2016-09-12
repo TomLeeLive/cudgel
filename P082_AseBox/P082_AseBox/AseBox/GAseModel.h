@@ -94,9 +94,9 @@ public:
 
 	//for Animation [START]
 	bool							m_bHasAniTrack;				// 애니메이션정보가 있으면 true;
-	D3DXMATRIX						m_matWorldTrans;			// 월드이동행렬 
-	D3DXMATRIX						m_matWorldRotate;			// 월드회전행렬 
-	D3DXMATRIX						m_matWorldScale;			// 월드신축행렬 
+	D3DXMATRIX						m_matWldTrans;			// 월드이동행렬 
+	D3DXMATRIX						m_matWldRotate;			// 월드회전행렬 
+	D3DXMATRIX						m_matWldScale;			// 월드신축행렬 
 
 	vector<shared_ptr<GAnimTrack>>	m_vPosTrack;				// 이동트랙 
 	vector<shared_ptr<GAnimTrack>>	m_vRotTrack;				// 회전트랙 
@@ -120,9 +120,9 @@ public:
 		memset(m_szParentName, 0, sizeof(m_szParentName));
 
 		D3DXMatrixIdentity(&m_matWorld);
-		D3DXMatrixIdentity(&m_matWorldTrans);
-		D3DXMatrixIdentity(&m_matWorldRotate);
-		D3DXMatrixIdentity(&m_matWorldScale);
+		D3DXMatrixIdentity(&m_matWldTrans);
+		D3DXMatrixIdentity(&m_matWldRotate);
+		D3DXMatrixIdentity(&m_matWldScale);
 		D3DXMatrixIdentity(&m_matCalculation);
 
 		m_bHasAniTrack = false;

@@ -506,6 +506,13 @@ void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack,
 }
 
 void		GAseModel::MultiAniFrame(){
+	D3DXMATRIX matWldTrans;
+	D3DXMATRIX matWldRotate;
+	D3DXMATRIX matWldScale;
+	D3DXMatrixIdentity(&matWldTrans);
+	D3DXMatrixIdentity(&matWldRotate);
+	D3DXMatrixIdentity(&matWldScale);
+
 
 
 	for (int i = 0; i < m_vGeomObj.size(); i++) {
@@ -544,9 +551,9 @@ void		GAseModel::MultiAniFrame(){
 					D3DXVec3Lerp(&vResultVector, &vP1, &vP2, fTValue);
 
 					//T행렬 값 대입
-					m_vGeomObj[i].get()->m_matWorldTrans._41 = vResultVector.x;
-					m_vGeomObj[i].get()->m_matWorldTrans._42 = vResultVector.y;
-					m_vGeomObj[i].get()->m_matWorldTrans._43 = vResultVector.z;
+					matWldTrans._41 = vResultVector.x;
+					matWldTrans._42 = vResultVector.y;
+					matWldTrans._43 = vResultVector.z;
 				}
 
 				//Rotation
@@ -580,9 +587,7 @@ void		GAseModel::MultiAniFrame(){
 					}
 
 					//사원수에서 행렬로 변환.
-					D3DXMatrixIdentity(&m_vGeomObj[i].get()->m_matWorldRotate);
-
-					D3DXMatrixRotationQuaternion(&m_vGeomObj[i].get()->m_matWorldRotate, &qR);// 사원수에서 행렬로 변환
+					D3DXMatrixRotationQuaternion(&matWldRotate, &qR);// 사원수에서 행렬로 변환
 				}
 
 				//Scale
@@ -597,14 +602,14 @@ void		GAseModel::MultiAniFrame(){
 
 					D3DXQUATERNION qS;
 					float fStartTick = 0.0f, fEndTick = 0.0f;
-					D3DXVECTOR3 vScale(m_vGeomObj[i].get()->m_matWorldScale._11, m_vGeomObj[i].get()->m_matWorldScale._22, m_vGeomObj[i].get()->m_matWorldScale._33);
+					D3DXVECTOR3 vScale(m_vGeomObj[i].get()->m_matWldScale._11, m_vGeomObj[i].get()->m_matWldScale._22, m_vGeomObj[i].get()->m_matWldScale._33);
 
 					//현재 Tick이 어디인지 찾자.
 					GetAnimationTrack(m_fTickFrame, &pStartTrack, &pEndTrack, ANITRACK_TYPE_SCL, i);
 
 					//신축트랙 보간
 					if (pStartTrack == NULL) {
-						vScale = m_vGeomObj[i].get()->m_vecTM_SCALE;
+						//vScale = m_vGeomObj[i].get()->m_vecTM_SCALE;
 
 						D3DXQuaternionRotationAxis(&qS, &m_vGeomObj[i].get()->m_vecTM_SCALE_AXIS, m_vGeomObj[i].get()->m_fTM_SCALEAXISANG);
 
@@ -634,11 +639,11 @@ void		GAseModel::MultiAniFrame(){
 					D3DXQuaternionSlerp(&qS, &qS, &pEndTrack->qRotate, fTValue);
 
 					//사원수 -> 행렬로 변환등...
-					D3DXMatrixScaling(&m_vGeomObj[i].get()->m_matWorldScale, vScale.x, vScale.y, vScale.z);
+					D3DXMatrixScaling(&matWldScale, vScale.x, vScale.y, vScale.z);
 					D3DXMatrixRotationQuaternion(&matScaleRot, &qS);
 					D3DXMatrixInverse(&matInvScaleRot, NULL, &matScaleRot);
 
-					m_vGeomObj[i].get()->m_matWorldScale = matInvScaleRot * m_vGeomObj[i].get()->m_matWorldScale * matScaleRot;
+					matWldScale = matInvScaleRot * matWldScale * matScaleRot;
 
 
 
@@ -646,15 +651,11 @@ void		GAseModel::MultiAniFrame(){
 
 				if (m_vGeomObj[i].get()->m_pParentObj != NULL) {
 
-					m_vGeomObj[i].get()->m_matCalculation = m_vGeomObj[i].get()->m_matWorldScale
-						* m_vGeomObj[i].get()->m_matWorldRotate
-						* m_vGeomObj[i].get()->m_matWorldTrans
+					m_vGeomObj[i].get()->m_matCalculation = matWldScale * matWldRotate * matWldTrans
 						* m_vGeomObj[i].get()->m_pParentObj->m_matWorld;
 				}
 				else {
-					m_vGeomObj[i].get()->m_matCalculation = m_vGeomObj[i].get()->m_matWorldScale
-						* m_vGeomObj[i].get()->m_matWorldRotate
-						* m_vGeomObj[i].get()->m_matWorldTrans;
+					m_vGeomObj[i].get()->m_matCalculation = matWldScale * matWldRotate * matWldTrans;
 				}
 			}
 
@@ -668,6 +669,15 @@ void		GAseModel::MultiAniFrame(){
 	
 }
 void		GAseModel::SingleAniFrame() {
+
+	D3DXMATRIX matWldTrans;
+	D3DXMATRIX matWldRotate;
+	D3DXMATRIX matWldScale;
+	D3DXMatrixIdentity(&matWldTrans);
+	D3DXMatrixIdentity(&matWldRotate);
+	D3DXMatrixIdentity(&matWldScale);
+
+
 	if (m_vGeomObj[0].get()->m_bHasAniTrack) {
 
 
@@ -698,9 +708,9 @@ void		GAseModel::SingleAniFrame() {
 			D3DXVec3Lerp(&vResultVector, &vP1, &vP2, fTValue);
 
 			//T행렬 값 대입
-			m_vGeomObj[0].get()->m_matWorldTrans._41 = vResultVector.x;
-			m_vGeomObj[0].get()->m_matWorldTrans._42 = vResultVector.y;
-			m_vGeomObj[0].get()->m_matWorldTrans._43 = vResultVector.z;
+			matWldTrans._41 = vResultVector.x;
+			matWldRotate._42 = vResultVector.y;
+			matWldScale._43 = vResultVector.z;
 		}
 
 		//Rotation
@@ -731,9 +741,7 @@ void		GAseModel::SingleAniFrame() {
 			}
 
 			//사원수에서 행렬로 변환.
-			D3DXMatrixIdentity(&m_vGeomObj[0].get()->m_matWorldRotate);
-
-			D3DXMatrixRotationQuaternion(&m_vGeomObj[0].get()->m_matWorldRotate, &qR);// 사원수에서 행렬로 변환
+			D3DXMatrixRotationQuaternion(&matWldRotate, &qR);// 사원수에서 행렬로 변환
 		}
 
 		//Scale
@@ -748,14 +756,14 @@ void		GAseModel::SingleAniFrame() {
 
 			D3DXQUATERNION qS;
 			float fStartTick = 0.0f, fEndTick = 0.0f;
-			D3DXVECTOR3 vScale(m_vGeomObj[0].get()->m_matWorldScale._11, m_vGeomObj[0].get()->m_matWorldScale._22, m_vGeomObj[0].get()->m_matWorldScale._33);
+			D3DXVECTOR3 vScale(m_vGeomObj[0].get()->m_matWldScale._11, m_vGeomObj[0].get()->m_matWldScale._22, m_vGeomObj[0].get()->m_matWldScale._33);
 
 			//현재 Tick이 어디인지 찾자.
 			GetAnimationTrack(m_fTickFrame, &pStartTrack, &pEndTrack, ANITRACK_TYPE_SCL);
 
 			//신축트랙 보간
 			if (pStartTrack == NULL) {
-				vScale = m_vGeomObj[0].get()->m_vecTM_SCALE;
+				//vScale = m_vGeomObj[0].get()->m_vecTM_SCALE;
 
 				D3DXQuaternionRotationAxis(&qS, &m_vGeomObj[0].get()->m_vecTM_SCALE_AXIS, m_vGeomObj[0].get()->m_fTM_SCALEAXISANG);
 
@@ -785,19 +793,19 @@ void		GAseModel::SingleAniFrame() {
 			D3DXQuaternionSlerp(&qS, &qS, &pEndTrack->qRotate, fTValue);
 
 			//사원수 -> 행렬로 변환등...
-			D3DXMatrixScaling(&m_vGeomObj[0].get()->m_matWorldScale, vScale.x, vScale.y, vScale.z);
+			D3DXMatrixScaling(&matWldScale, vScale.x, vScale.y, vScale.z);
 			D3DXMatrixRotationQuaternion(&matScaleRot, &qS);
 			D3DXMatrixInverse(&matInvScaleRot, NULL, &matScaleRot);
 
-			m_vGeomObj[0].get()->m_matWorldScale = matInvScaleRot * m_vGeomObj[0].get()->m_matWorldScale * matScaleRot;
+			matWldScale = matInvScaleRot * matWldScale * matScaleRot;
 
 
 
 		}
 
-		m_vGeomObj[0].get()->m_matCalculation = m_vGeomObj[0].get()->m_matWorldScale 
-												* m_vGeomObj[0].get()->m_matWorldRotate 
-												* m_vGeomObj[0].get()->m_matWorldTrans;
+		m_vGeomObj[0].get()->m_matCalculation = matWldScale
+												* matWldRotate
+												* matWldTrans;
 	}
 }
 bool		GAseModel::Frame() {
@@ -889,8 +897,7 @@ bool		GAseModel::MultiRender(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATR
 		D3DXMatrixIdentity(&matTemp);
 
 
-			matTemp = m_vGeomObj[i].get()->m_matCalculation *
-				*matWorld;
+		matTemp = m_vGeomObj[i].get()->m_matCalculation *  *matWorld;
 		
 
 		//matTemp = m_vGeomObj[i].get()->m_matWorld * *matWorld;

@@ -64,7 +64,33 @@ void GAseParser::ProcessInheritanceBtwObjs(GAseModel* stModel) {
 	for (int i = 0; i < stModel->m_vGeomObj.size(); i++) {
 		if (stModel->m_vGeomObj[i]->m_pParentObj == NULL && stModel->m_vGeomObj[i]->m_pChildObj.size() == 0)
 			stModel->m_vGeomObj[i]->m_bUsed = false;
+
+		if (stModel->m_vGeomObj[i]->m_pParentObj != NULL) {
+
+			D3DXMATRIX matTranslate, matRotation, matScale;
+			D3DXQUATERNION qR;
+			D3DXVECTOR3 vTrans, vScale;
+
+			D3DXMATRIX InversepWM;
+			D3DXMatrixInverse(&InversepWM, NULL, &stModel->m_vGeomObj[i]->m_pParentObj->m_matWorld);
+			stModel->m_vGeomObj[i]->m_matWorld = stModel->m_vGeomObj[i]->m_matWorld * InversepWM;
+
+			// 행렬을 분해    
+			D3DXMatrixDecompose(&vScale, &qR, &vTrans, &stModel->m_vGeomObj[i]->m_matWorld);
+
+			D3DXMatrixScaling(&matScale, vScale.x, vScale.y, vScale.z);
+			D3DXMatrixTranslation(&matTranslate, vTrans.x, vTrans.y, vTrans.z);
+			D3DXMatrixRotationQuaternion(&matRotation, &qR);
+
+			stModel->m_vGeomObj[i]->m_matWldTrans = matTranslate;
+			stModel->m_vGeomObj[i]->m_matWldRotate = matRotation;
+			stModel->m_vGeomObj[i]->m_matWldScale = matScale;
+
+		}
 	}
+
+
+
 	
 }
 void GAseParser::CountGeomObjFromFile(GAseModel* stModel) {
@@ -758,13 +784,13 @@ int		GAseParser::GetGeomObjDataFromFile(GAseModel* stModel) {
 					// 임의의 축과 각을 쿼터니언으로 변환
 					//D3DXQUATERNION qRotation;
 					D3DXQuaternionRotationAxis(&stModel->m_vGeomObj[m_iObjCount].get()->m_qRotation, &stModel->m_vGeomObj[m_iObjCount].get()->m_vecTM_ROTAXIS, stModel->m_vGeomObj[m_iObjCount].get()->m_fTM_ROTANGLE);
-					D3DXMatrixRotationQuaternion(&stModel->m_vGeomObj[m_iObjCount].get()->m_matWorldRotate, &stModel->m_vGeomObj[m_iObjCount].get()->m_qRotation);
+					D3DXMatrixRotationQuaternion(&stModel->m_vGeomObj[m_iObjCount].get()->m_matWldRotate, &stModel->m_vGeomObj[m_iObjCount].get()->m_qRotation);
 
 					//스케일축을 중심으로 회전하는 값이 스테일 값이므로 
 					//스케일축의 회전만큼을 먼저 반대로 회전한 이후
 					//스케일값을 적용시키고 그 다음에 
 					//다시 스케일축만큼을 회전시켜 원상복귀 시킨다.
-					D3DXMatrixScaling(&stModel->m_vGeomObj[m_iObjCount].get()->m_matWorldScale, stModel->m_vGeomObj[m_iObjCount].get()->m_vecTM_SCALE.x, stModel->m_vGeomObj[m_iObjCount].get()->m_vecTM_SCALE.y, stModel->m_vGeomObj[m_iObjCount].get()->m_vecTM_SCALE.z);
+					D3DXMatrixScaling(&stModel->m_vGeomObj[m_iObjCount].get()->m_matWldScale, stModel->m_vGeomObj[m_iObjCount].get()->m_vecTM_SCALE.x, stModel->m_vGeomObj[m_iObjCount].get()->m_vecTM_SCALE.y, stModel->m_vGeomObj[m_iObjCount].get()->m_vecTM_SCALE.z);
 
 
 					// 스케일축의 행렬과 그 역행렬을 구한다.
@@ -773,7 +799,7 @@ int		GAseParser::GetGeomObjDataFromFile(GAseModel* stModel) {
 					D3DXMatrixInverse(&matRotationInv, NULL, &matRotation);
 
 					//스케일 최종.
-					stModel->m_vGeomObj[m_iObjCount].get()->m_matWorldScale = matRotationInv * stModel->m_vGeomObj[m_iObjCount].get()->m_matWorldScale  * matRotation;
+					stModel->m_vGeomObj[m_iObjCount].get()->m_matWldScale = matRotationInv * stModel->m_vGeomObj[m_iObjCount].get()->m_matWldScale  * matRotation;
 
 
 

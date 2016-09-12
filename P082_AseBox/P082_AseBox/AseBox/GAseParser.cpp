@@ -72,11 +72,11 @@ void GAseParser::ProcessInheritanceBtwObjs(GAseModel* stModel) {
 			D3DXVECTOR3 vTrans, vScale;
 
 			D3DXMATRIX InversepWM;
-			D3DXMatrixInverse(&InversepWM, NULL, &stModel->m_vGeomObj[i]->m_pParentObj->m_matWorld);
-			stModel->m_vGeomObj[i]->m_matWorld = stModel->m_vGeomObj[i]->m_matWorld * InversepWM;
+			D3DXMatrixInverse(&InversepWM, NULL, &stModel->m_vGeomObj[i]->m_pParentObj->m_matWld);
+			stModel->m_vGeomObj[i]->m_matChlWld = stModel->m_vGeomObj[i]->m_matWld * InversepWM;
 
 			// 행렬을 분해    
-			D3DXMatrixDecompose(&vScale, &qR, &vTrans, &stModel->m_vGeomObj[i]->m_matWorld);
+			D3DXMatrixDecompose(&vScale, &qR, &vTrans, &stModel->m_vGeomObj[i]->m_matChlWld);
 
 			D3DXMatrixScaling(&matScale, vScale.x, vScale.y, vScale.z);
 			D3DXMatrixTranslation(&matTranslate, vTrans.x, vTrans.y, vTrans.z);
@@ -85,6 +85,7 @@ void GAseParser::ProcessInheritanceBtwObjs(GAseModel* stModel) {
 			stModel->m_vGeomObj[i]->m_matWldTrans = matTranslate;
 			stModel->m_vGeomObj[i]->m_matWldRotate = matRotation;
 			stModel->m_vGeomObj[i]->m_matWldScale = matScale;
+			stModel->m_vGeomObj[i]->m_qRotation = qR;
 
 		}
 	}
@@ -806,12 +807,12 @@ int		GAseParser::GetGeomObjDataFromFile(GAseModel* stModel) {
 
 					//GetData(&(stModel->m_vGeomObj[m_iObjCount].get()->m_vObj[0].get()->m_szName), STRING_DATA);
 
-					D3DXMatrixIdentity(&(stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld));
+					D3DXMatrixIdentity(&(stModel->m_vGeomObj[m_iObjCount].get()->m_matWld));
 
-					stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._11 = vecROW0.x; stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._12 = vecROW0.y; stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._13 = vecROW0.z;
-					stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._31 = vecROW1.x; stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._32 = vecROW1.y; stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._33 = vecROW1.z;
-					stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._21 = vecROW2.x; stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._22 = vecROW2.y; stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._23 = vecROW2.z;
-					stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._41 = vecROW3.x; stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._42 = vecROW3.y; stModel->m_vGeomObj[m_iObjCount].get()->m_matWorld._43 = vecROW3.z;
+					stModel->m_vGeomObj[m_iObjCount].get()->m_matWld._11 = vecROW0.x; stModel->m_vGeomObj[m_iObjCount].get()->m_matWld._12 = vecROW0.y; stModel->m_vGeomObj[m_iObjCount].get()->m_matWld._13 = vecROW0.z;
+					stModel->m_vGeomObj[m_iObjCount].get()->m_matWld._31 = vecROW1.x; stModel->m_vGeomObj[m_iObjCount].get()->m_matWld._32 = vecROW1.y; stModel->m_vGeomObj[m_iObjCount].get()->m_matWld._33 = vecROW1.z;
+					stModel->m_vGeomObj[m_iObjCount].get()->m_matWld._21 = vecROW2.x; stModel->m_vGeomObj[m_iObjCount].get()->m_matWld._22 = vecROW2.y; stModel->m_vGeomObj[m_iObjCount].get()->m_matWld._23 = vecROW2.z;
+					stModel->m_vGeomObj[m_iObjCount].get()->m_matWld._41 = vecROW3.x; stModel->m_vGeomObj[m_iObjCount].get()->m_matWld._42 = vecROW3.y; stModel->m_vGeomObj[m_iObjCount].get()->m_matWld._43 = vecROW3.z;
 				}
 				break;
 				case MESH:
@@ -1052,7 +1053,7 @@ void    GAseParser::SetPnctData(GAseModel* stModel, int iObjNum) {
 		}
 	}
 
-	D3DXMatrixInverse(&matWorldInverse, NULL, &stModel->m_vGeomObj[iObjNum].get()->m_matWorld);
+	D3DXMatrixInverse(&matWorldInverse, NULL, &stModel->m_vGeomObj[iObjNum].get()->m_matWld);
 
 
 

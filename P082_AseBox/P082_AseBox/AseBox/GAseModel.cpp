@@ -17,8 +17,6 @@ bool		GAseModel::Init(TCHAR* strFileName, TCHAR* strShaderName) {
 	stopwatch.Output(L"Init()");
 
 
-
-
 	// Create the sample state
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
@@ -506,165 +504,210 @@ void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack,
 }
 
 void		GAseModel::MultiAniFrame(){
+
 	D3DXMATRIX matWldTrans;
 	D3DXMATRIX matWldRotate;
 	D3DXMATRIX matWldScale;
 	D3DXMatrixIdentity(&matWldTrans);
 	D3DXMatrixIdentity(&matWldRotate);
 	D3DXMatrixIdentity(&matWldScale);
+	
 
+	D3DXQUATERNION qR, qS;
 
+	D3DXMATRIX matCalc;
+	D3DXMatrixIdentity(&matCalc);
+
+	m_fTickFrame += g_fSecPerFrame * m_fFrameSpeed *m_fTickPerFrame;
+	if (m_fTickFrame >= m_fLastFrame * m_fTickPerFrame /*마지막 프레임 틱수*/)
+	{
+		m_fTickFrame = 0.0f;
+	}
 
 	for (int i = 0; i < m_vGeomObj.size(); i++) {
 
 		if (m_vGeomObj[i]->m_bUsed == false)
 			continue;
+
+		D3DXMatrixIdentity(&m_vGeomObj[i]->m_matCalculation);
+
+		matWldRotate = m_vGeomObj[i]->m_matWldRotate;
+		matWldTrans = m_vGeomObj[i]->m_matWldTrans;
+		matWldScale = m_vGeomObj[i]->m_matWldScale;
+
+		D3DXQuaternionRotationMatrix(&qR, &matWldRotate);
+		D3DXQuaternionRotationMatrix(&qS, &matWldScale);
 		//for (int j = 0; j < m_vGeomObj[i]->m_vObj.size(); j++) {
 
-			if (m_vGeomObj[i].get()->m_bHasAniTrack) {
+			//if (m_vGeomObj[i].get()->m_bHasAniTrack) {
 
 
 
-				m_fTickFrame += g_fSecPerFrame * m_fFrameSpeed *m_fTickPerFrame;
-				if (m_fTickFrame >= m_fLastFrame * m_fTickPerFrame /*마지막 프레임 틱수*/)
-				{
-					m_fTickFrame = 0.0f;
-				}
-
-
-				//Translation
-				if (m_vGeomObj[i].get()->m_vPosTrack.size() != 0) {
-
-					GAnimTrack* pStartTrack = NULL;
-					GAnimTrack* pEndTrack = NULL;
-
-					//현재 Tick이 어디인지 찾자.
-					GetAnimationTrack(m_fTickFrame, &pStartTrack, &pEndTrack, ANITRACK_TYPE_POS, i);
-
-					//애니메이션 보간.
-					D3DXVECTOR3 vResultVector;
-					D3DXVECTOR3 vP1 = pStartTrack->vecVector;
-					D3DXVECTOR3 vP2 = pEndTrack->vecVector;
-
-					float fTValue = (m_fTickFrame - pStartTrack->iTick) / (pEndTrack->iTick - pStartTrack->iTick);
-
-					D3DXVec3Lerp(&vResultVector, &vP1, &vP2, fTValue);
-
-					//T행렬 값 대입
-					matWldTrans._41 = vResultVector.x;
-					matWldTrans._42 = vResultVector.y;
-					matWldTrans._43 = vResultVector.z;
-				}
-
-				//Rotation
-				if (m_vGeomObj[i].get()->m_vRotTrack.size() != 0) {
-					GAnimTrack* pStartTrack = NULL;
-					GAnimTrack* pEndTrack = NULL;
-					D3DXQUATERNION qR;
-
-					//현재 Tick이 어디인지 찾자.
-					GetAnimationTrack(m_fTickFrame, &pStartTrack, &pEndTrack, ANITRACK_TYPE_ROT, i);
-
-
-					//사원수간의 보간..
-					if (pStartTrack == NULL && pEndTrack == NULL) {
-						qR = m_vGeomObj[i].get()->m_qRotation;
-					}
-					else if (pStartTrack == NULL) {
-						qR = m_vGeomObj[i].get()->m_qRotation;
-						float fTValue = (m_fTickFrame - 0) / (pEndTrack->iTick - 0);
-						D3DXQuaternionSlerp(&qR, &qR, &pEndTrack->qRotate, fTValue);
-					}
-					else if (pEndTrack == NULL) {
-						qR = m_vGeomObj[i].get()->m_vRotTrack[m_vGeomObj[i].get()->m_vRotTrack.size() - 1].get()->qRotate;
-						float fTValue = ((m_fTickFrame - pStartTrack->iTick) / (m_fFrameSpeed*m_fTickPerFrame));
-						D3DXQuaternionSlerp(&qR, &qR, &qR, fTValue);
-					}
-					else {
-						qR = pStartTrack->qRotate;
-						float fTValue = (m_fTickFrame - pStartTrack->iTick) / (pEndTrack->iTick - pStartTrack->iTick);
-						D3DXQuaternionSlerp(&qR, &qR, &pEndTrack->qRotate, fTValue);
-					}
-
-					//사원수에서 행렬로 변환.
-					D3DXMatrixRotationQuaternion(&matWldRotate, &qR);// 사원수에서 행렬로 변환
-				}
-
-				//Scale
-				if (m_vGeomObj[i].get()->m_vSclTrack.size() != 0) {
-
-					GAnimTrack* pStartTrack = NULL;
-					GAnimTrack* pEndTrack = NULL;
-
-					D3DXMATRIX matScaleRot, matInvScaleRot;
-					D3DXMatrixIdentity(&matScaleRot);
-					D3DXMatrixIdentity(&matInvScaleRot);
-
-					D3DXQUATERNION qS;
-					float fStartTick = 0.0f, fEndTick = 0.0f;
-					D3DXVECTOR3 vScale(m_vGeomObj[i].get()->m_matWldScale._11, m_vGeomObj[i].get()->m_matWldScale._22, m_vGeomObj[i].get()->m_matWldScale._33);
-
-					//현재 Tick이 어디인지 찾자.
-					GetAnimationTrack(m_fTickFrame, &pStartTrack, &pEndTrack, ANITRACK_TYPE_SCL, i);
-
-					//신축트랙 보간
-					if (pStartTrack == NULL) {
-						//vScale = m_vGeomObj[i].get()->m_vecTM_SCALE;
-
-						D3DXQuaternionRotationAxis(&qS, &m_vGeomObj[i].get()->m_vecTM_SCALE_AXIS, m_vGeomObj[i].get()->m_fTM_SCALEAXISANG);
-
-						fStartTick = 0.0f;
-						fEndTick = pEndTrack->iTick;
-					}
-					else if (pEndTrack == NULL) {
-						vScale = pStartTrack->vecVector;
-						qS = pStartTrack->qRotate;
-
-						fStartTick = pStartTrack->iTick;
-
-						fEndTick = pStartTrack->iTick + (m_fFrameSpeed*m_fTickPerFrame);
-					}
-					else {
-						vScale = pStartTrack->vecVector;
-						qS = pStartTrack->qRotate;
-
-						fStartTick = pStartTrack->iTick;
-						fEndTick = pEndTrack->iTick;
-
-
-					}
-					float fTValue = (m_fTickFrame - fStartTick) / (fEndTick - fStartTick);
-
-					D3DXVec3Lerp(&vScale, &vScale, &pEndTrack->vecVector, fTValue);
-					D3DXQuaternionSlerp(&qS, &qS, &pEndTrack->qRotate, fTValue);
-
-					//사원수 -> 행렬로 변환등...
-					D3DXMatrixScaling(&matWldScale, vScale.x, vScale.y, vScale.z);
-					D3DXMatrixRotationQuaternion(&matScaleRot, &qS);
-					D3DXMatrixInverse(&matInvScaleRot, NULL, &matScaleRot);
-
-					matWldScale = matInvScaleRot * matWldScale * matScaleRot;
 
 
 
-				}
+		//Translation
+		if (m_vGeomObj[i].get()->m_vPosTrack.size() != 0) {
 
-				if (m_vGeomObj[i].get()->m_pParentObj != NULL) {
+			GAnimTrack* pStartTrack = NULL;
+			GAnimTrack* pEndTrack = NULL;
 
-					m_vGeomObj[i].get()->m_matCalculation = matWldScale * matWldRotate * matWldTrans
-						* m_vGeomObj[i].get()->m_pParentObj->m_matWorld;
-				}
-				else {
-					m_vGeomObj[i].get()->m_matCalculation = matWldScale * matWldRotate * matWldTrans;
-				}
+			//현재 Tick이 어디인지 찾자.
+			GetAnimationTrack(m_fTickFrame, &pStartTrack, &pEndTrack, ANITRACK_TYPE_POS, i);
+
+			//애니메이션 보간.
+			D3DXVECTOR3 vResultVector;
+			D3DXVECTOR3 vP1 = pStartTrack->vecVector;
+			D3DXVECTOR3 vP2 = pEndTrack->vecVector;
+
+			float fTValue = (m_fTickFrame - pStartTrack->iTick) / (pEndTrack->iTick - pStartTrack->iTick);
+
+			D3DXVec3Lerp(&vResultVector, &vP1, &vP2, fTValue);
+
+			//T행렬 값 대입
+			matWldTrans._41 = vResultVector.x;
+			matWldTrans._42 = vResultVector.y;
+			matWldTrans._43 = vResultVector.z;
+		}
+
+		//Rotation
+		if (m_vGeomObj[i].get()->m_vRotTrack.size() != 0) {
+			GAnimTrack* pStartTrack = NULL;
+			GAnimTrack* pEndTrack = NULL;
+			//D3DXQUATERNION qR;
+
+			//현재 Tick이 어디인지 찾자.
+			GetAnimationTrack(m_fTickFrame, &pStartTrack, &pEndTrack, ANITRACK_TYPE_ROT, i);
+
+
+			//사원수간의 보간..
+			if (pStartTrack == NULL && pEndTrack == NULL) {
+				qR = m_vGeomObj[i].get()->m_vRotTrack[0]->qRotate;// = m_vGeomObj[i].get()->m_qRotation;
+			}
+			else if (pStartTrack == NULL) {
+				qR;// = m_vGeomObj[i].get()->m_qRotation;
+				float fTValue = (m_fTickFrame - 0) / (pEndTrack->iTick - 0);
+				D3DXQuaternionSlerp(&qR, &qR, &pEndTrack->qRotate, fTValue);
+			}
+			else if (pEndTrack == NULL) {
+				qR = m_vGeomObj[i].get()->m_vRotTrack[m_vGeomObj[i].get()->m_vRotTrack.size() - 1].get()->qRotate;
+				float fTValue = ((m_fTickFrame - pStartTrack->iTick) / (m_fFrameSpeed*m_fTickPerFrame));
+				D3DXQuaternionSlerp(&qR, &qR, &qR, fTValue);
+			}
+			else {
+				qR = pStartTrack->qRotate;
+				float fTValue = (m_fTickFrame - pStartTrack->iTick) / (pEndTrack->iTick - pStartTrack->iTick);
+				D3DXQuaternionSlerp(&qR, &qR, &pEndTrack->qRotate, fTValue);
 			}
 
+			//사원수에서 행렬로 변환.
+			D3DXMatrixRotationQuaternion(&matWldRotate, &qR);// 사원수에서 행렬로 변환
+		}
 
+		//Scale
+		if (m_vGeomObj[i].get()->m_vSclTrack.size() != 0) {
+
+			GAnimTrack* pStartTrack = NULL;
+			GAnimTrack* pEndTrack = NULL;
+
+			D3DXMATRIX matScaleRot, matInvScaleRot;
+			D3DXMatrixIdentity(&matScaleRot);
+			D3DXMatrixIdentity(&matInvScaleRot);
+
+			//D3DXQUATERNION qS;
+			float fStartTick = 0.0f, fEndTick = 0.0f;
+			D3DXVECTOR3 vScale(m_vGeomObj[i].get()->m_matWldScale._11, m_vGeomObj[i].get()->m_matWldScale._22, m_vGeomObj[i].get()->m_matWldScale._33);
+
+			//현재 Tick이 어디인지 찾자.
+			GetAnimationTrack(m_fTickFrame, &pStartTrack, &pEndTrack, ANITRACK_TYPE_SCL, i);
+
+			//신축트랙 보간
+			if (pStartTrack == NULL) {
+				//vScale = m_vGeomObj[i].get()->m_vecTM_SCALE;
+
+				//D3DXQuaternionRotationAxis(&qS, &m_vGeomObj[i].get()->m_vecTM_SCALE_AXIS, m_vGeomObj[i].get()->m_fTM_SCALEAXISANG);
+
+				fStartTick = 0.0f;
+				fEndTick = pEndTrack->iTick;
+			}
+			else if (pEndTrack == NULL) {
+				vScale = pStartTrack->vecVector;
+				qS = pStartTrack->qRotate;
+
+				fStartTick = pStartTrack->iTick;
+
+				fEndTick = pStartTrack->iTick + (m_fFrameSpeed*m_fTickPerFrame);
+			}
+			else {
+				vScale = pStartTrack->vecVector;
+				qS = pStartTrack->qRotate;
+
+				fStartTick = pStartTrack->iTick;
+				fEndTick = pEndTrack->iTick;
+
+
+			}
+			float fTValue = (m_fTickFrame - fStartTick) / (fEndTick - fStartTick);
+
+			D3DXVec3Lerp(&vScale, &vScale, &pEndTrack->vecVector, fTValue);
+			D3DXQuaternionSlerp(&qS, &qS, &pEndTrack->qRotate, fTValue);
+
+			//사원수 -> 행렬로 변환등...
+			D3DXMatrixScaling(&matWldScale, vScale.x, vScale.y, vScale.z);
+			D3DXMatrixRotationQuaternion(&matScaleRot, &qS);
+			D3DXMatrixInverse(&matInvScaleRot, NULL, &matScaleRot);
+
+			matWldScale = matInvScaleRot * matWldScale * matScaleRot;
+
+
+
+		}
+
+		if (m_vGeomObj[i].get()->m_pParentObj != NULL) {
+
+			m_vGeomObj[i].get()->m_matCalculation  = matCalc = matWldScale * matWldRotate * matWldTrans
+				* m_vGeomObj[i].get()->m_pParentObj->m_matCalculation;
+			int iTest = 0;
+
+			// 인버스 매트릭스 확인 코드.
+			D3DXVECTOR3 v0, v1, v2, v3;
+			v0 = m_vGeomObj[i].get()->m_matCalculation.m[0];
+			v1 = m_vGeomObj[i].get()->m_matCalculation.m[1];
+			v2 = m_vGeomObj[i].get()->m_matCalculation.m[2];
+			D3DXVec3Cross(&v3, &v1, &v2);
+			if (D3DXVec3Dot(&v3, &v0) < 0.0f)
+			{
+				D3DXMATRIX matW;
+				D3DXMatrixScaling(&matW, -1.0f, -1.0f, -1.0f);
+				D3DXMatrixMultiply(&m_vGeomObj[i].get()->m_matCalculation,
+					&m_vGeomObj[i].get()->m_matCalculation, &matW);
+			}
+		}
+		else {
+			m_vGeomObj[i].get()->m_matCalculation = matCalc = matWldScale * matWldRotate * matWldTrans;
+			int iTest = 0;
+
+			// 인버스 매트릭스 확인 코드.
+			D3DXVECTOR3 v0, v1, v2, v3;
+			v0 = m_vGeomObj[i].get()->m_matCalculation.m[0];
+			v1 = m_vGeomObj[i].get()->m_matCalculation.m[1];
+			v2 = m_vGeomObj[i].get()->m_matCalculation.m[2];
+			D3DXVec3Cross(&v3, &v1, &v2);
+			if (D3DXVec3Dot(&v3, &v0) < 0.0f)
+			{
+				D3DXMATRIX matW;
+				D3DXMatrixScaling(&matW, -1.0f, -1.0f, -1.0f);
+				D3DXMatrixMultiply(&m_vGeomObj[i].get()->m_matCalculation,
+					&m_vGeomObj[i].get()->m_matCalculation, &matW);
+			}
+		}
+	}
+			//}
+			
 		//}
 
 		//최종행렬.
 
-	}
 
 	
 }
@@ -677,17 +720,14 @@ void		GAseModel::SingleAniFrame() {
 	D3DXMatrixIdentity(&matWldRotate);
 	D3DXMatrixIdentity(&matWldScale);
 
+	m_fTickFrame += g_fSecPerFrame * m_fFrameSpeed *m_fTickPerFrame;
+	if (m_fTickFrame >= m_fLastFrame * m_fTickPerFrame /*마지막 프레임 틱수*/)
+	{
+		m_fTickFrame = 0.0f;
+	}
+
 
 	if (m_vGeomObj[0].get()->m_bHasAniTrack) {
-
-
-
-		m_fTickFrame += g_fSecPerFrame * m_fFrameSpeed *m_fTickPerFrame;
-		if (m_fTickFrame >= m_fLastFrame * m_fTickPerFrame /*마지막 프레임 틱수*/)
-		{
-			m_fTickFrame = 0.0f;
-		}
-
 
 		//Translation
 		if (m_vGeomObj[0].get()->m_vPosTrack.size() != 0) {
@@ -709,8 +749,8 @@ void		GAseModel::SingleAniFrame() {
 
 			//T행렬 값 대입
 			matWldTrans._41 = vResultVector.x;
-			matWldRotate._42 = vResultVector.y;
-			matWldScale._43 = vResultVector.z;
+			matWldTrans._42 = vResultVector.y;
+			matWldTrans._43 = vResultVector.z;
 		}
 
 		//Rotation
@@ -888,7 +928,7 @@ bool		GAseModel::MultiRender(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATR
 	g_pImmediateContext->PSSetShader(m_pPixelShader.Get(), NULL, 0);
 	g_pImmediateContext->PSSetSamplers(0, 1, m_pSamplerLinear.GetAddressOf());
 
-	for (int i = 0; i < m_vGeomObj.size(); i++) {
+	for (int i = 0; i < m_vGeomObj.size() ; i++) {
 
 		if (m_vGeomObj[i]->m_bUsed == false)
 			continue;

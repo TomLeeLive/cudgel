@@ -81,7 +81,8 @@ public:
 	TCHAR									m_szParentName[MAX_PATH];	//*NODE_PARENT "Dummy01"
 	int										m_iMaterial_Ref;
 	bool									m_bUsed;					//렌더링 제외여부. false일 경우 렌더링 제외한다.
-	D3DXMATRIX								m_matWorld;					//월드행렬
+	D3DXMATRIX								m_matWld;					//월드행렬
+	D3DXMATRIX								m_matChlWld;				//부모월드행렬의 역행렬을 곱한 자식월드 행렬.
 	D3DXMATRIX								m_matCalculation;			//계산된 최종행렬
 	D3DXVECTOR3								m_vecBoundingboxMin;
 	D3DXVECTOR3								m_vecBoundingboxMax;
@@ -119,7 +120,8 @@ public:
 		memset(m_szName, 0, sizeof(m_szName));
 		memset(m_szParentName, 0, sizeof(m_szParentName));
 
-		D3DXMatrixIdentity(&m_matWorld);
+		D3DXMatrixIdentity(&m_matWld);
+		D3DXMatrixIdentity(&m_matChlWld);
 		D3DXMatrixIdentity(&m_matWldTrans);
 		D3DXMatrixIdentity(&m_matWldRotate);
 		D3DXMatrixIdentity(&m_matWldScale);

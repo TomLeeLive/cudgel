@@ -1,5 +1,72 @@
 #include "_stdafx.h"
 
+//To-Do:상속관계구축
+void GAseParser::ProcessInheritanceBtwObjs(GAseModel* stModel) {
+
+
+	TCHAR	pNodeName[256];
+
+	TCHAR	pParentNodeName[256];
+
+	GAseGeom* pChildObj;
+	GAseGeom* pParentObj;
+
+	memset(&pNodeName, 0, sizeof(pNodeName));
+	memset(&pParentNodeName, 0, sizeof(pParentNodeName));
+
+	while (!feof(m_pStream))
+	{
+		_fgetts(m_pBuffer, 256, m_pStream);
+		_stscanf(m_pBuffer, _T("%s"), m_pString);
+
+		if (!_tcsicmp(m_pString, L"*NODE_NAME"))
+		{
+			GetData(&pNodeName, STRING_DATA);
+
+			_fgetts(m_pBuffer, 256, m_pStream);
+			_stscanf(m_pBuffer, _T("%s"), m_pString);
+
+			if (!_tcsicmp(m_pString, L"*NODE_PARENT"))
+			{
+
+				GetData(&pParentNodeName, STRING_DATA);
+
+				//찾는다. 상속관계 저장.
+				//1) L"*NODE_NAME"
+				//2) L"*NODE_PARENT"
+
+				for (int i = 0; i < stModel->m_vGeomObj.size(); i++) {
+					if (!_tcsicmp(stModel->m_vGeomObj[i]->m_szName, pNodeName))
+					{
+						pChildObj = stModel->m_vGeomObj[i].get();
+						break;
+					}
+
+				}
+
+				for (int i = 0; i < stModel->m_vGeomObj.size(); i++) {
+					if (!_tcsicmp(stModel->m_vGeomObj[i]->m_szName, pParentNodeName))
+					{
+						pParentObj = stModel->m_vGeomObj[i].get();
+						break;
+					}
+					
+				}
+				pParentObj->m_pChildObj.push_back(pChildObj);
+				pChildObj->m_pParentObj = pParentObj;
+
+				memset(&pNodeName, 0, sizeof(pNodeName));
+				memset(&pParentNodeName, 0, sizeof(pParentNodeName));
+			}
+
+		}
+	}
+	for (int i = 0; i < stModel->m_vGeomObj.size(); i++) {
+		if (stModel->m_vGeomObj[i]->m_pParentObj == NULL && stModel->m_vGeomObj[i]->m_pChildObj.size() == 0)
+			stModel->m_vGeomObj[i]->m_bUsed = false;
+	}
+	
+}
 void GAseParser::CountGeomObjFromFile(GAseModel* stModel) {
 
 	m_iObjCount = 0;
@@ -26,33 +93,35 @@ void GAseParser::CountGeomObjFromFile(GAseModel* stModel) {
 }
 
 void	GAseParser::InitAseModel(TCHAR* strFile, GAseModel* stModel) {
-	OpenStream(strFile);
-
-	//*GEOMOBJECT 과 *HELPEROBJECT를 카운트하여 객체생성후 stModel->m_vGeomObj에 push 한다.
-	CountGeomObjFromFile(stModel);
-
-	CloseStream();
-
-	OpenStream(strFile);
+	
 	//파일 읽어서 필요한 정보 가져온다.
-
-	//To-Do:헬퍼 오브젝트등.. 파싱
-	/*
-	*GEOMOBJECT
-	*HELPEROBJECT
-	*TM_ANIMATION
-	*BOUNDINGBOX_MIN
-	*BOUNDINGBOX_MAX
-	*/
-	GetDataFromFile(stModel);
-
+	//*GEOMOBJECT 과 *HELPEROBJECT를 카운트하여 객체생성후 stModel->m_vGeomObj에 push 한다.
+	OpenStream(strFile);
+	CountGeomObjFromFile(stModel);
 	CloseStream();
+
+	
+	
+	//파일 읽어서 필요한 정보 가져온다.
+	//To-Do:헬퍼 오브젝트등.. 파싱
+	/*  *GEOMOBJECT *HELPEROBJECT *TM_ANIMATION *BOUNDINGBOX_MIN *BOUNDINGBOX_MAX  */
+	OpenStream(strFile);
+	GetDataFromFile(stModel);
+	CloseStream();
+
 
 	if(stModel->m_vGeomObj.size() == 1) //멀티 오브젝트가 아닐때...
 		SetPnctData(stModel);
 
 
+	//파일 읽어서 필요한 정보 가져온다.
 	//To-Do:상속관계구축
+	if (stModel->m_vGeomObj.size() > 1){
+		OpenStream(strFile);
+		ProcessInheritanceBtwObjs(stModel);
+		CloseStream();
+	}
+
 
 	//To-Do:NODE_TM 행렬처리(부모행렬과 결합된 것 부모행렬의 역행렬을 곱해줌)
 
@@ -732,6 +801,8 @@ int		GAseParser::GetGeomObjDataFromFile(GAseModel* stModel) {
 					stModel->m_fTickPerFrame = stModel->m_stScene.m_iTicksPerFrame;
 					stModel->m_fLastFrame = stModel->m_stScene.m_iLastFrame;
 					GetAnimationDataFromFile(stModel);
+					bLoop = false;
+					m_iObjCount++;
 				}
 				break;
 				case MATERIAL_REF:
@@ -749,8 +820,19 @@ int		GAseParser::GetGeomObjDataFromFile(GAseModel* stModel) {
 				case BOUNDINGBOX_MAX:
 				{
 					GetData(&stModel->m_vGeomObj[m_iObjCount].get()->m_vecBoundingboxMax, VERTEX_DATA);
-					bLoop = false;
-					m_iObjCount++;
+
+					SaveFilePosition();
+					_fgetts(m_pBuffer, 256, m_pStream);
+					_stscanf(m_pBuffer, _T("%s"), m_pString);
+
+					if (!_tcsicmp(m_pString, L"*TM_ANIMATION")){
+						RestoreFilePosition();
+						break;
+					}
+					else {
+						bLoop = false;
+						m_iObjCount++;
+					}
 				}
 				break;
 
@@ -808,8 +890,9 @@ int		GAseParser::GetDataFromFile(GAseModel* stModel ){
 
 						SaveFilePosition();
 
-						//GetDataFromFileLoop(L"*NUMSUBMTLS", &iSubMtls, INT_DATA);
+						GetDataFromFileLoop(L"*NUMSUBMTLS", &iSubMtls, INT_DATA);
 
+						/*
 						while (_tcsicmp(m_pString, L"{")) {
 							_fgetts(m_pBuffer, 256, m_pStream);
 							_stscanf(m_pBuffer, _T("%s"), m_pString);
@@ -818,12 +901,7 @@ int		GAseParser::GetDataFromFile(GAseModel* stModel ){
 								break;
 							}
 						}
-
-
-
-
-
-
+						*/
 
 						if (iSubMtls == -1) {
 							RestoreFilePosition();

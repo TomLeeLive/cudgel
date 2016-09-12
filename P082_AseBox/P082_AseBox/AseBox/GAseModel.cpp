@@ -428,7 +428,18 @@ void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack,
 		case ANITRACK_TYPE_POS:
 		{
 			for (int j = 0; j< m_vGeomObj[iGeomNum].get()->m_vPosTrack.size(); j++) {
+
+				//if(m_fTickFrame >= m_vGeomObj[iGeomNum].get()->m_vPosTrack[j].get())
+
 				if (m_fTickFrame >= m_vGeomObj[iGeomNum].get()->m_vPosTrack[j].get()->iTick
+					&& m_vGeomObj[iGeomNum].get()->m_vPosTrack[j].get()->pNext == NULL)
+				{
+					*pStartTrack = m_vGeomObj[iGeomNum].get()->m_vPosTrack[j].get();
+					*pEndTrack = m_vGeomObj[iGeomNum].get()->m_vPosTrack[j].get();
+					break;
+				}
+
+				else if (m_fTickFrame >= m_vGeomObj[iGeomNum].get()->m_vPosTrack[j].get()->iTick
 					&& m_fTickFrame < m_vGeomObj[iGeomNum].get()->m_vPosTrack[j].get()->pNext->iTick)
 				{
 					*pStartTrack = m_vGeomObj[iGeomNum].get()->m_vPosTrack[j].get();
@@ -441,9 +452,9 @@ void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack,
 		case ANITRACK_TYPE_ROT:
 		{
 			for (int j = 0; j< m_vGeomObj[iGeomNum].get()->m_vRotTrack.size(); j++) {
-				if (m_fTickFrame < m_vGeomObj[iGeomNum].get()->m_vRotTrack[m_vGeomObj[iGeomNum].get()->m_vRotTrack.size() - 1].get()->iTick) {
+				if (m_fTickFrame < m_vGeomObj[iGeomNum].get()->m_vRotTrack[0].get()->iTick) {
 					*pStartTrack = NULL;
-					*pEndTrack = m_vGeomObj[iGeomNum].get()->m_vRotTrack[iGeomNum].get();
+					*pEndTrack = m_vGeomObj[iGeomNum].get()->m_vRotTrack[0].get();
 					break;
 				}
 				else if (m_fTickFrame >= m_vGeomObj[iGeomNum].get()->m_vRotTrack[  m_vGeomObj[iGeomNum].get()->m_vRotTrack.size() - 1  ].get()->iTick) {
@@ -499,7 +510,9 @@ void		GAseModel::MultiAniFrame(){
 
 	for (int i = 0; i < m_vGeomObj.size(); i++) {
 
-		for (int j = 0; j < m_vGeomObj[i]->m_vObj.size(); j++) {
+		if (m_vGeomObj[i]->m_bUsed == false)
+			continue;
+		//for (int j = 0; j < m_vGeomObj[i]->m_vObj.size(); j++) {
 
 			if (m_vGeomObj[i].get()->m_bHasAniTrack) {
 
@@ -630,10 +643,26 @@ void		GAseModel::MultiAniFrame(){
 
 
 				}
+
+				if (m_vGeomObj[i].get()->m_pParentObj != NULL) {
+
+					m_vGeomObj[i].get()->m_matCalculation = m_vGeomObj[i].get()->m_matWorldScale
+						* m_vGeomObj[i].get()->m_matWorldRotate
+						* m_vGeomObj[i].get()->m_matWorldTrans
+						* m_vGeomObj[i].get()->m_pParentObj->m_matWorld;
+				}
+				else {
+					m_vGeomObj[i].get()->m_matCalculation = m_vGeomObj[i].get()->m_matWorldScale
+						* m_vGeomObj[i].get()->m_matWorldRotate
+						* m_vGeomObj[i].get()->m_matWorldTrans;
+				}
 			}
 
 
-		}
+		//}
+
+		//최종행렬.
+
 	}
 
 	
@@ -765,14 +794,18 @@ void		GAseModel::SingleAniFrame() {
 
 
 		}
+
+		m_vGeomObj[0].get()->m_matCalculation = m_vGeomObj[0].get()->m_matWorldScale 
+												* m_vGeomObj[0].get()->m_matWorldRotate 
+												* m_vGeomObj[0].get()->m_matWorldTrans;
 	}
 }
 bool		GAseModel::Frame() {
 
 	if (m_vGeomObj.size() == 1)
 		SingleAniFrame();
-	//else
-	//	MultiAniFrame();
+	else
+		MultiAniFrame();
 
 	return true;
 };
@@ -786,7 +819,7 @@ bool		GAseModel::SingleRender(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMAT
 
 	D3DXMATRIX	  matTemp;
 	D3DXMatrixIdentity(&matTemp);
-	matTemp = m_vGeomObj[0].get()->m_matWorldScale * m_vGeomObj[0].get()->m_matWorldRotate * m_vGeomObj[0].get()->m_matWorldTrans * *matWorld;
+	matTemp = m_vGeomObj[0].get()->m_matCalculation * *matWorld;
 
 	D3DXMatrixTranspose(&cb.mWorld, &matTemp);
 	D3DXMatrixTranspose(&cb.mView, matView);
@@ -837,8 +870,6 @@ bool		GAseModel::MultiRender(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATR
 	D3DXMatrixTranspose(&cb.mView, matView);
 	D3DXMatrixTranspose(&cb.mProjection, matProj);
 
-	
-
 
 	//
 	// Renders a triangle
@@ -851,51 +882,34 @@ bool		GAseModel::MultiRender(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATR
 
 	for (int i = 0; i < m_vGeomObj.size(); i++) {
 
+		if (m_vGeomObj[i]->m_bUsed == false)
+			continue;
+
 		D3DXMATRIX	  matTemp;
 		D3DXMatrixIdentity(&matTemp);
-		//matTemp = m_vGeomObj[i].get()->m_matWorldScale * m_vGeomObj[i].get()->m_matWorldRotate * m_vGeomObj[i].get()->m_matWorldTrans * *matWorld;
-		matTemp = m_vGeomObj[i].get()->m_matWorld * *matWorld;
+
+
+			matTemp = m_vGeomObj[i].get()->m_matCalculation *
+				*matWorld;
+		
+
+		//matTemp = m_vGeomObj[i].get()->m_matWorld * *matWorld;
 
 		D3DXMatrixTranspose(&cb.mWorld, &matTemp);
 		g_pImmediateContext->UpdateSubresource(m_pConstantBuffer.Get(), 0, NULL, &cb, 0, 0);
 
 
-
-
 		for (int j = 0; j < m_vGeomObj[i]->m_vObj.size(); j++) {
 
+			//Set vertex buffer
 
-
-
-
-
-
-
-
-
-			//for (int k = 0; k < m_vMaterial.size(); k++) {
-			//	for (int l = 0; l < m_vMaterial[k]->m_vSubMaterial.size(); l++) {
-
-
-					//Set vertex buffer
-
-					UINT stride = sizeof(PNCT_VERTEX);
-					UINT offset = 0;
-					g_pImmediateContext->IASetVertexBuffers(0, 1, m_vGeomObj[i].get()->m_vObj[j]->m_pVertexBuffer.GetAddressOf(), &stride, &offset);
-					g_pImmediateContext->PSSetShaderResources(0, 1, m_vMaterial[m_vGeomObj[i].get()->m_iMaterial_Ref]->m_vSubMaterial[j]->m_pTextureRV.GetAddressOf());
-					g_pImmediateContext->IASetIndexBuffer(m_vGeomObj[i].get()->m_vObj[j]->m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
-					//g_pImmediateContext->DrawIndexed(m_vGeomObj[0].get()->m_vObj[i]->m_vPnctVertex.size(), 0, 0);
-					g_pImmediateContext->Draw(m_vGeomObj[i].get()->m_vObj[j]->m_vPnctVertex.size(), 0);
-
-
-			//	}
-			//}
-
-				//for (int i = 0; i < m_vMaterial[i]->m_vSubMaterial.size(); i++) {
-
-				//	
-				//	
-				//}
+			UINT stride = sizeof(PNCT_VERTEX);
+			UINT offset = 0;
+			g_pImmediateContext->IASetVertexBuffers(0, 1, m_vGeomObj[i].get()->m_vObj[j]->m_pVertexBuffer.GetAddressOf(), &stride, &offset);
+			g_pImmediateContext->PSSetShaderResources(0, 1, m_vMaterial[m_vGeomObj[i].get()->m_iMaterial_Ref]->m_vSubMaterial[j]->m_pTextureRV.GetAddressOf());
+			g_pImmediateContext->IASetIndexBuffer(m_vGeomObj[i].get()->m_vObj[j]->m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+			//g_pImmediateContext->DrawIndexed(m_vGeomObj[0].get()->m_vObj[i]->m_vPnctVertex.size(), 0, 0);
+			g_pImmediateContext->Draw(m_vGeomObj[i].get()->m_vObj[j]->m_vPnctVertex.size(), 0);
 
 		}
 	}
@@ -914,57 +928,5 @@ bool		GAseModel::Render(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATRIX* m
 };
 bool		GAseModel::Release() {
 
-	//if (m_vMaterial[0]->m_iSubMaterial != 0) {
-	//	m_vMaterial[0]->m_vSubMaterial[0]->m_pTextureRV.Get()->Release();
-	//	m_vMaterial[0]->m_vSubMaterial[1]->m_pTextureRV.Get()->Release();
-	//	m_vMaterial[0]->m_vSubMaterial[2]->m_pTextureRV.Get()->Release();
-	//	m_vMaterial[0]->m_vSubMaterial[3]->m_pTextureRV.Get()->Release();
-	//	m_vMaterial[0]->m_vSubMaterial[4]->m_pTextureRV.Get()->Release();
-
-	//}
-/*	if (m_vGeomObj[0].get()->m_vObj[0]->m_pVertexBuffer.Get()) m_vGeomObj[0].get()->m_vObj[0]->m_pVertexBuffer.Get()->Release();
-	if (m_vGeomObj[0].get()->m_vObj[0]->m_pIndexBuffer.Get()) m_vGeomObj[0].get()->m_vObj[0]->m_pIndexBuffer.Get()->Release();
-	if (m_vMaterial[0]->m_pTextureRV.Get()) m_vMaterial[0]->m_pTextureRV.Get()->Release();
-
-	if (m_vGeomObj[0].get()->m_vObj[0]->m_pConstantBuffer.Get()) m_vGeomObj[0].get()->m_vObj[0]->m_pConstantBuffer.Get()->Release();
-	if (m_pVertexLayout.Get()) m_pVertexLayout.Get()->Release();
-	if (m_pVertexShader.Get()) m_pVertexShader.Get()->Release();
-	if (m_pPixelShader.Get()) m_pPixelShader.Get()->Release();
-	if (m_pSamplerLinear.Get()) m_pSamplerLinear.Get()->Release();
-	*/
-	/*
-	if (m_vMaterial[0]->m_vSubMaterial.size() != 0) {
-
-
-		vector<shared_ptr<GAseMaterial>>::iterator _F = m_vMaterial[0]->m_vSubMaterial.begin();
-		vector<shared_ptr<GAseMaterial>>::iterator _L = m_vMaterial[0]->m_vSubMaterial.end();
-
-		for (; _F != _L; ++_F)
-		{
-			(*_F).reset();
-		}
-		m_vMaterial[0]->m_vSubMaterial.clear();
-
-		//m_vMaterial[0]->m_iSubMaterial = 0;
-	}
-
-	vector<shared_ptr<GAseMaterial>>::iterator _F = m_vMaterial.begin();
-	vector<shared_ptr<GAseMaterial>>::iterator _L = m_vMaterial.end();
-
-	for (; _F != _L; ++_F)
-	{
-		(*_F).reset();
-	}
-	m_vMaterial.clear();
-
-	vector<shared_ptr<GAseObj>>::iterator _B = m_vGeomObj[0].get()->m_vObj.begin();
-	vector<shared_ptr<GAseObj>>::iterator _E = m_vGeomObj[0].get()->m_vObj.end();
-
-	for (; _B != _E; ++_B)
-	{
-		(*_B).reset();
-	}
-	m_vGeomObj[0].get()->m_vObj.clear();
-	*/
 	return true;
 };

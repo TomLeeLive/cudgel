@@ -199,14 +199,15 @@ public:
 	int		GetDataFromFile(GAseModel* stModel);
 	void	GetStringWeNeed(VOID* pOutStr, VOID* pInStr);
 
-	void GAseParser::SaveFilePosition()
+	void ProcessInheritanceBtwObjs(GAseModel* stModel);
+	void SaveFilePosition()
 	{
 		if (fgetpos(m_pStream, &m_FilePosition))
 		{
 			CloseStream();
 		}
 	}
-	void GAseParser::RestoreFilePosition()
+	void RestoreFilePosition()
 	{
 		if (fsetpos(m_pStream, &m_FilePosition))
 		{

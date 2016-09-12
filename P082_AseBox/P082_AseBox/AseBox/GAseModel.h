@@ -65,8 +65,6 @@ public:
 
 class GAseObj {
 public:
-	
-	
 
 	vector<PNCT_VERTEX>				m_vPnctVertex;				//for VB
 	ComPtr<ID3D11Buffer>			m_pVertexBuffer = NULL;
@@ -78,13 +76,13 @@ public:
 };
 class GAseGeom {
 public:
-	D3DXMATRIX						m_matWorld;					//월드행렬
-
-	int										m_iType;			//0:Geom 1:Helper
-
+	int										m_iType;					//0:Geom 1:Helper
 	TCHAR									m_szName[MAX_PATH];			//*NODE_NAME "Box01"
 	TCHAR									m_szParentName[MAX_PATH];	//*NODE_PARENT "Dummy01"
 	int										m_iMaterial_Ref;
+	bool									m_bUsed;					//렌더링 제외여부. false일 경우 렌더링 제외한다.
+	D3DXMATRIX								m_matWorld;					//월드행렬
+	D3DXMATRIX								m_matCalculation;			//계산된 최종행렬
 	D3DXVECTOR3								m_vecBoundingboxMin;
 	D3DXVECTOR3								m_vecBoundingboxMax;
 
@@ -95,7 +93,7 @@ public:
 
 
 	//for Animation [START]
-	bool							m_bHasAniTrack;				//애니메이션정보가 있으면 true;
+	bool							m_bHasAniTrack;				// 애니메이션정보가 있으면 true;
 	D3DXMATRIX						m_matWorldTrans;			// 월드이동행렬 
 	D3DXMATRIX						m_matWorldRotate;			// 월드회전행렬 
 	D3DXMATRIX						m_matWorldScale;			// 월드신축행렬 
@@ -114,12 +112,18 @@ public:
 	float							m_fTM_SCALEAXISANG;
 	//for Animation [END]
 	GAseGeom(){
+		m_pParentObj = NULL;
+
+		m_bUsed = true;
+		m_iMaterial_Ref = -1;
 		memset(m_szName, 0, sizeof(m_szName));
 		memset(m_szParentName, 0, sizeof(m_szParentName));
 
+		D3DXMatrixIdentity(&m_matWorld);
 		D3DXMatrixIdentity(&m_matWorldTrans);
 		D3DXMatrixIdentity(&m_matWorldRotate);
 		D3DXMatrixIdentity(&m_matWorldScale);
+		D3DXMatrixIdentity(&m_matCalculation);
 
 		m_bHasAniTrack = false;
 

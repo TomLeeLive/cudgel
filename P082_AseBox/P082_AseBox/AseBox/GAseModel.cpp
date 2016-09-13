@@ -444,6 +444,11 @@ void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack,
 					*pEndTrack = m_vGeomObj[iGeomNum].get()->m_vPosTrack[j].get()->pNext;
 					break;
 				}
+				else if (m_fTickFrame >= m_vGeomObj[iGeomNum].get()->m_vPosTrack[ m_vGeomObj[iGeomNum].get()->m_vPosTrack.size() - 1].get()->iTick)
+				{
+					*pStartTrack = m_vGeomObj[iGeomNum].get()->m_vPosTrack[m_vGeomObj[iGeomNum].get()->m_vPosTrack.size() - 1].get();
+					*pEndTrack = m_vGeomObj[iGeomNum].get()->m_vPosTrack[m_vGeomObj[iGeomNum].get()->m_vPosTrack.size() - 1].get();
+				}
 			}
 		}
 		break;
@@ -456,7 +461,7 @@ void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack,
 					break;
 				}
 				else if (m_fTickFrame >= m_vGeomObj[iGeomNum].get()->m_vRotTrack[  m_vGeomObj[iGeomNum].get()->m_vRotTrack.size() - 1  ].get()->iTick) {
-					*pStartTrack = m_vGeomObj[iGeomNum].get()->m_vRotTrack[  m_vGeomObj[iGeomNum].get()->m_vRotTrack.size() - 1 ].get()->pNext;
+					*pStartTrack = m_vGeomObj[iGeomNum].get()->m_vRotTrack[  m_vGeomObj[iGeomNum].get()->m_vRotTrack.size() - 1 ].get();
 					*pEndTrack = NULL;
 					break;
 				}
@@ -469,7 +474,13 @@ void		GAseModel::GetAnimationTrack(float fCurrentTick, GAnimTrack** pStartTrack,
 					break;
 				}
 
-
+				/*
+				if (m_fTickFrame >= m_vGeomObj[iGeomNum].get()->m_vRotTrack[m_vGeomObj[iGeomNum].get()->m_vRotTrack.size() - 1].get()->iTick)
+				{
+					*pStartTrack = m_vGeomObj[iGeomNum].get()->m_vRotTrack[m_vGeomObj[iGeomNum].get()->m_vRotTrack.size() - 1].get();
+					*pEndTrack = m_vGeomObj[iGeomNum].get()->m_vRotTrack[m_vGeomObj[iGeomNum].get()->m_vRotTrack.size() - 1].get();
+				}
+				*/
 			}
 		}
 		break;
@@ -518,13 +529,21 @@ void		GAseModel::MultiAniFrame(){
 	D3DXMATRIX matCalc;
 	D3DXMatrixIdentity(&matCalc);
 
+
+	//m_fTickFrame = 6400.0f;
 	m_fTickFrame += g_fSecPerFrame * m_fFrameSpeed *m_fTickPerFrame;
 	if (m_fTickFrame >= m_fLastFrame * m_fTickPerFrame /*마지막 프레임 틱수*/)
 	{
 		m_fTickFrame = 0.0f;
 	}
 
-	for (int i = 0; i < m_vGeomObj.size(); i++) {
+	//m_fTickFrame += 1000.0f;
+	//if (m_fTickFrame >= 8000.0f /*마지막 프레임 틱수*/)
+	//{
+	//	m_fTickFrame = 0.0f;
+	//}
+
+	for (int i = 0; i < m_vGeomObj.size() ; i++) {
 
 		if (m_vGeomObj[i]->m_bUsed == false)
 			continue;
@@ -562,12 +581,20 @@ void		GAseModel::MultiAniFrame(){
 
 			float fTValue = (m_fTickFrame - pStartTrack->iTick) / (pEndTrack->iTick - pStartTrack->iTick);
 
-			D3DXVec3Lerp(&vResultVector, &vP1, &vP2, fTValue);
+			if(pStartTrack != pEndTrack){
+				D3DXVec3Lerp(&vResultVector, &vP1, &vP2, fTValue);
 
-			//T행렬 값 대입
-			matWldTrans._41 = vResultVector.x;
-			matWldTrans._42 = vResultVector.y;
-			matWldTrans._43 = vResultVector.z;
+				//T행렬 값 대입
+				matWldTrans._41 = vResultVector.x;
+				matWldTrans._42 = vResultVector.y;
+				matWldTrans._43 = vResultVector.z;
+			}
+			else {
+				//T행렬 값 대입
+				matWldTrans._41 = pStartTrack->vecVector.x;
+				matWldTrans._42 = pStartTrack->vecVector.y;
+				matWldTrans._43 = pStartTrack->vecVector.z;
+			}
 		}
 
 		//Rotation
@@ -928,7 +955,7 @@ bool		GAseModel::MultiRender(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATR
 	g_pImmediateContext->PSSetShader(m_pPixelShader.Get(), NULL, 0);
 	g_pImmediateContext->PSSetSamplers(0, 1, m_pSamplerLinear.GetAddressOf());
 
-	for (int i = 0; i < m_vGeomObj.size() ; i++) {
+	for (int i = 0; i < m_vGeomObj.size(); i++) {
 
 		if (m_vGeomObj[i]->m_bUsed == false)
 			continue;

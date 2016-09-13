@@ -85,7 +85,7 @@ void GAseParser::ProcessInheritanceBtwObjs(GAseModel* stModel) {
 			stModel->m_vGeomObj[i]->m_matWldTrans = matTranslate;
 			stModel->m_vGeomObj[i]->m_matWldRotate = matRotation;
 			stModel->m_vGeomObj[i]->m_matWldScale = matScale;
-			stModel->m_vGeomObj[i]->m_qRotation = qR;
+			//stModel->m_vGeomObj[i]->m_qRotation = qR;
 
 		}
 	}
@@ -532,7 +532,7 @@ bool GAseParser::GetTrackListFromString(GAseModel* stModel, AseTrackType TrackTy
 				vTrack[vTrack.size() - 1].get()->pPrev = NULL;
 				vTrack[vTrack.size() - 1].get()->pNext = NULL;
 
-				D3DXQuaternionMultiply(&pTrack->qRotate, &stModel->m_vGeomObj[m_iObjCount].get()->m_qRotation, &pTrack->qRotate);
+				//D3DXQuaternionMultiply(&pTrack->qRotate, &stModel->m_vGeomObj[m_iObjCount].get()->m_qRotation, &pTrack->qRotate);
 			}
 
 			// 이전트랙의 쿼터니온과 누적시킴.

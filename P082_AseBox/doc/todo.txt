@@ -4,6 +4,7 @@ ASE가 애니메이션이 있는지? 없는지? 구분
 TM_ANIMATION 파싱
 
 
+//1. 아래 구조체 추가 for 애니메이션
 struct GAnimTrack 
 { 
 int    iTick; //  시간(틱 단위) 
@@ -14,7 +15,7 @@ GAnimTrack*  pPrev;// 이전 트랙 리스트 주소
 }; 
 
 
-//obj 구조체에 추가..
+//2. obj 구조체에 추가..
 D3DXMATRIX    m_matWorldTrans;  // 월드이동행렬 
 D3DXMATRIX    m_matWorldRotate;  // 월드회전행렬 
 D3DXMATRIX    m_matWorldScale;  // 월드신축행렬 
@@ -23,14 +24,15 @@ vector<GAnimTrack> m_PosTrack;// 이동트랙
 vector<GAnimTrack> m_RotTrack;// 회전트랙 
 vector<GAnimTrack> m_SclTrack;// 신축트랙 
 
-//파싱작업
-765p
+//3.추가 정보 파싱작업
 
-시간계산
-트랙리스트검색
-애니메이션보간
+4.시간계산
 
-오브젝트 렌더링
+5.트랙리스트검색
+
+6.애니메이션보간
+
+7.오브젝트 렌더링
 
 
 1.T 애니메이션

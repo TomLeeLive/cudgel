@@ -114,7 +114,7 @@ const TCHAR *gbsExport2016::LongDesc()
 const TCHAR *gbsExport2016::ShortDesc() 
 {			
 	#pragma message(TODO("Return short ASCII description (i.e. \"Targa\")"))
-	return _T("Gbs Exporter");
+	return _T("Gbs Exporter (GBS)");
 }
 
 const TCHAR *gbsExport2016::AuthorName()

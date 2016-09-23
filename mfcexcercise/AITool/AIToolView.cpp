@@ -143,3 +143,11 @@ void CAIToolView::OnSize(UINT nType, int cx, int cy)
 	//GCoreLib 연동..[END]
 
 }
+
+
+LRESULT CAIToolView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
+{
+	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
+
+	return CView::WindowProc(message, wParam, lParam);
+}

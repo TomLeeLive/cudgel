@@ -12,12 +12,15 @@
 // AUTHOR: 
 //***************************************************************************/
 
-#include "gbsExport2016.h"
+//#include "gbsExport2016.h"
+#include "GbsWriter.h"
 
 #define gbsExport2016_CLASS_ID	Class_ID(0x59c8c928, 0xcdb64b98)
 
 class gbsExport2016 : public SceneExport {
 public:
+	GbsWriter m_Writer;
+
 	//Constructor/Destructor
 	gbsExport2016();
 	~gbsExport2016();
@@ -65,7 +68,7 @@ ClassDesc2* GetgbsExport2016Desc() {
 
 
 
-INT_PTR CALLBACK gbsExport2016OptionsDlgProc(HWND hWnd,UINT message,WPARAM,LPARAM lParam) {
+INT_PTR CALLBACK gbsExport2016OptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam) {
 	static gbsExport2016* imp = nullptr;
 
 	switch(message) {
@@ -73,7 +76,17 @@ INT_PTR CALLBACK gbsExport2016OptionsDlgProc(HWND hWnd,UINT message,WPARAM,LPARA
 			imp = (gbsExport2016 *)lParam;
 			CenterWindow(hWnd,GetParent(hWnd));
 			return TRUE;
-
+		case WM_COMMAND:
+		{
+			switch (LOWORD(wParam))
+			{
+			case IDC_EXPORT:
+			{
+				imp->m_Writer.Exporter();
+				EndDialog(hWnd, 1);
+			}
+			}
+		}
 		case WM_CLOSE:
 			EndDialog(hWnd, 0);
 			return 1;

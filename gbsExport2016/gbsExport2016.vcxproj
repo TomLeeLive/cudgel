@@ -49,6 +49,7 @@
   <ItemGroup>
     <ClCompile Include="gbsExport2016.cpp" />
     <ClCompile Include="DllEntry.cpp" />
+    <ClCompile Include="GbsWriter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="gbsExport2016.def" />
@@ -56,6 +57,7 @@
   <ItemGroup>
     <ClInclude Include="3dsmaxsdk_preinclude.h" />
     <ClInclude Include="gbsExport2016.h" />
+    <ClInclude Include="GbsWriter.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

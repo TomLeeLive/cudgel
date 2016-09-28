@@ -12,7 +12,7 @@
 
 
 
-
+#define IDC_EXPORT						1001
 
 
 

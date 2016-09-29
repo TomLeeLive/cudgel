@@ -172,18 +172,17 @@ BOOL gbsExport2016::SupportsOptions(int /*ext*/, DWORD /*options*/)
 }
 
 
-int	gbsExport2016::DoExport(const TCHAR* /*name*/, ExpInterface* /*ei*/, Interface* /*ip*/, BOOL suppressPrompts, DWORD /*options*/)
+int	gbsExport2016::DoExport(const TCHAR* name, ExpInterface* ei, Interface* ip, BOOL suppressPrompts, DWORD options)
 {
-	#pragma message(TODO("Implement the actual file Export here and"))
+	m_Writer.Init(name, ip);
+	if (!suppressPrompts)
+		DialogBoxParam(hInstance,
+			MAKEINTRESOURCE(IDD_PANEL),
+			GetActiveWindow(),
+			gbsExport2016OptionsDlgProc, (LPARAM)this);
 
-	if(!suppressPrompts)
-		DialogBoxParam(hInstance, 
-				MAKEINTRESOURCE(IDD_PANEL), 
-				GetActiveWindow(), 
-				gbsExport2016OptionsDlgProc, (LPARAM)this);
-
-	#pragma message(TODO("return TRUE If the file is exported properly"))
-	return FALSE;
+	m_Writer.Release();
+	return TRUE;
 }
 
 

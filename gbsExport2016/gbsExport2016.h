@@ -21,10 +21,11 @@
 #include <iparamm2.h>
 #include <maxtypes.h>
 //SIMPLE TYPE
-
-
+#include <stdmat.h>
+#include <max.h>
+#include <decomp.h>
 #include <impexp.h>
-
+#include <algorithm>
 
 extern TCHAR *GetString(int id);
 

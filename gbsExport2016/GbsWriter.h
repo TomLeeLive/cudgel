@@ -130,7 +130,7 @@ public:
 
 
 
-	void Release();
+	void Release() { fclose(m_fp); };
 	bool Exporter();
 	bool ExpScene();
 	bool ExpMaterial();

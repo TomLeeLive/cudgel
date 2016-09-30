@@ -600,6 +600,7 @@ void GbsWriter::Init(TSTR name,
 	m_p3dsMax = p3dsMax;
 	m_szFileName = name;
 	m_pRootNode = m_p3dsMax->GetRootNode();
+	m_Interval = m_p3dsMax->GetAnimRange();
 	PreProcess(m_pRootNode);
 
 	m_Scene.iVersion = 100;
@@ -610,17 +611,11 @@ void GbsWriter::Init(TSTR name,
 	m_fp = _tfopen(m_szFileName, _T("wt"));
 	_ftprintf(m_fp, _T("%s\n"), _T("GBS_FILE_EXPORT"));
 };
-void GbsWriter::Release() { fclose(m_fp); };
-bool GbsWriter::Exporter() {
-	
-	ExpScene();
-	ExpMaterial();
-	ExpObject();
-	return true; 
-};
+
+
 bool GbsWriter::ExpScene() {
 	
-	Interval m_Interval = m_p3dsMax->GetAnimRange();
+	//Interval m_Interval = m_p3dsMax->GetAnimRange();
 
 	m_Scene.iTickPerFrame = GetTicksPerFrame();
 	m_Scene.iFirstFrame = m_Interval.Start() / GetTicksPerFrame();
@@ -828,7 +823,13 @@ bool GbsWriter::ExpObject() {
 
 	return true; 
 };
+bool GbsWriter::Exporter() {
 
+	ExpScene();
+	ExpMaterial();
+	ExpObject();
+	return true;
+};
 GbsWriter::GbsWriter()
 {
 }

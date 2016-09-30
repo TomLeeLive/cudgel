@@ -10,7 +10,7 @@ struct AScendingSort
 {
 	bool operator()(GTri& a, GTri& b)
 	{
-		return a.iSubIndex > b.iSubIndex;
+		return a.iSubIndex < b.iSubIndex;
 	}
 };
 
@@ -22,6 +22,87 @@ struct IsSubEqual
 		return a.iSubIndex == g_iSubIndex;
 	}
 };
+
+int GbsWriter::IsEqulVertexList(vector<PNCT_VERTEX>& UniqueVertex,
+	PNCT_VERTEX& vertex)
+{
+	for (int iCnt = 0; iCnt < UniqueVertex.size(); iCnt++)
+	{
+		if (EqualPoint3(UniqueVertex[iCnt].p, vertex.p) &&
+			EqualPoint3(UniqueVertex[iCnt].n, vertex.n) &&
+			EqualPoint4(UniqueVertex[iCnt].c, vertex.c) &&
+			EqualPoint2(UniqueVertex[iCnt].t, vertex.t))
+		{
+			return iCnt;
+		}
+	}
+	return -1;
+};
+int GbsWriter::ExpMesh(GMesh& pMesh, int iMtl, int iAddCount)
+{
+	vector<PNCT_VERTEX>  UniqueVertex;
+	vector<DWORD>  UniqueIndex;
+	int iNumTriangle = pMesh.triList.size();
+	if (iMtl >= 0)
+	{
+		g_iSubIndex = iMtl;
+		iNumTriangle =
+			std::count_if(
+				pMesh.triList.begin(),
+				pMesh.triList.end(),
+				IsSubEqual());
+	}
+
+	for (int iFace = 0; iFace < iNumTriangle; iFace++)
+	{
+
+		for (int iVertex = 0; iVertex < 3; iVertex++)
+		{
+			int iPosReturn = IsEqulVertexList(UniqueVertex,
+				pMesh.triList[iAddCount + iFace].v[iVertex]);
+			if (iPosReturn < 0)
+			{
+				UniqueVertex.push_back(pMesh.triList[iAddCount + iFace].v[iVertex]);
+				iPosReturn = UniqueVertex.size() - 1;
+			}
+			UniqueIndex.push_back(iPosReturn);
+		}
+
+	}
+
+	_ftprintf(m_fp,
+		_T("%d %d %d\n"), iMtl, UniqueVertex.size(),
+		UniqueIndex.size());
+	for (int iCnt = 0; iCnt < UniqueVertex.size(); iCnt++)
+	{
+		_ftprintf(m_fp,
+			_T("%10.4f %10.4f %10.4f %10.4f  %10.4f %10.4f %10.4f %10.4f  %10.4f %10.4f %10.4f %10.4f \n"),
+			UniqueVertex[iCnt].p.x,
+			UniqueVertex[iCnt].p.y,
+			UniqueVertex[iCnt].p.z,
+
+			UniqueVertex[iCnt].n.x,
+			UniqueVertex[iCnt].n.y,
+			UniqueVertex[iCnt].n.z,
+
+			UniqueVertex[iCnt].c.x,
+			UniqueVertex[iCnt].c.y,
+			UniqueVertex[iCnt].c.z,
+			UniqueVertex[iCnt].c.w,
+
+			UniqueVertex[iCnt].t.x,
+			UniqueVertex[iCnt].t.y);
+	}
+	for (int iCnt = 0; iCnt < UniqueIndex.size(); iCnt += 3)
+	{
+		_ftprintf(m_fp, _T(" %d"), UniqueIndex[iCnt + 0]);
+		_ftprintf(m_fp, _T(" %d"), UniqueIndex[iCnt + 1]);
+		_ftprintf(m_fp, _T(" %d\n"), UniqueIndex[iCnt + 2]);
+	}
+	return iNumTriangle;
+};
+
+
 
 void GbsWriter::GetPosTrack(INode* pNode, GMesh& tMesh)
 {
@@ -95,6 +176,21 @@ BOOL GbsWriter::EqualPoint3(Point3 t0, Point3 t1)
 	if (fabs(t1.z - t0.z) > 0.001f) return FALSE;
 	return TRUE;
 }
+BOOL GbsWriter::EqualPoint4(Point4 t0, Point4 t1)
+{
+	if (fabs(t1.x - t0.x) > 0.001f) return FALSE;
+	if (fabs(t1.y - t0.y) > 0.001f) return FALSE;
+	if (fabs(t1.z - t0.z) > 0.001f) return FALSE;
+	if (fabs(t1.w - t0.w) > 0.001f) return FALSE;
+	return TRUE;
+}
+BOOL GbsWriter::EqualPoint2(Point2 t0, Point2 t1)
+{
+	if (fabs(t1.x - t0.x) > 0.001f) return FALSE;
+	if (fabs(t1.y - t0.y) > 0.001f) return FALSE;
+	return TRUE;
+}
+
 BOOL GbsWriter::EqualQuat(Quat q0, Quat q1)
 {
 	Point3 vAxis[2];
@@ -646,91 +742,88 @@ bool GbsWriter::ExpObject() {
 				break;
 			}
 		}
-		m_tObjectList.push_back(gMesh);
+		m_gObjectList.push_back(gMesh);
 	}
 
 
-	for (int iObj = 0; iObj < m_tObjectList.size(); iObj++)
+	for (int iObj = 0; iObj < m_gObjectList.size(); iObj++)
 	{
 		_ftprintf(m_fp, _T("%s %d %s %s\n"),
 			_T("#OBJECT"), iObj,
-			m_tObjectList[iObj].nodeName,
-			m_tObjectList[iObj].nodeParentName);
+			m_gObjectList[iObj].nodeName,
+			m_gObjectList[iObj].nodeParentName);
 
 		_ftprintf(m_fp, _T("%s %10.4f %10.4f %10.4f %10.4f  %10.4f %10.4f %10.4f %10.4f  %10.4f %10.4f %10.4f %10.4f  %10.4f %10.4f %10.4f %10.4f \n"),
 			_T("#WORLD"),
-			m_tObjectList[iObj].matWorld._11,
-			m_tObjectList[iObj].matWorld._12,
-			m_tObjectList[iObj].matWorld._13,
-			m_tObjectList[iObj].matWorld._14,
+			m_gObjectList[iObj].matWorld._11,
+			m_gObjectList[iObj].matWorld._12,
+			m_gObjectList[iObj].matWorld._13,
+			m_gObjectList[iObj].matWorld._14,
 
-			m_tObjectList[iObj].matWorld._21,
-			m_tObjectList[iObj].matWorld._22,
-			m_tObjectList[iObj].matWorld._23,
-			m_tObjectList[iObj].matWorld._24,
+			m_gObjectList[iObj].matWorld._21,
+			m_gObjectList[iObj].matWorld._22,
+			m_gObjectList[iObj].matWorld._23,
+			m_gObjectList[iObj].matWorld._24,
 
-			m_tObjectList[iObj].matWorld._31,
-			m_tObjectList[iObj].matWorld._32,
-			m_tObjectList[iObj].matWorld._33,
-			m_tObjectList[iObj].matWorld._34,
+			m_gObjectList[iObj].matWorld._31,
+			m_gObjectList[iObj].matWorld._32,
+			m_gObjectList[iObj].matWorld._33,
+			m_gObjectList[iObj].matWorld._34,
 
-			m_tObjectList[iObj].matWorld._41,
-			m_tObjectList[iObj].matWorld._42,
-			m_tObjectList[iObj].matWorld._43,
-			m_tObjectList[iObj].matWorld._44);
+			m_gObjectList[iObj].matWorld._41,
+			m_gObjectList[iObj].matWorld._42,
+			m_gObjectList[iObj].matWorld._43,
+			m_gObjectList[iObj].matWorld._44);
 
 
-		std::sort(m_tObjectList[iObj].triList.begin(),
-			m_tObjectList[iObj].triList.end(),
+		std::sort(m_gObjectList[iObj].triList.begin(),
+			m_gObjectList[iObj].triList.end(),
 			AScendingSort());
-		_ftprintf(m_fp, _T("%s %d"), _T("TRIANGLE"),
-			m_gMtlList[m_tObjectList[iObj].iRef].subMtls.size());
-		for (int iMtl = 0; iMtl <
-			m_gMtlList[m_tObjectList[iObj].iRef].subMtls.size();
-			iMtl++)
+		_ftprintf(m_fp, _T("%s %d\n"), _T("TRIANGLE"),
+			m_gMtlList[m_gObjectList[iObj].iRef].subMtls.size());
+
+		int iAddCount = 0;
+		if (m_gMtlList[m_gObjectList[iObj].iRef].subMtls.size() >  0)
 		{
-			g_iSubIndex = iMtl;
-			int iNumTriangle =
-				std::count_if(
-					m_tObjectList[iObj].triList.begin(),
-					m_tObjectList[iObj].triList.end(),
-					IsSubEqual());
-
-			_ftprintf(m_fp, _T(" %d"), iNumTriangle);
-		}
-
-
-
-
-
-
-
-
-
-
-		for (int iTri = 0; iTri < m_tObjectList[iObj].triList.size(); iTri++)
-		{
-			for (int iVertex = 0; iVertex < 3; iVertex++)
+			for (int iMtl = 0; iMtl <
+				m_gMtlList[m_gObjectList[iObj].iRef].subMtls.size();
+				iMtl++)
 			{
-				_ftprintf(m_fp,
-					_T("%10.4f %10.4f %10.4f %10.4f  %10.4f %10.4f %10.4f %10.4f  %10.4f %10.4f %10.4f %10.4f \n"),
-					m_tObjectList[iObj].triList[iTri].v[iVertex].p.x,
-					m_tObjectList[iObj].triList[iTri].v[iVertex].p.y,
-					m_tObjectList[iObj].triList[iTri].v[iVertex].p.z,
-
-					m_tObjectList[iObj].triList[iTri].v[iVertex].n.x,
-					m_tObjectList[iObj].triList[iTri].v[iVertex].n.y,
-					m_tObjectList[iObj].triList[iTri].v[iVertex].n.z,
-
-					m_tObjectList[iObj].triList[iTri].v[iVertex].c.x,
-					m_tObjectList[iObj].triList[iTri].v[iVertex].c.y,
-					m_tObjectList[iObj].triList[iTri].v[iVertex].c.z,
-					m_tObjectList[iObj].triList[iTri].v[iVertex].c.w,
-
-					m_tObjectList[iObj].triList[iTri].v[iVertex].t.x,
-					m_tObjectList[iObj].triList[iTri].v[iVertex].t.y);
+				iAddCount += ExpMesh(m_gObjectList[iObj],
+					iMtl,
+					iAddCount);
 			}
 		}
+		else
+		{
+			ExpMesh(m_gObjectList[iObj], -1, iAddCount);
+		}
+
+
+		/*	for (int iTri = 0; iTri < m_tObjectList[iObj].triList.size(); iTri++)
+		{
+		for (int iVertex = 0; iVertex < 3; iVertex++)
+		{
+		_ftprintf(m_fp,
+		_T("%10.4f %10.4f %10.4f %10.4f  %10.4f %10.4f %10.4f %10.4f  %10.4f %10.4f %10.4f %10.4f \n"),
+		m_tObjectList[iObj].triList[iTri].v[iVertex].p.x,
+		m_tObjectList[iObj].triList[iTri].v[iVertex].p.y,
+		m_tObjectList[iObj].triList[iTri].v[iVertex].p.z,
+
+		m_tObjectList[iObj].triList[iTri].v[iVertex].n.x,
+		m_tObjectList[iObj].triList[iTri].v[iVertex].n.y,
+		m_tObjectList[iObj].triList[iTri].v[iVertex].n.z,
+
+		m_tObjectList[iObj].triList[iTri].v[iVertex].c.x,
+		m_tObjectList[iObj].triList[iTri].v[iVertex].c.y,
+		m_tObjectList[iObj].triList[iTri].v[iVertex].c.z,
+		m_tObjectList[iObj].triList[iTri].v[iVertex].c.w,
+
+		m_tObjectList[iObj].triList[iTri].v[iVertex].t.x,
+		m_tObjectList[iObj].triList[iTri].v[iVertex].t.y );
+		}
+		}*/
+
 	}
 
 	return true; 

@@ -59,7 +59,7 @@ struct GTri
 	PNCT_VERTEX v[3];
 	int         iSubIndex;
 };
-struct GMesh
+struct GMesh // ÇÇºÎ, »ì
 {
 	int   iType; // 0 geom, 1 helper, 2 biped	
 	TSTR  nodeName;
@@ -67,13 +67,18 @@ struct GMesh
 	D3D_MATRIX  matWorld;
 	vector<GTri>  triList;
 	vector<GMesh> subMesh;
+	Box3  box;
+	int   iRef;
 	vector<GAnimTrack> posTrack;
 	vector<GAnimTrack> rotTrack;
 	vector<GAnimTrack> sclTrack;
-	Box3  box;
-	int   iRef;
 };
-
+//struct TMatrixIndex // »À
+//{
+//	vector<TAnimTrack> posTrack;
+//	vector<TAnimTrack> rotTrack;
+//	vector<TAnimTrack> sclTrack;
+//};
 
 
 
@@ -84,15 +89,24 @@ public:
 	Interface*		m_p3dsMax;
 	INode*			m_pRootNode;
 
-	vector <Mtl*>	m_MtlList;
-	vector <INode*> m_ObjectList;
-	vector <GMtl>	m_gMtlList;
-	vector<GMesh>   m_tObjectList;
+
+	vector<Mtl*>	m_MtlList;
+	vector<GMtl>	m_gMtlList;
+
+	vector<INode*>  m_ObjectList;
+	vector<GMesh>   m_gObjectList;
+
 	Interval		m_Interval;
 	GScene			m_Scene;
 	FILE*			m_fp;
 public:
+	int IsEqulVertexList(vector<PNCT_VERTEX>& UniqueVertex,
+		PNCT_VERTEX& vertex);
+	int ExpMesh(GMesh& pMesh, int iMtl, int iAddCount);
+	BOOL EqualPoint2(Point2 t0, Point2 t1);
 	BOOL EqualPoint3(Point3 t0, Point3 t1);
+	BOOL EqualPoint4(Point4 t0, Point4 t1);
+
 	BOOL EqualQuat(Quat t0, Quat t1);
 
 	void  DumpPoint3(Point3& v, Point3& Vertex);

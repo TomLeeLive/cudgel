@@ -1,0 +1,260 @@
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01"
+	*NODE_PARENT	""
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 Footsteps"
+	*NODE_PARENT	"Bip01"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 Pelvis"
+	*NODE_PARENT	"Bip01"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 Spine"
+	*NODE_PARENT	"Bip01 Pelvis"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 Spine1"
+	*NODE_PARENT	"Bip01 Spine"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 Neck"
+	*NODE_PARENT	"Bip01 Spine1"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 Head"
+	*NODE_PARENT	"Bip01 Neck"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"head"
+	*NODE_PARENT	"Bip01 Head"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 L Clavicle"
+	*NODE_PARENT	"Bip01 Neck"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 L UpperArm"
+	*NODE_PARENT	"Bip01 L Clavicle"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 L Forearm"
+	*NODE_PARENT	"Bip01 L UpperArm"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 L Hand"
+	*NODE_PARENT	"Bip01 L Forearm"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 L Finger0"
+	*NODE_PARENT	"Bip01 L Hand"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 L Finger1"
+	*NODE_PARENT	"Bip01 L Hand"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Lhand"
+	*NODE_PARENT	"Bip01 L Hand"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Lforearm"
+	*NODE_PARENT	"Bip01 L Forearm"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Lupperarm"
+	*NODE_PARENT	"Bip01 L UpperArm"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Lclavicle"
+	*NODE_PARENT	"Bip01 L Clavicle"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 R Clavicle"
+	*NODE_PARENT	"Bip01 Neck"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 R UpperArm"
+	*NODE_PARENT	"Bip01 R Clavicle"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 R Forearm"
+	*NODE_PARENT	"Bip01 R UpperArm"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 R Hand"
+	*NODE_PARENT	"Bip01 R Forearm"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 R Finger0"
+	*NODE_PARENT	"Bip01 R Hand"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 R Finger1"
+	*NODE_PARENT	"Bip01 R Hand"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Rhand"
+	*NODE_PARENT	"Bip01 R Hand"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Rforearm"
+	*NODE_PARENT	"Bip01 R Forearm"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Rupperarm"
+	*NODE_PARENT	"Bip01 R UpperArm"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Rclavicle"
+	*NODE_PARENT	"Bip01 R Clavicle"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"neck"
+	*NODE_PARENT	"Bip01 Neck"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"spine2"
+	*NODE_PARENT	"Bip01 Spine1"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 L Thigh"
+	*NODE_PARENT	"Bip01 Spine"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 L Calf"
+	*NODE_PARENT	"Bip01 L Thigh"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 L Foot"
+	*NODE_PARENT	"Bip01 L Calf"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 L Toe0"
+	*NODE_PARENT	"Bip01 L Foot"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Lfoot"
+	*NODE_PARENT	"Bip01 L Foot"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Lcalf"
+	*NODE_PARENT	"Bip01 L Calf"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Lthigh"
+	*NODE_PARENT	"Bip01 L Thigh"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 R Thigh"
+	*NODE_PARENT	"Bip01 Spine"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 R Calf"
+	*NODE_PARENT	"Bip01 R Thigh"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 R Foot"
+	*NODE_PARENT	"Bip01 R Calf"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 R Toe0"
+	*NODE_PARENT	"Bip01 R Foot"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Rfoot"
+	*NODE_PARENT	"Bip01 R Foot"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Rcalf"
+	*NODE_PARENT	"Bip01 R Calf"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Rthigh"
+	*NODE_PARENT	"Bip01 R Thigh"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 Tail"
+	*NODE_PARENT	"Bip01 Spine"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 Tail1"
+	*NODE_PARENT	"Bip01 Tail"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"Bip01 Tail2"
+	*NODE_PARENT	"Bip01 Tail1"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"tail3"
+	*NODE_PARENT	"Bip01 Tail2"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"tail2"
+	*NODE_PARENT	"Bip01 Tail1"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"tail1"
+	*NODE_PARENT	"Bip01 Tail"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"spine1"
+	*NODE_PARENT	"Bip01 Spine"
+}
+
+*GEOMOBJECT {
+	*NODE_NAME	"pelvis"
+	*NODE_PARENT	"Bip01 Pelvis"
+}
+

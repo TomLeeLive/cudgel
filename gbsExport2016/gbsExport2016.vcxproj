@@ -15,7 +15,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>gbsExport2016</ProjectName>
+    <ProjectName>GbsExport2016</ProjectName>
     <ProjectGuid>{6671F0BA-6FB8-4f35-8392-0676D05113A8}</ProjectGuid>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <MaxSDK>C:\Program Files\Autodesk\3ds Max 2016 SDK\maxsdk</MaxSDK>
@@ -47,21 +47,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="gbsExport2016.cpp" />
-    <ClCompile Include="DllEntry.cpp" />
-    <ClCompile Include="GbsWriter.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="gbsExport2016.def" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="3dsmaxsdk_preinclude.h" />
-    <ClInclude Include="gbsExport2016.h" />
+    <ClInclude Include="GbsExport2016.h" />
     <ClInclude Include="GbsWriter.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="gbsExport2016.rc" />
+    <ClCompile Include="DllEntry.cpp" />
+    <ClCompile Include="GbsExport2016.cpp" />
+    <ClCompile Include="GbsWriter.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GbsExport2016.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="GbsExport2016.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

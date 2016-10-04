@@ -980,6 +980,15 @@ bool		GGbsModel::MultiRender(D3DXMATRIX* matWorld, D3DXMATRIX* matView, D3DXMATR
 			UINT offset = 0;
 			g_pImmediateContext->IASetVertexBuffers(0, 1, m_vGeomObj[i].get()->m_vObj[j]->m_pVertexBuffer.GetAddressOf(), &stride, &offset);
 
+
+
+
+			if (m_vGeomObj[i].get()->m_iMaterial_Ref < 0)
+				continue;
+
+
+
+
 			g_pImmediateContext->PSSetShaderResources(0, 1, m_vMaterial[m_vGeomObj[i].get()->m_iMaterial_Ref]->m_vSubMaterial[j]->m_pTextureRV.GetAddressOf());
 			//g_pImmediateContext->PSSetShaderResources(0, 1, m_vMaterial[0]->m_vSubMaterial[j]->m_pTextureRV.GetAddressOf());
 

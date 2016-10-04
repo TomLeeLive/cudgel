@@ -5,9 +5,9 @@
 //#define GBS_DEFINE_BOX
 //#define GBS_DEFINE_SHIP
 //#define GBS_DEFINE_MULTICAMERAS
-#define GBS_DEFINE_ANI_TRANSLATE
+//#define GBS_DEFINE_ANI_TRANSLATE
 //#define GBS_DEFINE_ANI_SCALE
-//#define GBS_DEFINE_ANI_TURRET
+#define GBS_DEFINE_ANI_TURRET
 
 int GbsViewer::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -61,8 +61,8 @@ bool	GbsViewer::Init() {
 #ifdef GBS_DEFINE_ANI_ROTATE
 		m_stModel.Init(L"data/rotanimation.GBS", L"Tutorial04.fx");
 #endif
-#ifdef G_DEFINE_ANI_TURRET
-		m_stModel.Init(L"data/Turret_Deploy.GBS", L"Tutorial04.fx");
+#ifdef GBS_DEFINE_ANI_TURRET
+		m_stModel.Init(L"data/turret.GBS", L"Tutorial04.fx");
 #endif
 
 

@@ -777,11 +777,18 @@ bool GbsWriter::ExpObject() {
 		std::sort(m_gObjectList[iObj].triList.begin(),
 			m_gObjectList[iObj].triList.end(),
 			AScendingSort());
-		_ftprintf(m_fp, _T("%s %d\n"), _T("#TRIANGLE"),
-			m_gMtlList[m_gObjectList[iObj].iRef].subMtls.size());
+
+		if (m_gObjectList[iObj].iRef < 0) {
+			_ftprintf(m_fp, _T("%s %d\n"), _T("#TRIANGLE"),0);
+		}
+		else {
+			_ftprintf(m_fp, _T("%s %d\n"), _T("#TRIANGLE"),
+				m_gMtlList[m_gObjectList[iObj].iRef].subMtls.size());
+		}
 
 		int iAddCount = 0;
-		if (m_gMtlList[m_gObjectList[iObj].iRef].subMtls.size() >  0)
+
+		if (m_gObjectList[iObj].iRef >0 && m_gMtlList[m_gObjectList[iObj].iRef].subMtls.size() >  0)
 		{
 			for (int iMtl = 0; iMtl <
 				m_gMtlList[m_gObjectList[iObj].iRef].subMtls.size();

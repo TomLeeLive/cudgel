@@ -1,0 +1,178 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>GCoreLib</ProjectName>
+    <ProjectGuid>{C2320D8D-FB07-4F72-ABB9-364EDCF5EE4C}</ProjectGuid>
+    <RootNamespace>TBasisLib_0</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>11.0.50727.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>../output</OutDir>
+    <IntDir>../output/GCoreLib_0</IntDir>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <TargetName>$(ProjectName)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>../output</OutDir>
+    <IntDir>../output/GCoreLib_0</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <AdditionalIncludeDirectories>../include/dx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Lib>
+      <OutputFile>GCoreLib32d.lib</OutputFile>
+      <AdditionalLibraryDirectories>../lib/dx/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <PostBuildEvent />
+    <PostBuildEvent>
+      <Command>copy "./GCoreLib32d.lib" "..\\lib"
+copy "*.h" "..\\include\\Inc"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>../include/dx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Lib>
+      <AdditionalLibraryDirectories>../lib/dx/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <OutputFile>GCoreLib32.lib</OutputFile>
+    </Lib>
+    <PostBuildEvent />
+    <PostBuildEvent>
+      <Command>copy "./GCoreLib32.lib" "..\\lib"
+copy "*.h" "..\\include\\Inc"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="GArcBall.cpp" />
+    <ClCompile Include="GAseObj.cpp" />
+    <ClCompile Include="GAseParser.cpp" />
+    <ClCompile Include="GBackViewCamera.cpp" />
+    <ClCompile Include="GBasisLib_0.cpp" />
+    <ClCompile Include="GBoxObj.cpp" />
+    <ClCompile Include="GCamera.cpp" />
+    <ClCompile Include="GDevice.cpp" />
+    <ClCompile Include="GDirectWrite.cpp" />
+    <ClCompile Include="GDxHelper.cpp" />
+    <ClCompile Include="GDxHelperEx.cpp" />
+    <ClCompile Include="GDxState.cpp" />
+    <ClCompile Include="GFrustum.cpp" />
+    <ClCompile Include="GHeightMap.cpp" />
+    <ClCompile Include="GInput.cpp" />
+    <ClCompile Include="GLightObj.cpp" />
+    <ClCompile Include="GLoadToken.cpp" />
+    <ClCompile Include="GMap.cpp" />
+    <ClCompile Include="GMesh.cpp" />
+    <ClCompile Include="GModel.cpp" />
+    <ClCompile Include="GModelViewCamera.cpp" />
+    <ClCompile Include="GObject.cpp" />
+    <ClCompile Include="GObjMgr.cpp" />
+    <ClCompile Include="GParser.cpp" />
+    <ClCompile Include="GRenderSO.cpp" />
+    <ClCompile Include="GShape.cpp" />
+    <ClCompile Include="GSprite.cpp" />
+    <ClCompile Include="GSpriteMgr.cpp" />
+    <ClCompile Include="GTextureMgr.cpp" />
+    <ClCompile Include="GTimer.cpp" />
+    <ClCompile Include="GWindow.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GArcBall.h" />
+    <ClInclude Include="GAseObj.h" />
+    <ClInclude Include="GAseParser.h" />
+    <ClInclude Include="GBackViewCamera.h" />
+    <ClInclude Include="GBasisLib_0.h" />
+    <ClInclude Include="GBasisStd.h" />
+    <ClInclude Include="GBoxObj.h" />
+    <ClInclude Include="GCamera.h" />
+    <ClInclude Include="GDevice.h" />
+    <ClInclude Include="GDirectWrite.h" />
+    <ClInclude Include="GDxHelperEx.h" />
+    <ClInclude Include="GDxState.h" />
+    <ClInclude Include="GFrustum.h" />
+    <ClInclude Include="GHeightMap.h" />
+    <ClInclude Include="GInput.h" />
+    <ClInclude Include="GLightObj.h" />
+    <ClInclude Include="GLoadMgr.h" />
+    <ClInclude Include="GLoadToken.h" />
+    <ClInclude Include="GMap.h" />
+    <ClInclude Include="GMesh.h" />
+    <ClInclude Include="GModel.h" />
+    <ClInclude Include="GModelViewCamera.h" />
+    <ClInclude Include="GObject.h" />
+    <ClInclude Include="GObjMgr.h" />
+    <ClInclude Include="GObjStd.h" />
+    <ClInclude Include="GParser.h" />
+    <ClInclude Include="GRenderSO.h" />
+    <ClInclude Include="GShape.h" />
+    <ClInclude Include="GSprite.h" />
+    <ClInclude Include="GSpriteMgr.h" />
+    <ClInclude Include="GTemplate.h" />
+    <ClInclude Include="GTextureMgr.h" />
+    <ClInclude Include="GTimer.h" />
+    <ClInclude Include="GWindow.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

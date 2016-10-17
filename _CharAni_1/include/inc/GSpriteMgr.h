@@ -10,7 +10,7 @@ public:
 	typedef map <INT, GSprite*>					TemplateMap;
 	typedef TemplateMap::iterator				TemplateMapItor;
 	TemplateMapItor								TItor;
-	TemplateMap									GMap;
+	TemplateMap									TMap;
 	INT											m_iCurIndex;
 public:
 	void			SetDevice(ID3D11Device*	 pDevice);
@@ -19,7 +19,7 @@ public:
 						TCHAR *pShaderFileName,						
 						ID3D11BlendState* m_pBlendState = nullptr,
 						bool bInstancing = false );
-	GSprite*		GetPtr(INT iIndex);
+	GSprite* const	GetPtr(INT iIndex);
 	bool			Release();
 	bool			Delete(INT iDelete);
 public:

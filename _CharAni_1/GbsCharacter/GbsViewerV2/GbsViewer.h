@@ -1,6 +1,6 @@
 #pragma once
 
-class GbsViewer : public GBASISLib_0
+class Sample : public GBasisLib_0
 {
 public:
 	shared_ptr<GCamera > m_pMainCamera;
@@ -20,7 +20,7 @@ public:
 	bool		Frame();
 	bool		Render();
 	bool		Release();
-	GbsViewer();
-	virtual ~GbsViewer();
+	Sample();
+	virtual ~Sample();
 };
 

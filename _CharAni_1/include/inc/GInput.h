@@ -1,5 +1,5 @@
 #pragma once
-#include "GBASISStd.h"
+#include "GBasisStd.h"
 #include <dinput.h>
 #pragma comment (lib, "dinput8.lib")
 
@@ -16,6 +16,7 @@ enum KeyState {
 class GInput : public GSingleton < GInput >
 {
 public:
+	HWND				m_hWnd;
 	//  ¿Œ«≤ ∞¥√º
 	LPDIRECTINPUT8		m_pDI;
 	LPDIRECTINPUTDEVICE8  m_pKeyDevice; // ≈∞∫∏µÂ

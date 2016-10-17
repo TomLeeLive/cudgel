@@ -1,5 +1,5 @@
 #pragma once
-#include "GBASISStd.h"
+#include "GBasisStd.h"
 
 class GArcBall
 {

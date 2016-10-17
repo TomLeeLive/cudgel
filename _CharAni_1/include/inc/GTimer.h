@@ -1,5 +1,5 @@
 #pragma once
-#include "GBASISStd.h"
+#include "GBasisStd.h"
 class CStopwatch
 {
 public:
@@ -10,14 +10,16 @@ public:
 	{    // Start 가 호출된 후 경과한 밀리초를 리턴
 		LARGE_INTEGER liPerfNow;
 		QueryPerformanceCounter(&liPerfNow);
-		__int64 qwElapsedTime = (((liPerfNow.QuadPart - m_liPerfStart.QuadPart) * 1000) / m_liPerFreq.QuadPart);
+		__int64 qwElapsedTime = (((liPerfNow.QuadPart - m_liPerfStart.QuadPart)));// / m_liPerFreq.QuadPart);
 		return qwElapsedTime;
 	}
 	void Output(const TCHAR* pData)
 	{
 #ifdef _DEBUG
 		TCHAR  strMessage[MAX_PATH] = { 0, };
-		_stprintf_s(strMessage, _T("<=====%s[%ld]====>"), pData, Now());
+		__int64 qwElapsedTime = Now();
+		//float Second = static_cast<float>(qwElapsedTime) / static_cast<float>(m_liPerFreq.QuadPart);
+		_stprintf_s(strMessage, _T("<=====%s[%ld]====>"), pData, qwElapsedTime);
 		OutputDebugString(strMessage);
 #endif
 	}

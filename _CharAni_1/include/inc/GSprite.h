@@ -6,7 +6,7 @@ struct GRectUV
 	D3DXVECTOR4	vUV;
 	RECT		Rect;
 };
-struct TInstatnce
+struct GInstatnce
 {
 	D3DXMATRIX matWorld;
 	D3DXVECTOR4  uv[4];
@@ -35,7 +35,7 @@ public:
 	vector<GRectUV>			m_RectList;
 	D3DXVECTOR4				m_ParticleColor;
 	
-	vector<TInstatnce>			m_pInstance;
+	vector<GInstatnce>			m_pInstance;
 	ComPtr<ID3D11Buffer>		m_pVBInstance;
 	bool						m_bInstancing;
 public:
@@ -47,7 +47,7 @@ public:
 						bool   bInstancing = false,
 						ID3D11BlendState* pBlendState = nullptr);
 	bool		Frame(ID3D11DeviceContext*    pContext, float fGlobalTime, float fElapsedTime);
-	void		Updata(ID3D11DeviceContext*    pContext, float& pfCurrenGTimer, int& iApplyIndex, float fGlobalTime, float fElapsedTime);
+	void		Updata(ID3D11DeviceContext*    pContext, float& pfCurrentTimer, int& iApplyIndex, float fGlobalTime, float fElapsedTime);
 	bool		PreDraw(ID3D11DeviceContext* pContext);
 	bool		Render(ID3D11DeviceContext* pContext);
 	bool		PostDraw(ID3D11DeviceContext* pContext);

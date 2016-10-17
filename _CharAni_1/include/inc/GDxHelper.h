@@ -5,8 +5,6 @@
 #include <d2d1helper.h>
 #include <dwrite.h>
 #include <d3dx10math.h>
-#include <wrl.h>
-#include <memory>
 
 #pragma comment( lib, "dxguid.lib" )
 #pragma comment( lib, "dxgi.lib" )
@@ -22,19 +20,11 @@
 #pragma comment( lib, "d2d1.lib" )
 #pragma comment( lib, "dwrite.lib" )
 
-using namespace Microsoft::WRL;
-using namespace std;
-
-extern ID3D11Device*			g_pd3dDevice;
-extern ID3D11DeviceContext*		g_pImmediateContext;
-
-#define str(x) L#x
-#define xstr(x) str(x)
-
-#define randf(x) (x*rand()/(float)RAND_MAX)
-#define randf2(x,off) (off+x*rand()/(float)RAND_MAX)
-#define randstep(fMin,fMax) (fMin+((float)fMax-(float)fMin)*rand()/(float)RAND_MAX)
-#define clamp(x,MinX,MaxX) if (x>MaxX) x=MaxX; else if (x<MinX) x=MinX;
+namespace GBASIS
+{
+	extern ID3D11Device*			g_pd3dDevice;
+	extern ID3D11DeviceContext*		g_pImmediateContext;
+}
 
 #if defined(DEBUG) | defined(_DEBUG) 
 #ifndef H_RETURN

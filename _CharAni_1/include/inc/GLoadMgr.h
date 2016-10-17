@@ -8,10 +8,10 @@ class GCallBackBase
 };
 
 template <class GObjectType>
-class TLoadCallBack : public GCallBackBase 
+class GLoadCallBack : public GCallBackBase 
 {
 	public:
-		TLoadCallBack() 
+		GLoadCallBack() 
 		{			
 			m_pFunction = 0;
 			m_hThread = 0;
@@ -47,26 +47,26 @@ class TLoadCallBack : public GCallBackBase
 };
 
 template <class GObjectType >
-TLoadCallBack<GObjectType> SetProc(GObjectType pObjType)
+GLoadCallBack<GObjectType> SetProc(GObjectType pObjType)
 {
-	return TLoadCallBack<GObjectType>(&pObjType);
+	return GLoadCallBack<GObjectType>(&pObjType);
 }
 template <class GObjectType>
-DWORD  WINAPI TLoadCallBack<GObjectType>::LoadMgrThread(void* lParam)
+DWORD  WINAPI GLoadCallBack<GObjectType>::LoadMgrThread(void* lParam)
 {	
 	 if(lParam)
 	 {  		 
-		 TLoadCallBack* pLoadMgr=(TLoadCallBack*)lParam;			
+		 GLoadCallBack* pLoadMgr=(GLoadCallBack*)lParam;			
 		 pLoadMgr->Execute();	 
 	 }
 	 return 0;
 }
 
 template <class GObjectType>
-bool TLoadCallBack<GObjectType>::NewThread()
+bool GLoadCallBack<GObjectType>::NewThread()
 {
 	m_bEndOfLoadData = false;
-	m_hThread = CreateThread( NULL, 0, TLoadCallBack::LoadMgrThread, this, CREATE_SUSPENDED, &m_dwThreadID );
+	m_hThread = CreateThread( NULL, 0, GLoadCallBack::LoadMgrThread, this, CREATE_SUSPENDED, &m_dwThreadID );
 	if( m_hThread == NULL )
 	{
 		return false;
@@ -74,13 +74,13 @@ bool TLoadCallBack<GObjectType>::NewThread()
 	return true;
 }
 template <class GObjectType>
-bool TLoadCallBack<GObjectType>::SetThread()
+bool GLoadCallBack<GObjectType>::SetThread()
 {
 	ResumeThread(m_hThread);	
 	return true;
 }
 template <class GObjectType>
-bool TLoadCallBack<GObjectType>::EndThread()
+bool GLoadCallBack<GObjectType>::EndThread()
 {
 	TerminateThread(m_hThread,m_dwThreadID);
 	CloseHandle( m_hThread );

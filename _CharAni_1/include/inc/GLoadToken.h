@@ -23,8 +23,8 @@ public:
 	const TCHAR*	GetNextTokenString();
 	const TCHAR*	GetCurrentTokenString();
 	bool			LoadBuffer(const TCHAR* strFileName);
-	INT				SearchTokenArray(INT NumObjType, TCHAR** pObjectType, DWORD dwNexGObjectIndex = 0);
-	const TCHAR*	GetSearchString(PTCHAR szSearchData, bool bLoop = true);
+	INT				SearchTokenArray(INT NumObjType, TCHAR** pObjectType, DWORD dwNextObjectIndex = 0);
+	const TCHAR*	GetSearchString(TCHAR* szSearchData, bool bLoop = true);
 	bool			DeleteBuffer();
 public:
 	template <typename OutputIterator>

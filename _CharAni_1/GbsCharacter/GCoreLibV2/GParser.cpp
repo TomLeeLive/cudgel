@@ -63,6 +63,90 @@ BOOL GParser::GetData(VOID* pData, INT DataType)
 			}
 		}
 		break;
+		case MESH_FACE_DATA:
+		{
+			int iTemp; int iTemp2 = -1;
+			//ST_INT_FOUR stTemp;
+			//memset(&stTemp, 0, sizeof(stTemp));
+
+			//%s %d %s %d %s %d %s %d %s %d
+			_stscanf(m_pBuffer, _T("%s %s%s %d %s %d %s %d %s %d %s %d %s %d %s %d %s %d"),
+				m_pString, m_pString, m_pString,
+				&((ST_INT_FOUR*)pData)->index1, m_pString, &((ST_INT_FOUR*)pData)->index2, m_pString, &((ST_INT_FOUR*)pData)->index3,
+				m_pString, &iTemp,
+				m_pString, &iTemp,
+				m_pString, &iTemp,
+				m_pString, &iTemp,
+				m_pString, &iTemp2
+				);
+
+			if (iTemp2 == -1) {
+				_stscanf(m_pBuffer, _T("%s %s%s %d %s %d %s %d %s %d %s %d %s %d %s %s %d"),
+					m_pString, m_pString, m_pString,
+					&((ST_INT_FOUR*)pData)->index1, m_pString, &((ST_INT_FOUR*)pData)->index2, m_pString, &((ST_INT_FOUR*)pData)->index3,
+					m_pString, &iTemp,
+					m_pString, &iTemp,
+					m_pString, &iTemp,
+					m_pString, 
+					m_pString, &iTemp2
+					);
+
+				((ST_INT_FOUR*)pData)->index4 = iTemp2;
+			}
+			else {
+				((ST_INT_FOUR*)pData)->index4 = iTemp2;
+			}
+			
+		}
+		break;
+		case MESH_VERTEX_DATA:
+		{
+			INT iData;
+			_stscanf(m_pBuffer, _T("%s %d %f %f %f"),
+				m_pString,
+				&iData,
+				&((D3DXVECTOR3*)pData)->x,
+				&((D3DXVECTOR3*)pData)->z,
+				&((D3DXVECTOR3*)pData)->y);
+		}
+		break;
+		case ANI_SCL_DATA:
+		{
+			_stscanf(m_pBuffer, _T("%s %d %f %f %f %f %f %f %f"),
+				m_pString,
+				&((ST_ANI_SCL*)pData)->iTick,
+				&((ST_ANI_SCL*)pData)->vecVec.x,
+				&((ST_ANI_SCL*)pData)->vecVec.z,
+				&((ST_ANI_SCL*)pData)->vecVec.y,
+				&((ST_ANI_SCL*)pData)->vecRot.x,
+				&((ST_ANI_SCL*)pData)->vecRot.z,
+				&((ST_ANI_SCL*)pData)->vecRot.y,
+				&((ST_ANI_SCL*)pData)->vecRot.w
+				);
+		}
+		break;
+		case ANI_ROT_DATA:
+		{
+			_stscanf(m_pBuffer, _T("%s %d %f %f %f %f"),
+				m_pString,
+				&((ST_ANI_ROT*)pData)->iTick,
+				&((ST_ANI_ROT*)pData)->vecRot.x,
+				&((ST_ANI_ROT*)pData)->vecRot.z,
+				&((ST_ANI_ROT*)pData)->vecRot.y,
+				&((ST_ANI_ROT*)pData)->vecRot.w
+				);
+		}
+		break;
+		case ANI_POS_DATA:
+		{
+			_stscanf(m_pBuffer, _T("%s %d %f %f %f"),
+				m_pString,
+				&((ST_ANI_POS*)pData)->iTick,
+				&((ST_ANI_POS*)pData)->vecPos.x,
+				&((ST_ANI_POS*)pData)->vecPos.z,
+				&((ST_ANI_POS*)pData)->vecPos.y);
+		}
+		break;
 		case VERTEX_DATA:
 		{
 			_stscanf(m_pBuffer, _T("%s %f %f %f"),
@@ -73,6 +157,16 @@ BOOL GParser::GetData(VOID* pData, INT DataType)
 		}
 		break;
 		case FACE_DATA:
+		{
+			INT iData;
+			_stscanf(m_pBuffer, _T("%s %d %d %d %d"),
+				m_pString,
+				&iData,
+				&((ST_INT_THREE*)pData)->index1,
+				&((ST_INT_THREE*)pData)->index2,
+				&((ST_INT_THREE*)pData)->index3);
+		}
+		break;
 		case MATRIX_DATA:
 		case NULL_DATA:
 			break;

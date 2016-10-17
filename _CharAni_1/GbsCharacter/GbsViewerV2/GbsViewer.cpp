@@ -3,13 +3,13 @@
 
 
 //#define GBS_DEFINE_BOX
-//#define GBS_DEFINE_SHIP
+#define GBS_DEFINE_SHIP
 //#define GBS_DEFINE_MULTICAMERAS
 //#define GBS_DEFINE_ANI_TRANSLATE
 //#define GBS_DEFINE_ANI_SCALE
-#define GBS_DEFINE_ANI_TURRET
+//#define GBS_DEFINE_ANI_TURRET
 
-int GbsViewer::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+int Sample::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	if (m_pMainCamera != nullptr)
 	{
@@ -18,7 +18,7 @@ int GbsViewer::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return -1;
 }
    
-HRESULT GbsViewer::CreateResource()
+HRESULT Sample::CreateResource()
 {
 	HRESULT hr;
 	if (m_pMainCamera)
@@ -32,22 +32,22 @@ HRESULT GbsViewer::CreateResource()
 //--------------------------------------------------------------------------------------
 // 
 //--------------------------------------------------------------------------------------
-HRESULT GbsViewer::DeleteResource()
+HRESULT Sample::DeleteResource()
 {
 	HRESULT hr = S_OK;
-	if (m_pImmediateContext) m_pImmediateContext->ClearState();
+	if (g_pImmediateContext) g_pImmediateContext->ClearState();
 	return S_OK;
 }
 
 
-bool	GbsViewer::Init() {
+bool	Sample::Init() {
 
 
 #ifdef GBS_DEFINE_BOX
-		m_stModel.Init(L"data/box.GBS", L"Tutorial04.fx");
+		m_stModel.Init(L"data/box.GB2", L"Tutorial04.fx");
 #endif
 #ifdef GBS_DEFINE_SHIP
-		m_stModel.Init(L"data/ship.GBS", L"Tutorial04.fx");
+		m_stModel.Init(L"data/ship.GB2", L"Tutorial04.fx");
 #endif
 #ifdef GBS_DEFINE_MULTICAMERAS
 		m_stModel.Init(L"data/MultiCameras.GBS", L"Tutorial04.fx");
@@ -62,7 +62,7 @@ bool	GbsViewer::Init() {
 		m_stModel.Init(L"data/rotanimation.GBS", L"Tutorial04.fx");
 #endif
 #ifdef GBS_DEFINE_ANI_TURRET
-		m_stModel.Init(L"data/turret.GBS", L"Tutorial04.fx");
+		m_stModel.Init(L"data/turret.GB2", L"Tutorial04.fx");
 #endif
 
 
@@ -83,7 +83,7 @@ bool	GbsViewer::Init() {
 
 	return true;
 };
-bool	GbsViewer::Frame() {
+bool	Sample::Frame() {
 
 
 
@@ -117,7 +117,7 @@ bool	GbsViewer::Frame() {
 
 	return true;
 };
-bool	GbsViewer::Render() {
+bool	Sample::Render() {
 
 
 	//
@@ -136,7 +136,7 @@ bool	GbsViewer::Render() {
 
 	return true;
 };
-bool	GbsViewer::Release() {
+bool	Sample::Release() {
 
 
 
@@ -145,12 +145,12 @@ bool	GbsViewer::Release() {
 	return true;
 };
 
-GbsViewer::GbsViewer()
+Sample::Sample()
 {
 }
 
 
-GbsViewer::~GbsViewer()
+Sample::~Sample()
 {
 
 }

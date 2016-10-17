@@ -19,11 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{8593411B-5AEF-448C-9AEB-C3320EFA497F}</ProjectGuid>
+    <ProjectGuid>{9A4165F1-5F41-49D1-8349-20F5DC418CB7}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>AseBox</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-    <ProjectName>GbsViewer</ProjectName>
+    <ProjectName>GbsViewerV2</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

@@ -3,8 +3,9 @@
 #include "GTimer.h"
 #include "GInput.h"
 #include "GDirectWrite.h"
+#include "GShape.h"
 
-class GBASISLib_0 : public GWindow
+class GBasisLib_0 : public GWindow
 {
 public:
 	GTimer					m_Timer;
@@ -14,6 +15,8 @@ public:
 	UINT					m_iSamplerMode;
 	bool					m_bWireFrameRender;
 	bool					m_bDebugPrint;
+	GDirectionLineShape		m_AxisLine;
+	T_STR					m_LineShaderFile;
 public:
 	virtual bool		Init();
 	virtual bool		Frame();
@@ -33,12 +36,12 @@ public:
 	virtual bool		DrawDebugRect(RECT* rcDest = NULL, TCHAR* pString = 0, D3DXCOLOR color = D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f) );
 	virtual	bool		PostRender();
 
-	bool				TInit();
-	bool				TFrame();
-	bool				TRender();	
+	bool				GInit();
+	bool				GFrame();
+	bool				GRender();	
 	bool				Run();		 
 	bool				ToolRun();
-	bool				TRelease();
+	bool				GRelease();
 
 				HRESULT		CreateDxResource();
 				HRESULT		DeleteDxResource();
@@ -46,6 +49,6 @@ public:
 	virtual		HRESULT		DeleteResource();
 	
 public:
-	GBASISLib_0(void);
-	virtual ~GBASISLib_0(void);
+	GBasisLib_0(void);
+	virtual ~GBasisLib_0(void);
 };

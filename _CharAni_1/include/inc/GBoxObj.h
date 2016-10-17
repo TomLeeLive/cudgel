@@ -1,12 +1,12 @@
 #pragma once
 #include "GShape.h"
-#include "GRenderSO.h"
+#include "GDxSO.h"
 
 class GBoxObj : public GBoxShape
 {
 public:
-	int							m_iNumSteamOut;
-	GRenderSO					m_RenderSO;
+	int						m_iNumSteamOut;
+	GDxSO					m_RenderSO;
 	ComPtr<ID3D11GeometryShader>	m_pGS;
 	ComPtr<ID3D11GeometryShader>	m_pGSStreamOutput;
 	ComPtr<ID3D11VertexShader>		m_pVSPassThroughMain;

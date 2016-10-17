@@ -1,8 +1,7 @@
 #pragma once
-#include "GBASISStd.h"
+#include "GBasisStd.h"
 #include "GDxHelperEx.h"
 using namespace DX;
-
 
 class GDevice 
 {
@@ -50,7 +49,6 @@ public:
 	//
 	//--------------------------------------------------------------------------------------	
 	bool		CleanupDevice();
-	void		ClearD3D11DeviceContext( ID3D11DeviceContext* pd3dDeviceContext );
 	//--------------------------------------------------------------------------------------
 	// 변경된 클라이언트 영역를 재설정한다.
 	//--------------------------------------------------------------------------------------

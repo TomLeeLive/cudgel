@@ -18,7 +18,7 @@ public:
 	// 윈도우 생성
 	bool				InitWindow(		HINSTANCE hInstance, 
 										int nCmdShow, 
-										TCHAR* strWindowTitle = _T("GBASIS Sample"), 										
+										TCHAR* strWindowTitle = _T("TBasis Sample"), 										
 										int iWidth = 800,
 										int iHeight=600,
 										BOOL IsFullScreen = FALSE);	

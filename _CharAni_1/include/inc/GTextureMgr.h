@@ -1,5 +1,5 @@
 #pragma once
-#include "GBASISStd.h"
+#include "GBasisStd.h"
 
 class GTexture
 {
@@ -33,13 +33,13 @@ public:
 	typedef unordered_map <INT, GTexture*>		TemplateMap;
 	typedef TemplateMap::iterator				TemplateMapItor;
 	TemplateMapItor								TItor;
-	TemplateMap									GMap;
+	TemplateMap									TMap;
 	INT											m_iCurIndex;
 public:
 	INT				Add(ID3D11Device*	 pDevice, const TCHAR *pFileName);
 	INT				Add(ID3D11Device*	 pDevice, const TCHAR *pFileName, const TCHAR* szPath);
-	GTexture*		GetPtr(INT iIndex);
-	GTexture*		GetPtr(T_STR strFindName);
+	GTexture* const	GetPtr(INT iIndex);
+	GTexture* const	GetPtr(T_STR strFindName);
 	bool			Release();
 public:
 	GTextureMgr();

@@ -1,6 +1,5 @@
 #pragma once
-#include "GBASISStd.h"
-#include "GShape.h"
+#include "GBasisStd.h"
 namespace GBASIS {
 
 	template< typename T > void Swap(T* a, T* b)
@@ -10,10 +9,10 @@ namespace GBASIS {
 		*a = *b;
 		*b = Temp;
 	}
-	template<typename GContainer>
-	inline void stl_wipe(GContainer& container)
+	template<typename TContainer>
+	inline void stl_wipe(TContainer& container)
 	{
-		for (GContainer::iterator i = container.begin(); i != container.end(); ++i)
+		for (TContainer::iterator i = container.begin(); i != container.end(); ++i)
 			delete *i;
 		container.clear();
 	}
@@ -34,15 +33,15 @@ namespace GBASIS {
 		typedef unordered_map <int, Child*>			TemplateMap;
 		typedef typename TemplateMap::iterator		TemplateMapItor;
 		TemplateMapItor								TItor;
-		TemplateMap									GMap;
+		TemplateMap									TMap;
 		int											m_iCurIndex;
 	public:
 		// 초기화 한다.
 		virtual bool		Init();
 		// 인덱스를 통하여 객체를 리턴받는다.
-		virtual Child*		GetPtr(int index);
+		virtual Child*	const	GetPtr(int index);
 		// 객체이름으로 객체를 리턴받는다.
-		virtual Child*		GetPtr(const TCHAR* szName);
+		virtual Child* const	GetPtr(const TCHAR* szName);
 		// 객체 포인터로 저장된 인덱스를 리턴받는다.
 		virtual int			GetID(Child*);
 		// 객체이름으로 저장된 인덱스를 리턴받는다.
@@ -67,7 +66,7 @@ namespace GBASIS {
 	int GTemplateMap< Child >::GetID(Child* pChild)
 	{
 		int iIndex = -1;
-		for (TemplateMapItor itor = GMap.begin(); itor != GMap.end(); itor++)
+		for (TemplateMapItor itor = TMap.begin(); itor != TMap.end(); itor++)
 		{
 			Child *pPoint = (Child *)(*itor).second;
 			if (pChild == pPoint)
@@ -82,7 +81,7 @@ namespace GBASIS {
 	int GTemplateMap< Child >::GetID(const TCHAR* szName)
 	{
 		int iIndex = -1;
-		for (TemplateMapItor itor = GMap.begin(); itor != GMap.end(); itor++)
+		for (TemplateMapItor itor = TMap.begin(); itor != TMap.end(); itor++)
 		{
 			Child *pPoint = (Child *)(*itor).second;
 			if (!_tcsicmp(pPoint->m_szName.c_str(), szName))
@@ -98,19 +97,19 @@ namespace GBASIS {
 	bool GTemplateMap< Child >::Init()
 	{
 		m_iCurIndex = 0;
-		GMap.clear();
+		TMap.clear();
 		return true;
 	}
 	template < class Child >
 	int GTemplateMap< Child >::Count()
 	{
-		return (int)GMap.size();
+		return (int)TMap.size();
 	}
 
 	template < class Child >
 	bool GTemplateMap< Child >::Frame()
 	{
-		for (TemplateMapItor itor = GMap.begin(); itor != GMap.end(); itor++)
+		for (TemplateMapItor itor = TMap.begin(); itor != TMap.end(); itor++)
 		{
 			Child *pPoint = (Child *)(*itor).second;
 			if (pPoint)
@@ -121,7 +120,7 @@ namespace GBASIS {
 	template < class Child >
 	bool GTemplateMap< Child >::Render(ID3D11DeviceContext*    pContext)
 	{
-		for (TemplateMapItor itor = GMap.begin(); itor != GMap.end(); itor++)
+		for (TemplateMapItor itor = TMap.begin(); itor != TMap.end(); itor++)
 		{
 			Child *pPoint = (Child *)(*itor).second;
 			if (pPoint)
@@ -132,7 +131,7 @@ namespace GBASIS {
 	template < class Child >
 	bool GTemplateMap< Child >::Release()
 	{
-		for (TemplateMapItor itor = GMap.begin(); itor != GMap.end(); itor++)
+		for (TemplateMapItor itor = TMap.begin(); itor != TMap.end(); itor++)
 		{
 			Child *pPoint = (Child *)(*itor).second;
 			if (pPoint)
@@ -141,22 +140,22 @@ namespace GBASIS {
 				return false;
 			delete pPoint;
 		}
-		GMap.clear();
+		TMap.clear();
 		m_iCurIndex = 0;
 		return true;
 	}
 	template < class Child >
-	Child *GTemplateMap< Child >::GetPtr(int iIndex)
+	Child* const GTemplateMap< Child >::GetPtr(int iIndex)
 	{
-		TemplateMapItor itor = GMap.find(iIndex);
-		if (itor == GMap.end()) return NULL;
+		TemplateMapItor itor = TMap.find(iIndex);
+		if (itor == TMap.end()) return NULL;
 		Child *pPoint = (*itor).second;
 		return pPoint;
 	}
 	template < class Child >
-	Child* GTemplateMap< Child >::GetPtr(const TCHAR* szName)
+	 Child* const GTemplateMap< Child >::GetPtr(const TCHAR* szName)
 	{
-		for (TemplateMapItor itor = GMap.begin(); itor != GMap.end(); itor++)
+		for (TemplateMapItor itor = TMap.begin(); itor != TMap.end(); itor++)
 		{
 			Child *pPoint = (Child *)(*itor).second;
 			if (!_tcsicmp(pPoint->m_szName.c_str(), szName))
@@ -169,11 +168,11 @@ namespace GBASIS {
 	template < class Child >
 	bool GTemplateMap< Child >::Delete(int iIndex)
 	{
-		Child *pPoint = GetPtr(iIndex);
+		Child* const pPoint = GetPtr(iIndex);
 		if (pPoint)
 		{
 			pPoint->Release();
-			GMap.erase(iIndex);
+			TMap.erase(iIndex);
 		}
 		return true;
 	}
@@ -183,7 +182,7 @@ namespace GBASIS {
 		if (pPoint)
 		{
 			pPoint->Release();
-			GMap.erase(GetID(pPoint));
+			TMap.erase(GetID(pPoint));
 		}
 		return true;
 	}
@@ -191,7 +190,7 @@ namespace GBASIS {
 	GTemplateMap< Child >::GTemplateMap()
 	{
 		m_iCurIndex = 0;
-		GMap.clear();
+		TMap.clear();
 	}
 
 	template < class Child >

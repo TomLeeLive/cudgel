@@ -3,15 +3,15 @@
 
 class GBackViewCamera : public GCamera
 {
-public:
+public:		
 	D3DXVECTOR3			m_vOffsetDistance;		// 오브젝트의 위치에서 각 방향으로 떨어져 있는 거리 
 	D3DXVECTOR3			m_vLerpUpVector;
 	//--------------------------------------------------------------------------------------
 	// 카메라 위치 정보 
 	//--------------------------------------------------------------------------------------
-	void				MoveLook(float fValue);
-	void				MoveSide(float fValue);
-	void				MoveUp(float fValue);
+	void				MoveLook( float fValue );
+	void				MoveSide( float fValue );	
+	void				MoveUp( float fValue );	
 	//--------------------------------------------------------------------------------------
 	//이동방향의 + or - 를 판단하여 이동벡터의 방향을 결정한다.
 	//--------------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ public:
 	//--------------------------------------------------------------------------------------
 	// 오일러 각에 따른 뷰 행렬 계산 
 	//--------------------------------------------------------------------------------------
-	D3DXMATRIX			Update(float fElapseTime);
+	D3DXMATRIX			Update( float fElapseTime );
 
 	//--------------------------------------------------------------------------------------
 	// 카메라 보간이동의 목표지점.
@@ -43,7 +43,7 @@ public:
 	//--------------------------------------------------------------------------------------
 	// 뷰 행렬 계산  
 	//--------------------------------------------------------------------------------------
-	D3DXMATRIX			SetViewMatrix(D3DXVECTOR3 vPos, D3DXVECTOR3 vTarget, D3DXVECTOR3 vUp = D3DXVECTOR3(0.0f, 1.0f, 0.0f));
+	D3DXMATRIX			SetViewMatrix( D3DXVECTOR3 vPos, D3DXVECTOR3 vTarget, D3DXVECTOR3 vUp = D3DXVECTOR3( 0.0f, 1.0f, 0.0f ));	
 
 public:
 	GBackViewCamera(void);

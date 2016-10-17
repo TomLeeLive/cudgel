@@ -1,5 +1,5 @@
 #pragma once
-#include "GBASISStd.h"
+#include "GBasisStd.h"
 #include "GShape.h"
 
 enum G_POSITION
@@ -35,6 +35,7 @@ public:
 	D3DXVECTOR3	m_vNearCenter;
 	GBoxShape*	m_pBoxShape;
 	ID3D11Device*		m_pd3dDevice;
+	ComPtr<ID3D11PixelShader>  m_pPixelShader;
 public:
 	void	SetMatrix( D3DXMATRIX* pWorld, D3DXMATRIX* pView, D3DXMATRIX* pProj );
 	bool	CreateRenderBox(ID3D11Device*  pd3dDevice,ID3D11DeviceContext*    pImmediateContext);

@@ -1,5 +1,5 @@
 #pragma once
-#include "GBASISStd.h"
+#include "GBasisStd.h"
 
 struct GLightInfo
 {
@@ -21,7 +21,12 @@ public:
 	D3DXVECTOR3				m_vScale;		// 라이트 오브젝트의 크기변환 값
 	D3DXVECTOR3				m_vRotation;    // 라이트 오브젝트의 회전(xyz)
 	D3DXVECTOR3				m_vOffset;		// 지형 높이에서 추가된 위치(x,y,z)
-
+public:
+	T_STR		m_szName;
+	T_STR		m_szPath;
+public:
+	HRESULT				Load(ID3D11Device* pDevice, const TCHAR* strFilePath);
+	void				SetPath(TCHAR* pPath);
 	void					SetValue(D3DXVECTOR3* pvPos = NULL,
 		D3DXVECTOR3* pvDir = NULL,
 		float* pfRange = NULL,
@@ -33,6 +38,7 @@ public:
 public:
 	bool					Init();
 	bool					Frame(float fElapaseTime = 0.0f, float fSecondPerFrame = 0.0f);
+	bool					Update(D3DXMATRIX* pmatLightWorld);
 	bool					Render();
 	bool					Release();
 	//--------------------------------------------------------------------------------------
@@ -44,3 +50,37 @@ public:
 	GLightObj(void);
 	~GLightObj(void);
 };
+class TLightMgr : public GSingleton < TLightMgr >
+{
+private:
+	friend class GSingleton<TLightMgr>;
+	ID3D11Device*			m_pd3dDevice;
+public:
+	typedef map <INT, GLightObj*>					TemplateMap;
+	typedef TemplateMap::iterator				TemplateMapItor;
+	TemplateMapItor								TItor;
+	TemplateMap									TMap;
+	INT											m_iCurIndex;
+
+
+public:
+	void			SetDevice(ID3D11Device*	 pDevice);
+
+	//D3DXVECTOR3 vPosition( 0.0f, 10.0f, 0.0f );
+	//D3DXVECTOR3 vDir( 0.0f, -1.0f, 0.0f );
+	INT				Add(D3DXVECTOR3,
+		D3DXVECTOR3,
+		const TCHAR *pFileName = _T("NULL"));
+
+	GLightObj* const		GetPtr(INT iIndex);
+	GLightObj* const		GetPtr(T_STR strFindName);
+	bool			Init();
+	bool			Frame();
+	bool			Render();
+	bool			Release();
+	bool			Update(D3DXMATRIX* pmatLightWorld);
+public:
+	TLightMgr();
+	~TLightMgr();
+};
+#define I_Light	 TLightMgr::GetInstance()

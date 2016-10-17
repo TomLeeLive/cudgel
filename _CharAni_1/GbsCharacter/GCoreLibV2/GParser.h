@@ -1,5 +1,29 @@
 #pragma once
 #include "GBasisStd.h"
+struct ST_ANI_POS {
+	int			iTick;
+	D3DXVECTOR3	vecPos;
+};
+struct ST_ANI_ROT {
+	int			iTick;
+	D3DXVECTOR4	vecRot;
+};
+struct ST_ANI_SCL {
+	int			iTick;
+	D3DXVECTOR3 vecVec;
+	D3DXVECTOR4 vecRot;
+};
+struct ST_INT_THREE {
+	int index1;
+	int index2;
+	int index3;
+};
+struct ST_INT_FOUR {
+	int index1;
+	int index2;
+	int index3;
+	int index4;
+};
 
 enum SET_DATA_TYPES
 {
@@ -14,6 +38,11 @@ enum SET_DATA_TYPES
 	INDEX_DATA,
 	FACE_DATA,
 	MATRIX_DATA,
+	MESH_VERTEX_DATA,
+	MESH_FACE_DATA,
+	ANI_POS_DATA,
+	ANI_ROT_DATA,
+	ANI_SCL_DATA
 };
 
 class GParser

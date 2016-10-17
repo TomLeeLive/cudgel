@@ -1,0 +1,431 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{209f3ff2-d92f-4c71-8206-339e64a2dbf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Object">
+      <UniqueIdentifier>{5179b499-4bd6-411c-8603-c4b528c84301}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Shape">
+      <UniqueIdentifier>{54792983-2e95-411f-bc01-bcbea8a30a53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Camera">
+      <UniqueIdentifier>{07150801-8ec0-4ad8-8642-b5e2b590436e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Sprite">
+      <UniqueIdentifier>{6c5bee6d-21e3-4515-b434-556ef916390a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\DXHelper">
+      <UniqueIdentifier>{2ef91f50-a9a0-43d6-93bc-743f1a89b794}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Map">
+      <UniqueIdentifier>{26dd2da1-cbf9-4853-a2cc-cc533f7e6783}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Texture">
+      <UniqueIdentifier>{c4d16f28-340c-4b2d-8eac-1aba23daa9a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Utils">
+      <UniqueIdentifier>{4c322fb8-0570-46e7-b07f-cb2833f8f2dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Light">
+      <UniqueIdentifier>{749098c1-5902-40f7-a162-5123216ae2a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{f1e607bb-7bf0-4159-80fc-2b1696ff3c85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\math">
+      <UniqueIdentifier>{83c72e03-3140-437e-bb27-33d13ff41d1d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GArcBall.cpp">
+      <Filter>Common\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="GBackViewCamera.cpp">
+      <Filter>Common\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="GCamera.cpp">
+      <Filter>Common\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="GFrustum.cpp">
+      <Filter>Common\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="GMiniMap.cpp">
+      <Filter>Common\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="GModelViewCamera.cpp">
+      <Filter>Common\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="GDxHelper.cpp">
+      <Filter>Common\DXHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="GDxHelperEx.cpp">
+      <Filter>Common\DXHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="GDxRT.cpp">
+      <Filter>Common\DXHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="GDxShader.cpp">
+      <Filter>Common\DXHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="GDxSO.cpp">
+      <Filter>Common\DXHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="GDxState.cpp">
+      <Filter>Common\DXHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="GLightObj.cpp">
+      <Filter>Common\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="map\GBspParser.cpp">
+      <Filter>Common\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="map\GBspRender.cpp">
+      <Filter>Common\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="map\GBspTree.cpp">
+      <Filter>Common\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="map\GHeightMap.cpp">
+      <Filter>Common\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="map\GMap.cpp">
+      <Filter>Common\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="map\GMapLOD.cpp">
+      <Filter>Common\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="map\GMapObject.cpp">
+      <Filter>Common\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="map\GNode.cpp">
+      <Filter>Common\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="map\GNoise.cpp">
+      <Filter>Common\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="map\GNoiseMap.cpp">
+      <Filter>Common\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="map\GPolygonGen.cpp">
+      <Filter>Common\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="map\GQuadTree.cpp">
+      <Filter>Common\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="map\GQuadTreeIndex.cpp">
+      <Filter>Common\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="map\GSpaceDivision.cpp">
+      <Filter>Common\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="GMatrix.cpp">
+      <Filter>Common\math</Filter>
+    </ClCompile>
+    <ClCompile Include="GVector.cpp">
+      <Filter>Common\math</Filter>
+    </ClCompile>
+    <ClCompile Include="GAnimation.cpp">
+      <Filter>Common\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GAseObj.cpp">
+      <Filter>Common\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GAseParser.cpp">
+      <Filter>Common\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GBaseObj.cpp">
+      <Filter>Common\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GBoneObj.cpp">
+      <Filter>Common\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GLoadToken.cpp">
+      <Filter>Common\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GModel.cpp">
+      <Filter>Common\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GObject.cpp">
+      <Filter>Common\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GObjMgr.cpp">
+      <Filter>Common\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GSkinObj.cpp">
+      <Filter>Common\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GGbsObj.cpp">
+      <Filter>Common\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GBoxObj.cpp">
+      <Filter>Common\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="GShape.cpp">
+      <Filter>Common\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="GSkyObj.cpp">
+      <Filter>Common\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="GSprite.cpp">
+      <Filter>Common\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="GSpriteMgr.cpp">
+      <Filter>Common\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="GTextureMgr.cpp">
+      <Filter>Common\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="GNormalMap.cpp">
+      <Filter>Common\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="GParser.cpp">
+      <Filter>Common\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="GSelect.cpp">
+      <Filter>Common\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="GBasisLib_0.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GDevice.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GDirectWrite.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GInput.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GTimer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GWindow.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GArcBall.h">
+      <Filter>Common\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="GBackViewCamera.h">
+      <Filter>Common\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="GCamera.h">
+      <Filter>Common\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="GFrustum.h">
+      <Filter>Common\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="GMiniMap.h">
+      <Filter>Common\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="GModelViewCamera.h">
+      <Filter>Common\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="GDxHelper.h">
+      <Filter>Common\DXHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="GDxHelperEx.h">
+      <Filter>Common\DXHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="GDxRT.h">
+      <Filter>Common\DXHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="GDxShader.h">
+      <Filter>Common\DXHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="GDxSO.h">
+      <Filter>Common\DXHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="GDxState.h">
+      <Filter>Common\DXHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="GLightObj.h">
+      <Filter>Common\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="map\GBspParser.h">
+      <Filter>Common\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="map\GBspRender.h">
+      <Filter>Common\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="map\GBspTree.h">
+      <Filter>Common\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="map\GHeightMap.h">
+      <Filter>Common\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="map\GMap.h">
+      <Filter>Common\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="map\GMapLOD.h">
+      <Filter>Common\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="map\GMapObject.h">
+      <Filter>Common\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="map\GNode.h">
+      <Filter>Common\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="map\GNoise.h">
+      <Filter>Common\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="map\GNoiseMap.h">
+      <Filter>Common\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="map\GPolygonGen.h">
+      <Filter>Common\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="map\GQuadTree.h">
+      <Filter>Common\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="map\GQuadTreeIndex.h">
+      <Filter>Common\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="map\GSpaceDivision.h">
+      <Filter>Common\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="GMatrix.h">
+      <Filter>Common\math</Filter>
+    </ClInclude>
+    <ClInclude Include="GVector.h">
+      <Filter>Common\math</Filter>
+    </ClInclude>
+    <ClInclude Include="GAnimation.h">
+      <Filter>Common\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GAseObj.h">
+      <Filter>Common\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GAseParser.h">
+      <Filter>Common\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GBaseObj.h">
+      <Filter>Common\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GBoneObj.h">
+      <Filter>Common\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GLoadMgr.h">
+      <Filter>Common\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GLoadToken.h">
+      <Filter>Common\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GMesh.h">
+      <Filter>Common\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GModel.h">
+      <Filter>Common\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GObject.h">
+      <Filter>Common\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GObjMgr.h">
+      <Filter>Common\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GObjStd.h">
+      <Filter>Common\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GSkinObj.h">
+      <Filter>Common\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GGbsObj.h">
+      <Filter>Common\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GBoxObj.h">
+      <Filter>Common\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="GShape.h">
+      <Filter>Common\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="GSkyObj.h">
+      <Filter>Common\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="GSprite.h">
+      <Filter>Common\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="GSpriteMgr.h">
+      <Filter>Common\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="GTextureMgr.h">
+      <Filter>Common\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="GNormalMap.h">
+      <Filter>Common\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="GParser.h">
+      <Filter>Common\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="GSelect.h">
+      <Filter>Common\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="GTemplate.h">
+      <Filter>Common\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="GUtils.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GBasisStd.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GBasisLib_0.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GDevice.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GDirectWrite.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GInput.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GTimer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GWindow.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="shader\Box.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\BoxSO.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\DiffuseLight.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\Line.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\Plane.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\SkyObj.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>

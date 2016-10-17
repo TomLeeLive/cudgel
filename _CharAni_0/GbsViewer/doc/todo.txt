@@ -1,0 +1,136 @@
+ASE가 애니메이션이 있는지? 없는지? 구분
+샘플링 애니메이션인지 키프레임 애니메이션 인지 구분
+
+TM_ANIMATION 파싱
+
+
+//1. 아래 구조체 추가 for 애니메이션
+struct GAnimTrack 
+{ 
+int    iTick; //  시간(틱 단위) 
+D3DXQUATERNION  qRotate; ;// 임의의 축 및 벡터를 통하여 사원수로 변환
+D3DXVECTOR3  vVector; // 위치 벡터 및 스케일 값으로 활용 
+GAnimTrack*  pNext; // 다음 트랙 리스트 주소 
+GAnimTrack*  pPrev;// 이전 트랙 리스트 주소 
+}; 
+
+
+//2. obj 구조체에 추가..
+D3DXMATRIX    m_matWorldTrans;  // 월드이동행렬 
+D3DXMATRIX    m_matWorldRotate;  // 월드회전행렬 
+D3DXMATRIX    m_matWorldScale;  // 월드신축행렬 
+ 
+vector<GAnimTrack> m_PosTrack;// 이동트랙 
+vector<GAnimTrack> m_RotTrack;// 회전트랙 
+vector<GAnimTrack> m_SclTrack;// 신축트랙 
+
+//3.추가 정보 파싱작업
+
+4.시간계산
+
+5.트랙리스트검색
+
+6.애니메이션보간
+
+7.오브젝트 렌더링
+
+
+1.T 애니메이션
+2.R 애니메이션
+3.S 애니메이션
+4.싱글애니메이션 SRT
+
+5.멀티애니메이션(터렛)
+-MATERIAL REF 읽어서 각 오브젝트에서 참조 하도록.. 처리, SUB NO1 :diffuse SUB NO9 : specular?
+-현재 읽은 ASE 파일이 Multi Object Animation인지 판정..*GEOMOBJECT 가 여러번 나오는가?
+-HELPER_OBJ 파싱.
+-상속관계구축
+-NODE_TM 행렬처리(부모행렬과 결합된 것 부모행렬의 역행렬을 곱해줌)
+-불필요한헬퍼오브젝트 렌더에서 제외
+-----------------------------------------------------------------------------------------------------------
+AseSections에  HELPEROBJECT를 추가 하였으며 오브젝트들이 상속 관계를 갖고 있는 애
+니메이션이기 때문에 부모 오브젝트(NODE_PARENT)의 이름이 추가
+-----------------------------------------------------------------------------------------------------------
+static TCHAR* AseSections[]={_T("SCENE "),_T("MATERIAL_LIST"),_T("GEOMOBJECT"),_T("HELPEROBJECT"), }; 
+enum AseSectionType  {    SCENE = 0,  MATERIALLIST,   GEOMOBJECT,   HELPEROBJECT, }; 
+ 
+static TCHAR* AseGeomObjectTokens[]={ _T("NODE_PARENT"), _T("NODE_TM"), _T("MESH {"),   
+        _T("TM_ANIMATION"), _T("MATERIAL_REF"), 
+_T("GEOMOBJECT"),  // Return 
+_T("HELPEROBJECT"),   }; // Return 
+ 
+enum AseGeomObjectType {   
+NODE_PARENT=0,  MODE_TM,  MESH,  TM_ANIMATION,  MATERIAL_REF, }; 
+-----------------------------------------------------------------------------------------------------------
+헬퍼 오브젝트는 메쉬구조를 갖고 있지 않기 때문에  _T("MESH {")가 출력되어 있지 않지만 대신에 바운딩 박스 정보
+(_T("BOUNDINGBOX_MIN"))가 출력되어 있다. 헬퍼 오브젝트는 본(Bone)과 더미(Dummy)오브젝트로 구분되며 이는  _T("HELPER_CLASS")에서 
+찾을 수 있다. 
+-----------------------------------------------------------------------------------------------------------
+상속구조 구축  Convert() -> InheriteCollect()
+-----------------------------------------------------------------------------------------------------------
+SearchToCollects()함수는 부모의 이름(m_strParentName)을 두번째 인자로 하여 호출하면 부모 오브젝트를 반환
+-----------------------------------------------------------------------------------------------------------
+불필요한 오브젝트 제거(헬퍼 오브젝트)   m_pMesh[dwObject]->m_bUsed=false;
+
+
+
+
+
+텍스처 출력안되는 것 디버깅.
+상속구조
+렌더링 최적화..
+
+싱글오브젝트 애니메이션 렌더링 디버깅
+
+
+
+
+
+--------------------------
+
+상속관계
+
+애니메이션 처리..
+
+//최적화..
+
+
+
+민방위?
+
+가스에전화
+
+
+녹음 들어볼것 ~31:43
+
+버텍스 블렌딩
+
+
+
+5615
+
+
+AScendingSort
+Count_if
+
+양력 2015-10-02 -> 음력 2015-08-20 辛亥 입니다. -> 양력 2016-09-20 乙巳 입니다.
+
+
+3dsmax 2016복사..
+
+
+
+필기,샘플업로드
+
+
+멀티애니메이션마무리.
+
+익스포터 작업..
+
+
+커피구입
+
+민방위
+
+
+

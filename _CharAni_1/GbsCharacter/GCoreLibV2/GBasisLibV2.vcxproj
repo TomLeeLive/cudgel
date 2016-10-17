@@ -1,0 +1,298 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>GCoreLibV2</ProjectName>
+    <ProjectGuid>{62B09430-89AB-4EAE-9107-DA502BC5270E}</ProjectGuid>
+    <RootNamespace>TBasisLib_0</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>11.0.50727.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>../../output/</OutDir>
+    <IntDir>../../output/GCoreLib_0</IntDir>
+    <IncludePath>$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>../../output</OutDir>
+    <IntDir>../../output/GCoreLib_0</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <AdditionalIncludeDirectories>../../include/dx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Lib>
+      <OutputFile>GCoreLib32d.lib</OutputFile>
+      <AdditionalLibraryDirectories>../../lib/dx/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <PostBuildEvent />
+    <PostBuildEvent>
+      <Command>copy "./GCoreLib32d.lib" "..\\..\\lib"
+copy "*.h" "..\\..\\include\\Inc"
+md "..\\..\\include\\Inc\\map""
+copy ".\\map\\*.h" "..\\..\\include\\Inc\\map"
+md "..\\..\\Output\\data\\shader"
+copy ".\\shader\\*.*" "..\\..\\Output\\data\\shader"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>../../include/dx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Lib>
+      <AdditionalLibraryDirectories>../../lib/dx/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <OutputFile>GCoreLib32.lib</OutputFile>
+    </Lib>
+    <PostBuildEvent />
+    <PostBuildEvent>
+      <Command>copy "./GCoreLib32.lib" "..\\..\\lib"
+copy "*.h" "..\\..\\include\\Inc"
+md "..\\..\\include\\Inc\\map""
+copy ".\\map\\*.h" "..\\..\\include\\Inc\\map"
+md "..\\..\\Output\\data\\shader"
+copy ".\\shader\\*.*" "..\\..\\Output\\data\\shader"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="GAnimation.cpp" />
+    <ClCompile Include="GArcBall.cpp" />
+    <ClCompile Include="GAseObj.cpp" />
+    <ClCompile Include="GAseParser.cpp" />
+    <ClCompile Include="GBackViewCamera.cpp" />
+    <ClCompile Include="GBaseObj.cpp" />
+    <ClCompile Include="GBasisLib_0.cpp" />
+    <ClCompile Include="GBoneObj.cpp" />
+    <ClCompile Include="GBoxObj.cpp" />
+    <ClCompile Include="GCamera.cpp" />
+    <ClCompile Include="GDevice.cpp" />
+    <ClCompile Include="GDirectWrite.cpp" />
+    <ClCompile Include="GDxHelper.cpp" />
+    <ClCompile Include="GDxHelperEx.cpp" />
+    <ClCompile Include="GDxRT.cpp" />
+    <ClCompile Include="GDxShader.cpp" />
+    <ClCompile Include="GDxSO.cpp" />
+    <ClCompile Include="GDxState.cpp" />
+    <ClCompile Include="GFrustum.cpp" />
+    <ClCompile Include="GGbsObj.cpp" />
+    <ClCompile Include="GInput.cpp" />
+    <ClCompile Include="GLightObj.cpp" />
+    <ClCompile Include="GLoadToken.cpp" />
+    <ClCompile Include="GMatrix.cpp" />
+    <ClCompile Include="GMiniMap.cpp" />
+    <ClCompile Include="GModel.cpp" />
+    <ClCompile Include="GModelViewCamera.cpp" />
+    <ClCompile Include="GNormalMap.cpp" />
+    <ClCompile Include="GObject.cpp" />
+    <ClCompile Include="GObjMgr.cpp" />
+    <ClCompile Include="GParser.cpp" />
+    <ClCompile Include="GSelect.cpp" />
+    <ClCompile Include="GShape.cpp" />
+    <ClCompile Include="GSkinObj.cpp" />
+    <ClCompile Include="GSkyObj.cpp" />
+    <ClCompile Include="GSprite.cpp" />
+    <ClCompile Include="GSpriteMgr.cpp" />
+    <ClCompile Include="GTextureMgr.cpp" />
+    <ClCompile Include="GTimer.cpp" />
+    <ClCompile Include="GVector.cpp" />
+    <ClCompile Include="GWindow.cpp" />
+    <ClCompile Include="map\GBspParser.cpp" />
+    <ClCompile Include="map\GBspRender.cpp" />
+    <ClCompile Include="map\GBspTree.cpp" />
+    <ClCompile Include="map\GHeightMap.cpp" />
+    <ClCompile Include="map\GMap.cpp" />
+    <ClCompile Include="map\GMapLOD.cpp" />
+    <ClCompile Include="map\GMapObject.cpp" />
+    <ClCompile Include="map\GNode.cpp" />
+    <ClCompile Include="map\GNoise.cpp" />
+    <ClCompile Include="map\GNoiseMap.cpp" />
+    <ClCompile Include="map\GPolygonGen.cpp" />
+    <ClCompile Include="map\GQuadTree.cpp" />
+    <ClCompile Include="map\GQuadTreeIndex.cpp" />
+    <ClCompile Include="map\GSpaceDivision.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GAnimation.h" />
+    <ClInclude Include="GArcBall.h" />
+    <ClInclude Include="GAseObj.h" />
+    <ClInclude Include="GAseParser.h" />
+    <ClInclude Include="GBackViewCamera.h" />
+    <ClInclude Include="GBaseObj.h" />
+    <ClInclude Include="GBasisLib_0.h" />
+    <ClInclude Include="GBasisStd.h" />
+    <ClInclude Include="GBoneObj.h" />
+    <ClInclude Include="GBoxObj.h" />
+    <ClInclude Include="GCamera.h" />
+    <ClInclude Include="GDevice.h" />
+    <ClInclude Include="GDirectWrite.h" />
+    <ClInclude Include="GDxHelper.h" />
+    <ClInclude Include="GDxHelperEx.h" />
+    <ClInclude Include="GDxRT.h" />
+    <ClInclude Include="GDxShader.h" />
+    <ClInclude Include="GDxSO.h" />
+    <ClInclude Include="GDxState.h" />
+    <ClInclude Include="GFrustum.h" />
+    <ClInclude Include="GGbsObj.h" />
+    <ClInclude Include="GInput.h" />
+    <ClInclude Include="GLightObj.h" />
+    <ClInclude Include="GLoadMgr.h" />
+    <ClInclude Include="GLoadToken.h" />
+    <ClInclude Include="GMatrix.h" />
+    <ClInclude Include="GMesh.h" />
+    <ClInclude Include="GMiniMap.h" />
+    <ClInclude Include="GModel.h" />
+    <ClInclude Include="GModelViewCamera.h" />
+    <ClInclude Include="GNormalMap.h" />
+    <ClInclude Include="GObject.h" />
+    <ClInclude Include="GObjMgr.h" />
+    <ClInclude Include="GObjStd.h" />
+    <ClInclude Include="GParser.h" />
+    <ClInclude Include="GSelect.h" />
+    <ClInclude Include="GShape.h" />
+    <ClInclude Include="GSkinObj.h" />
+    <ClInclude Include="GSkyObj.h" />
+    <ClInclude Include="GSprite.h" />
+    <ClInclude Include="GSpriteMgr.h" />
+    <ClInclude Include="GTemplate.h" />
+    <ClInclude Include="GTextureMgr.h" />
+    <ClInclude Include="GTimer.h" />
+    <ClInclude Include="GUtils.h" />
+    <ClInclude Include="GVector.h" />
+    <ClInclude Include="GWindow.h" />
+    <ClInclude Include="map\GBspParser.h" />
+    <ClInclude Include="map\GBspRender.h" />
+    <ClInclude Include="map\GBspTree.h" />
+    <ClInclude Include="map\GHeightMap.h" />
+    <ClInclude Include="map\GMap.h" />
+    <ClInclude Include="map\GMapLOD.h" />
+    <ClInclude Include="map\GMapObject.h" />
+    <ClInclude Include="map\GNode.h" />
+    <ClInclude Include="map\GNoise.h" />
+    <ClInclude Include="map\GNoiseMap.h" />
+    <ClInclude Include="map\GPolygonGen.h" />
+    <ClInclude Include="map\GQuadTree.h" />
+    <ClInclude Include="map\GQuadTreeIndex.h" />
+    <ClInclude Include="map\GSpaceDivision.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="shader\Box.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../output/data/shader/%(Filename).cso</ObjectFileOutput>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../output/data/shader/%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="shader\BoxSO.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../output/data/shader/%(Filename).cso</ObjectFileOutput>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../output/data/shader/%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="shader\DiffuseLight.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../output/data/shader/%(Filename).cso</ObjectFileOutput>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../output/data/shader/%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="shader\Line.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../output/data/shader/%(Filename).cso</ObjectFileOutput>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../output/data/shader/%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="shader\Plane.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../output/data/shader/%(Filename).cso</ObjectFileOutput>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../output/data/shader/%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="shader\SkyObj.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../output/data/shader/%(Filename).cso</ObjectFileOutput>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../output/data/shader/%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

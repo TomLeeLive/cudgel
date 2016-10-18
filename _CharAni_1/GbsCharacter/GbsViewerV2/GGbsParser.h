@@ -14,7 +14,7 @@ class GGbsModel;
 class GGbsParser : public GParser, public GSingleton < GGbsParser >
 {
 public:
-	TCHAR* g_pGbsItems[6] = { 
+	TCHAR* g_pGbsItems[4] = { 
 		//L"*SCENE",
 		//L"*MATERIAL_LIST",
 		//L"*GEOMOBJECT",
@@ -22,9 +22,9 @@ public:
 		L"#SCENE",
 		L"#ROOT_MATERIAL",
 		L"#MATERIAL",
-		L"#OBJECT",
-		L"#WORLD",
-		L"#TRIANGLE"
+		L"#OBJECT"
+		//L"#WORLD",
+		//L"#TRIANGLE"
 	};
 	enum GbsItemsType { 
 		//SCENE = 0, 
@@ -34,9 +34,9 @@ public:
 		SCENE = 0,
 		ROOT_MATERIAL,
 		MATERIAL,
-		OBJECT,
-		WORLD,
-		TRIANGLE
+		OBJECT
+		//WORLD,
+		//TRIANGLE
 	};
 
 	TCHAR* g_pGbsSceneTokens[5] = { 

@@ -44,25 +44,25 @@ bool	Sample::Init() {
 
 
 #ifdef GBS_DEFINE_BOX
-		m_stModel.Init(L"data/box.GB2", L"Tutorial04.fx");
+		m_stModel.Init(L"data/box.GB2", L"GbsViewerV2.fx");
 #endif
 #ifdef GBS_DEFINE_SHIP
-		m_stModel.Init(L"data/ship.GB2", L"Tutorial04.fx");
+		m_stModel.Init(L"data/ship.GB2", L"GbsViewerV2.fx");
 #endif
 #ifdef GBS_DEFINE_MULTICAMERAS
-		m_stModel.Init(L"data/MultiCameras.GBS", L"Tutorial04.fx");
+		m_stModel.Init(L"data/MultiCameras.GBS", L"GbsViewerV2.fx");
 #endif
 #ifdef GBS_DEFINE_ANI_TRANSLATE
-		m_stModel.Init(L"data/boxtranslate.GBS", L"Tutorial04.fx");
+		m_stModel.Init(L"data/boxtranslate.GBS", L"GbsViewerV2.fx");
 #endif
 #ifdef GBS_DEFINE_ANI_SCALE
-		m_stModel.Init(L"data/scaleanimationmodel.GBS", L"Tutorial04.fx");
+		m_stModel.Init(L"data/scaleanimationmodel.GBS", L"GbsViewerV2.fx");
 #endif
 #ifdef GBS_DEFINE_ANI_ROTATE
-		m_stModel.Init(L"data/rotanimation.GBS", L"Tutorial04.fx");
+		m_stModel.Init(L"data/rotanimation.GBS", L"GbsViewerV2.fx");
 #endif
 #ifdef GBS_DEFINE_ANI_TURRET
-		m_stModel.Init(L"data/turret.GB2", L"Tutorial04.fx");
+		m_stModel.Init(L"data/turret.GB2", L"GbsViewerV2.fx");
 #endif
 
 

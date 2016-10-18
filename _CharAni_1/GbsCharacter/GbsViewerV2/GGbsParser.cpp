@@ -827,9 +827,11 @@ int		GGbsParser::GetGeomObjDataFromFile(GGbsModel* stModel) {
 				case TM_ANIMATION:
 				{
 					stModel->m_vGeomObj[m_iObjCount].get()->m_bHasAniTrack = true;
+/*
 					stModel->m_fFrameSpeed = stModel->m_stScene.m_iFrameSpeed;
 					stModel->m_fTickPerFrame = stModel->m_stScene.m_iTicksPerFrame;
 					stModel->m_fLastFrame = stModel->m_stScene.m_iLastFrame;
+*/
 					GetAnimationDataFromFile(stModel);
 					bLoop = false;
 					m_iObjCount++;
@@ -896,27 +898,31 @@ int		GGbsParser::GetDataFromFile(GGbsModel* stModel ){
 				{
 				case SCENE:
 				{
-					/*
-					//iVersion, iFirstFrame, iLastFrame,  iFrameSpeed, iTickPerFrame, iNumMtl, iNumObject
-					#SCENE 100 0 100 30 160 1 1
-					*/
-					int iVersion = 0, iFirstFrame = 0, iLastFrame = 0, iFrameSpeed = 0, iTickPerFrame = 0, iNumMtl = 0, iNumObject = 0;
+					_fgetts(m_pBuffer, 256, m_pStream);
+					_stscanf(m_pBuffer, _T("%d %d%d%d%d%d %d%d"),
+						&stModel->m_stScene.iVersion,
+						&stModel->m_stScene.iFirstFrame,
+						&stModel->m_stScene.iLastFrame,
+						&stModel->m_stScene.iFrameSpeed,
+						&stModel->m_stScene.iTickPerFrame,
+						&stModel->m_stScene.iNumMesh,
+						&stModel->m_stScene.iMaxWeight,
+						&stModel->m_stScene.iBindPose);
 
-					_stscanf(m_pBuffer, _T("%s %d %d %d %d %d %d %d"),
-						m_pString,
-						&iVersion, &iFirstFrame, &iLastFrame, &iFrameSpeed, &iTickPerFrame, &iNumMtl, &iNumObject
-						);
 
-					stModel->m_stScene.m_iFrame = iFirstFrame;
-					stModel->m_stScene.m_iLastFrame = iLastFrame;
-					stModel->m_stScene.m_iFrameSpeed = iFrameSpeed;
-					stModel->m_stScene.m_iTicksPerFrame = iTickPerFrame;
+					//for (int j = 0; j < iNumObject; j++) {
+					//	auto gbsgeom = make_shared<GGbsGeom>();
+					//	gbsgeom->m_iType = 0;
+					//	stModel->m_vGeomObj.push_back(gbsgeom);
+					//}
 
-					for (int j = 0; j < iNumObject; j++) {
-						auto gbsgeom = make_shared<GGbsGeom>();
-						gbsgeom->m_iType = 0;
-						stModel->m_vGeomObj.push_back(gbsgeom);
-					}
+
+				}
+				break;
+				case ROOT_MATERIAL:
+				{
+					int iNumMtl = 0;
+					_stscanf(m_pBuffer, _T("%s %d"), m_pString, &iNumMtl);
 
 					for (int j = 0; j < iNumMtl; j++) {
 						auto material = make_shared<GGbsMaterial>();
@@ -926,73 +932,97 @@ int		GGbsParser::GetDataFromFile(GGbsModel* stModel ){
 				break;
 				case MATERIAL:
 				{
-					int iDiffuse = 0;
-						/*
-						//itMtl, m_gMtlList[itMtl].subMtls.size(), m_gMtlList[itMtl].texlist.size()
-						#MATERIAL 0 0 1
-						*/
-					int iMtl = 0, iSubMtlSize = 0, iTexListSize = 0;
-					_stscanf(m_pBuffer, _T("%s %d %d %d"),
-						m_pString,
-						&iMtl, &iSubMtlSize, &iTexListSize
-						);
+					TCHAR   pStrTextureName[256];		//텍스처 이름
 
+					TCHAR	pStrCurMtrlName[256];		//현재 메터리얼 이름
+					TCHAR	pStrClassName[256];			//클래스 이름
 
-					if (iTexListSize == 1) {
+					TCHAR   pStrSubMtrlName[256];		//서브 매터리얼 이름
+					TCHAR   pStrSubMtrlClassName[256];	//서브 매터리얼 클래스 이름
+
+					int     iSubMtlCount = -1;			//서브 매터리얼 카운트
+					int		iTexMapSize = -1;			//텍스처맵사이즈
+					int		iRootMtl = -1;				//루트매터리얼 인덱스
+					int		iTexType = -1;				//텍스처 타입
+
+					
+					_stscanf(m_pBuffer, _T("%s %d"), m_pString, &iRootMtl);
+
+						
 
 						_fgetts(m_pBuffer, 256, m_pStream);
-						_stscanf(m_pBuffer, _T("%d %s"),
-							&iDiffuse,
-							&stModel->m_vMaterial[iMtlCnt].get()->m_szMapDiffuse
-							);
+						_stscanf(m_pBuffer, _T("%s %s %d %d"), pStrCurMtrlName, pStrClassName, &iSubMtlCount, &iTexMapSize);
 
+						_tcscpy(stModel->m_vMaterial[iRootMtl].get()->m_szName, pStrCurMtrlName);
+						_tcscpy(stModel->m_vMaterial[iRootMtl].get()->m_szClsName, pStrClassName);
 
-						TCHAR strDir[MAX_PATH] = L"data\\";
-						_tcsncat(strDir, stModel->m_vMaterial[iMtlCnt].get()->m_szMapDiffuse, _tcsclen(stModel->m_vMaterial[iMtlCnt].get()->m_szMapDiffuse));
-
-						_tcscpy(stModel->m_vMaterial[iMtlCnt].get()->m_szMapDiffuse, strDir);
-
-					}
-					else {
-						/*
-						#SUBMATERIAL 0 0 1
-						1 0_st02_sc00_g04.tga
-						#SUBMATERIAL 1 0 1
-						1 0_st02_sc00_g00.tga
-						#SUBMATERIAL 2 0 1
-						1 0_st02_sc00_g01.tga
-						#SUBMATERIAL 3 0 1
-						1 0_st02_sc00_g03.tga
-						#SUBMATERIAL 4 0 1
-						1 0_st02_sc00_g02.tga
-						*/
-						for (int j = 0; j < iSubMtlSize; j++) {
-							auto submaterial = make_shared<GGbsMaterial>();
-							stModel->m_vMaterial[iMtlCnt].get()->m_vSubMaterial.push_back(submaterial);
+						for (int j = 0; j < iSubMtlCount; j++) {
+							auto submtl = make_shared<GGbsMaterial>();
+							stModel->m_vMaterial[iRootMtl].get()->m_vSubMaterial.push_back(submtl);
 						}
-						for (int j = 0; j < iSubMtlSize; j++) {
 
-							int i_temp_Mtl = 0, i_temp_SubMtlSize = 0, i_temp_TexListSize = 0;
+						if (!_tcsicmp(pStrClassName, L"Standard")) {
 
-							_fgetts(m_pBuffer, 256, m_pStream);
-							_stscanf(m_pBuffer, _T("%s %d %d %d"),
-								m_pString,
-								&i_temp_Mtl, &i_temp_SubMtlSize, &i_temp_TexListSize
-								);
+							for (int j = 0; j < iTexMapSize; j++) {
+								_fgetts(m_pBuffer, 256, m_pStream);
+								_stscanf(m_pBuffer, _T("%d %s"), &iTexType, pStrTextureName);
 
-							_fgetts(m_pBuffer, 256, m_pStream);
-							_stscanf(m_pBuffer, _T("%d %s"),
-								&iDiffuse,
-								&stModel->m_vMaterial[iMtlCnt].get()->m_vSubMaterial[j].get()->m_szMapDiffuse
-								);
+								TCHAR strDir[MAX_PATH] = L"data\\";
+								_tcsncat(strDir, pStrTextureName, _tcsclen(pStrTextureName));
 
-							TCHAR strDir[MAX_PATH] = L"data\\";
-							_tcsncat(strDir, stModel->m_vMaterial[iMtlCnt].get()->m_vSubMaterial[j].get()->m_szMapDiffuse, _tcsclen(stModel->m_vMaterial[iMtlCnt].get()->m_vSubMaterial[j].get()->m_szMapDiffuse));
-
-							_tcscpy(stModel->m_vMaterial[iMtlCnt].get()->m_vSubMaterial[j].get()->m_szMapDiffuse, strDir);
+								if (iTexType == G_TEX_DIFFUSE) {
+									stModel->m_vMaterial[iRootMtl].get()->m_iDiffuse = iTexType;
+									_tcscpy(stModel->m_vMaterial[iRootMtl].get()->m_szMapDiffuse, strDir);
+								}
+								else if (iTexType == G_TEX_REFLECT) {
+									stModel->m_vMaterial[iRootMtl].get()->m_iReflect = iTexType;
+									_tcscpy(stModel->m_vMaterial[iRootMtl].get()->m_szMapReflect, strDir);
+								}
+							}
 						}
-					}	
-					iMtlCnt++;
+						else if (!_tcsicmp(pStrClassName, L"Multi/Sub-Object")) {
+							for (int j = 0; j < iSubMtlCount; j++) {
+
+								int iSubMtlNum = -1;
+								int iMtlCount = -1;
+								int iSubMtlCnt = -1;
+
+								_fgetts(m_pBuffer, 256, m_pStream);
+								_stscanf(m_pBuffer, _T("%s %d"), m_pString, &iSubMtlNum);
+
+								_fgetts(m_pBuffer, 256, m_pStream);
+								_stscanf(m_pBuffer, _T("%s %s %d %d"), pStrSubMtrlName, pStrSubMtrlClassName, &iSubMtlCnt, &iTexMapSize);
+
+								if (iSubMtlCnt > 0)
+									MessageBox(GetActiveWindow(), _T(__FUNCTION__), _T("iSubMtlCnt > 0"), MB_OK);
+
+								if (iTexMapSize > 2)
+									MessageBox(GetActiveWindow(), _T(__FUNCTION__), _T("iTexMapSize > 2"), MB_OK);
+
+								for (int k = 0; k < iTexMapSize; k++) {
+
+									_fgetts(m_pBuffer, 256, m_pStream);
+									_stscanf(m_pBuffer, _T("%d %s"), &iTexType, pStrTextureName);
+
+									TCHAR strDir[MAX_PATH] = L"data\\";
+									_tcsncat(strDir, pStrTextureName, _tcsclen(pStrTextureName));
+
+									if (iTexType == G_TEX_DIFFUSE) {
+										stModel->m_vMaterial[iRootMtl].get()->m_vSubMaterial[j].get()->m_iDiffuse = iTexType;
+										_tcscpy(stModel->m_vMaterial[iRootMtl].get()->m_vSubMaterial[j].get()->m_szMapDiffuse, strDir);
+
+									}
+									else if (iTexType == G_TEX_REFLECT) {
+										stModel->m_vMaterial[iRootMtl].get()->m_vSubMaterial[j].get()->m_iReflect = iTexType;
+										_tcscpy(stModel->m_vMaterial[iRootMtl].get()->m_vSubMaterial[j].get()->m_szMapReflect, strDir);
+
+									}
+								}
+							}
+						}
+						else {
+
+						}
 				}
 				break;
 

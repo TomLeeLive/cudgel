@@ -14,12 +14,13 @@ class GGbsModel;
 class GGbsParser : public GParser, public GSingleton < GGbsParser >
 {
 public:
-	TCHAR* g_pGbsItems[5] = { 
+	TCHAR* g_pGbsItems[6] = { 
 		//L"*SCENE",
 		//L"*MATERIAL_LIST",
 		//L"*GEOMOBJECT",
 		//L"*HELPEROBJECT" 
 		L"#SCENE",
+		L"#ROOT_MATERIAL",
 		L"#MATERIAL",
 		L"#OBJECT",
 		L"#WORLD",
@@ -31,6 +32,7 @@ public:
 		//GEOMOBJECT, 
 		//HELPEROBJECT 
 		SCENE = 0,
+		ROOT_MATERIAL,
 		MATERIAL,
 		OBJECT,
 		WORLD,

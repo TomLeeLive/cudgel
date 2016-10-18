@@ -3,11 +3,11 @@
 
 
 //#define GBS_DEFINE_BOX
-#define GBS_DEFINE_SHIP
+//#define GBS_DEFINE_SHIP
 //#define GBS_DEFINE_MULTICAMERAS
 //#define GBS_DEFINE_ANI_TRANSLATE
 //#define GBS_DEFINE_ANI_SCALE
-//#define GBS_DEFINE_ANI_TURRET
+#define GBS_DEFINE_ANI_TURRET
 
 int Sample::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {

@@ -27,26 +27,36 @@ struct ConstantBuffer
 class GGbsScene {
 public:
 	// Scene정보들..
-	TCHAR				m_szName[MAX_PATH];				//*SCENE_FILENAME "Box.max"
-	int					m_iFrame;						//*SCENE_FIRSTFRAME 0
-	int					m_iLastFrame;					//*SCENE_LASTFRAME 100
-	int					m_iFrameSpeed;					//*SCENE_FRAMESPEED 30
-	int					m_iTicksPerFrame;				//*SCENE_TICKSPERFRAME 160
+	//TCHAR				m_szName[MAX_PATH];				//*SCENE_FILENAME "Box.max"
+	//int					m_iFrame;						//*SCENE_FIRSTFRAME 0
+	//int					m_iLastFrame;					//*SCENE_LASTFRAME 100
+	//int					m_iFrameSpeed;					//*SCENE_FRAMESPEED 30
+	//int					m_iTicksPerFrame;				//*SCENE_TICKSPERFRAME 160
+	int iVersion;		// 버전
+	int	iFirstFrame;    // 시작 프레임
+	int	iLastFrame;     // 마지막 프레임
+	int	iFrameSpeed;    // 1초당 프레임 개수(30)
+	int	iTickPerFrame;  // 1프레임의 틱 값(160)
+	int iNumMesh;		// 메쉬오브젝트 개수
+	int iMaxWeight;		// 정점 당 가중치
+	int iBindPose;		// 바인딩 포즈 에니메이션 여부
+
 	GGbsScene() {
-		memset(m_szName, 0, sizeof(m_szName));
+		//memset(m_szName, 0, sizeof(m_szName));
 	}
 	~GGbsScene() {}
 };
 
 class GGbsMaterial {
 public:
-	//int	m_iType;		// 1: diffuse 9:reflect
+//	int	m_iType;		// 1: diffuse 9:reflect
 	bool  m_iDiffuse;
 	bool  m_iReflect;
 
 	vector<shared_ptr<GGbsMaterial>>				m_vSubMaterial;
 	//int												m_iSubMaterial;				//0이면 SubMaterial 없는 걸로 처리. 0이 아니면 Submaterial 있음.
 	TCHAR											m_szName[MAX_PATH];			//*MATERIAL_NAME "01 - Default"
+	TCHAR											m_szClsName[MAX_PATH];
 	D3DXVECTOR3										m_vecAmbient;				//*MATERIAL_AMBIENT 0.5882	0.5882	0.5882
 	D3DXVECTOR3										m_vecDiffuse;				//*MATERIAL_DIFFUSE 0.5882	0.5882	0.5882
 	D3DXVECTOR3										m_vecSpecular;				//*MATERIAL_SPECULAR 0.9000	0.9000	0.9000
@@ -56,7 +66,9 @@ public:
 	GGbsMaterial() { //m_iSubMaterial = 0; 
 		m_iDiffuse = 0;
 		m_iReflect = 0;
-		//m_iType = 0;
+//		m_iType = -1;
+		memset(m_szName, 0, sizeof(m_szName));
+		memset(m_szClsName, 0, sizeof(m_szClsName));
 		memset(m_szMapDiffuse, 0, sizeof(m_szMapDiffuse));
 		memset(m_szMapReflect, 0, sizeof(m_szMapReflect));
 	};

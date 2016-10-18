@@ -84,11 +84,13 @@ void TbsWriter::ExpMaterial()
 			_ftprintf( m_pStream, _T("\t%s"), m_Material[iRootMtl].strName);
 		else
 			_ftprintf( m_pStream, _T("\t%s"), _T("NULL") );
+
 		// Class Name
 		if( !m_Material[iRootMtl].strClassName.isNull() )
 			_ftprintf( m_pStream, _T("\t%s"), m_Material[iRootMtl].strClassName);
 		else
 			_ftprintf( m_pStream, _T("\t%s"), _T("NULL") );
+
 		// SubMaterial count
 		_ftprintf( m_pStream, _T("\t%d"), m_Material[iRootMtl].iNumSubMtl );
 

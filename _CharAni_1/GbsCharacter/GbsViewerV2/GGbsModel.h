@@ -49,6 +49,12 @@ public:
 
 class GGbsMaterial {
 public:
+	//for GBS 추가함 [START]
+	DWORD m_dwSubCount;
+	DWORD m_dwTexMapCount;
+	DWORD m_dwIndex;
+	//for GBS 추가함 [END]
+
 //	int	m_iType;		// 1: diffuse 9:reflect
 	bool  m_iDiffuse;
 	bool  m_iReflect;
@@ -75,9 +81,26 @@ public:
 	~GGbsMaterial() {};
 };
 
+struct GTri
+{
+	PNCT_VERTEX		vVertex[3];
+	D3DXVECTOR3  vNormal;
+	int						iSubIndex;
+	GTri(int Index) : iSubIndex(Index) {}
+	GTri() : iSubIndex(-1) {}
+};
+
+
 class GGbsObj {
 public:
-	vector<WORD>						m_vIndexList;
+
+	//추가함 for GBS [START]
+	int					m_iNumFace;
+	vector<GTri>		m_TriList;
+	vector<shared_ptr<GGbsObj>>		m_pSubMesh;
+	//추가함 for GBS [END]
+
+	vector<DWORD>					m_vIndexList;
 	vector<PNCT_VERTEX>				m_vPnctVertex;				//for VB
 	ComPtr<ID3D11Buffer>			m_pVertexBuffer = NULL;
 	ComPtr<ID3D11Buffer>			m_pIndexBuffer = NULL;
@@ -86,14 +109,29 @@ public:
 	~GGbsObj() { m_vPnctVertex.clear();};
 
 };
+typedef vector<shared_ptr<GGbsObj>>	gGbsMeshData;
+
 class GGbsGeom {
 public:
+	gGbsMeshData							m_pData;
+	//추가함 for GBS [START]
+	int										m_iIndex;
+	OBJECTCLASSTYPE							m_ClassType;
+	int										m_iNumFace;
+	int										m_iDiffuseTex;
+	D3DXMATRIX								m_matInverse;
+	G_BOX									m_BBox;
+	float									m_fVisibility;
+	int										m_iNumTrack[4];
+	int										m_iMtrlRef;
+	//추가함 for GBS [END]
+
+	D3DXMATRIX								m_matWld;					//월드행렬
 	int										m_iType;					//0:Geom 1:Helper
 	TCHAR									m_szName[MAX_PATH];			//*NODE_NAME "Box01"
 	TCHAR									m_szParentName[MAX_PATH];	//*NODE_PARENT "Dummy01"
 	int										m_iMaterial_Ref;
 	bool									m_bUsed;					//렌더링 제외여부. false일 경우 렌더링 제외한다.
-	D3DXMATRIX								m_matWld;					//월드행렬
 	D3DXMATRIX								m_matChlWld;				//부모월드행렬의 역행렬을 곱한 자식월드 행렬.
 	D3DXMATRIX								m_matCalculation;			//계산된 최종행렬
 	D3DXVECTOR3								m_vecBoundingboxMin;
@@ -102,7 +140,9 @@ public:
 
 	GGbsGeom*								m_pParentObj;
 	vector<GGbsGeom*>  						m_pChildObj;
-	vector<shared_ptr<GGbsObj>>				m_vObj;
+
+	vector<shared_ptr<GGbsGeom>>			m_vSubObj;
+	vector<shared_ptr<GGbsObj>>				m_vSubObjData;
 
 
 	//for Animation [START]
@@ -114,6 +154,7 @@ public:
 	vector<shared_ptr<GAnimTrack>>	m_vPosTrack;				// 이동트랙 
 	vector<shared_ptr<GAnimTrack>>	m_vRotTrack;				// 회전트랙 
 	vector<shared_ptr<GAnimTrack>>	m_vSclTrack;				// 신축트랙 
+	vector<shared_ptr<GAnimTrack>>	m_vVisTrack;				// ? 
 
 	D3DXQUATERNION					m_qRotation;
 
@@ -125,6 +166,12 @@ public:
 	float							m_fTM_SCALEAXISANG;
 	//for Animation [END]
 	GGbsGeom(){
+		m_iIndex = -1;
+		m_iNumFace = -1;
+		m_iDiffuseTex = -1;
+		m_fVisibility = 0.0f;
+		m_iMtrlRef = -1;
+
 		m_pParentObj = NULL;
 
 		m_bUsed = true;
@@ -132,6 +179,7 @@ public:
 		memset(m_szName, 0, sizeof(m_szName));
 		memset(m_szParentName, 0, sizeof(m_szParentName));
 
+		D3DXMatrixIdentity(&m_matInverse);
 		D3DXMatrixIdentity(&m_matWld);
 		D3DXMatrixIdentity(&m_matChlWld);
 		D3DXMatrixIdentity(&m_matWldTrans);

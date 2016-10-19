@@ -8,6 +8,7 @@ struct GGbsScene;
 struct GGbsMaterial;
 
 class GGbsObj;
+class GGbsGeom;
 class GGbsModel;
 
 
@@ -201,10 +202,21 @@ public:
 		m_iColorVerCount = 0;
 	}
 
+	//Ãß°¡ÇÔ for GBS
+	UINT				m_iMaxVertex;
+	UINT				m_iMaxIndex;
+
+	int		LoadVertexIndex(GGbsObj* pData);
+	void	LoadAnimation(GGbsGeom* pMesh);
+	bool	LoadAnimationTrack(int iNumTrack, vector<shared_ptr<GAnimTrack>>& pTrackList);
+	GAnimTrack* SetDoublyLinkedList(GAnimTrack* pCurrentTrack, GAnimTrack* pPrev);
+
+
+
 	void	CountGeomObjFromFile(GGbsModel* stModel);
 	void	InitGbsModel(TCHAR* strFile, GGbsModel* stModel);
 	//void	SetPnctMultiObjData(GAseModel* stModel,int iObjNum = 0);
-	void    SetPnctData(GGbsModel* stModel, int iObjNum = 0);
+	//void    SetPnctData(GGbsModel* stModel, int iObjNum = 0);
 	bool	GetTrackListFromString(GGbsModel* stModel /*vector<shared_ptr<GAnimTrack>>& vTrack*/, GbsTrackType TrackType);
 	int		GetAnimationDataFromFile(GGbsModel* stModel);
 	int		GetMeshDataFromFile(GGbsModel* stModel);

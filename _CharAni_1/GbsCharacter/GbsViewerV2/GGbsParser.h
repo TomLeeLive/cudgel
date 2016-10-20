@@ -212,7 +212,9 @@ public:
 	GAnimTrack* SetDoublyLinkedList(GAnimTrack* pCurrentTrack, GAnimTrack* pPrev);
 
 
-
+	bool	InheriteCollect();
+	bool	SetMaterial();
+	bool	Convert(ID3D11Device* pd3dDevice);
 	void	CountGeomObjFromFile(GGbsModel* stModel);
 	void	InitGbsModel(TCHAR* strFile, GGbsModel* stModel);
 	//void	SetPnctMultiObjData(GAseModel* stModel,int iObjNum = 0);

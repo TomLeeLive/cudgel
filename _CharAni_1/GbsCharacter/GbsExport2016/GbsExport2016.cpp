@@ -15,7 +15,7 @@
 #include "GbsExport2016.h"
 #include "GbsWriter.h"
 
-#define tbsExport2016_CLASS_ID	Class_ID(0x6050d661, 0xa923c99f)
+#define tbsExport2016_CLASS_ID	Class_ID(0x57b509b3, 0xc9b2eec)
 
 class tbsExport2016 : public SceneExport {
 public:

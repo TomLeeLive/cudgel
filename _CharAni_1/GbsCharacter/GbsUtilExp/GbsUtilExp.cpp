@@ -15,7 +15,7 @@
 #include "GbsUtilExp.h"
 #include "GbsWriter.h"
 #include "GSkinExp.h"
-#define tbsUtilExp_CLASS_ID	Class_ID(0x3a6f0563, 0x86f24c74)
+#define tbsUtilExp_CLASS_ID	Class_ID(0x64622ce2, 0x397e4ec4)
 
 
 class tbsUtilExp : public UtilityObj 

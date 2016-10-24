@@ -206,14 +206,15 @@ public:
 	UINT				m_iMaxVertex;
 	UINT				m_iMaxIndex;
 
+	int		GetMapID(GGbsMaterial* pMtrl, int iTexMapType);
 	int		LoadVertexIndex(GGbsObj* pData);
 	void	LoadAnimation(GGbsGeom* pMesh);
 	bool	LoadAnimationTrack(int iNumTrack, vector<shared_ptr<GAnimTrack>>& pTrackList);
 	GAnimTrack* SetDoublyLinkedList(GAnimTrack* pCurrentTrack, GAnimTrack* pPrev);
 
 
-	bool	InheriteCollect();
-	bool	SetMaterial();
+	bool	InheriteCollect(GGbsModel* stModel);
+	bool	SetMaterial(GGbsModel* stModel);
 	bool	Convert(ID3D11Device* pd3dDevice);
 	void	CountGeomObjFromFile(GGbsModel* stModel);
 	void	InitGbsModel(TCHAR* strFile, GGbsModel* stModel);

@@ -718,8 +718,47 @@ bool GGbsParser::Convert(ID3D11Device* pd3dDevice)
 	return true;
 }
 
-bool GGbsParser::SetMaterial()
+int	GGbsParser::GetMapID(GGbsMaterial* pMtrl, int iTexMapType)
 {
+	_ASSERT(pMtrl);
+	if (pMtrl->m_TexMaps.size() <= 0) return -1;
+
+	for (int iTexmap = 0; iTexmap < pMtrl->m_TexMaps.size(); iTexmap++)
+	{
+		if (pMtrl->m_TexMaps[iTexmap].m_dwType == iTexMapType)
+		{
+			return pMtrl->m_TexMaps[iTexmap].m_dwIndex;
+		}
+	}
+	return -1;
+}
+
+bool GGbsParser::SetMaterial(GGbsModel* stModel)
+{
+	
+
+	for (DWORD dwObject = 0; dwObject < stModel->m_vGeomObj.size(); dwObject++)
+	{
+		GGbsGeom* pMesh = stModel->m_vGeomObj[dwObject].get();
+		if (pMesh->m_iNumFace <= 0 || pMesh->m_iMtrlRef < 0) continue;
+	
+		if (pMesh->m_vSubObj.size() > 0)
+		{
+			for (int iSubMesh = 0; iSubMesh < pMesh->m_vSubObj.size(); iSubMesh++)
+			{
+				GGbsGeom* pSubMesh = pMesh->m_vSubObj[iSubMesh].get();
+				if (pSubMesh)
+				{
+					pSubMesh->m_iDiffuseTex = GetMapID(stModel->m_vMaterial[pMesh->m_iMtrlRef]->m_vSubMaterial[pSubMesh->m_iMtrlRef].get(), ID_TBASIS_DI);
+				}
+			}
+		}
+		else
+		{
+			pMesh->m_iDiffuseTex = GetMapID(stModel->m_vMaterial[pMesh->m_iMtrlRef].get(), ID_TBASIS_DI);
+		}
+	}
+	/*
 	for (DWORD dwObject = 0; dwObject < m_pData.size(); dwObject++)
 	{
 		GMesh* pMesh = m_pMesh[dwObject].get();
@@ -741,10 +780,12 @@ bool GGbsParser::SetMaterial()
 			pMesh->m_iDiffuseTex = GetMapID(&m_Material[pMesh->m_iMtrlRef], ID_TBASIS_DI);
 		}
 	}
+	*/
+	
 	return true;
 }
 
-bool GGbsParser::InheriteCollect()
+bool GGbsParser::InheriteCollect(GGbsModel* stModel)
 {
 	D3DXMATRIX m_matInverse;
 	D3DXQUATERNION qR;

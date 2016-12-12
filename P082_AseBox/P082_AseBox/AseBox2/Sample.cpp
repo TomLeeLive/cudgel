@@ -1,13 +1,73 @@
 #include "_stdafx.h"
 
-#define G_DEFINE_BOX
-//#define G_DEFINE_SHIP
+//#define G_DEFINE_BOX
+#define G_DEFINE_SHIP
 //#define G_DEFINE_MULTICAMERAS
 //#define G_DEFINE_ANI_TRANSLATE
 //#define G_DEFINE_ANI_SCALE
 //#define G_DEFINE_ANI_TURRET
 
 //#define G_DEFINE_ANI_ROTATE
+
+bool Sample::DrawDebug()
+{
+
+	if (I_Input.KeyCheck(DIK_N))
+	{
+		// 정점노말 표시
+		m_LineDraw.SetMatrix(NULL, m_pMainCamera->GetViewMatrix(), m_pMainCamera->GetProjMatrix());
+
+		D3DXMATRIX invWorld;
+		D3DXMatrixIdentity(&invWorld);
+		D3DXMatrixInverse(&invWorld, 0, m_pMainCamera->GetWorldMatrix());
+		D3DXMatrixTranspose(&invWorld, &invWorld);
+		D3DXVECTOR3 vStart, vEnd, vDir, vEye;
+		vEye = *m_pMainCamera->GetLookVector();
+
+		for (int i = 0; i < m_stModel.m_vGeomObj.size(); i++) {
+			for (int j = 0; j < m_stModel.m_vGeomObj[i]->m_vObj.size(); j++) {
+				for (int k = 0; k < m_stModel.m_vGeomObj[i]->m_vObj[j]->m_vPnctVertex.size(); k++) {
+					D3DXVec3TransformCoord(&vStart, &m_stModel.m_vGeomObj[i]->m_vObj[j]->m_vPnctVertex[k].p, m_pMainCamera->GetWorldMatrix());
+					D3DXVec3TransformNormal(&vDir, &m_stModel.m_vGeomObj[i]->m_vObj[j]->m_vPnctVertex[k].n, &invWorld);
+					D3DXVec3Normalize(&vDir, &vDir);
+					vEnd = vStart + vDir * 2.0f;
+					float fDot = D3DXVec3Dot(&vEye, &vDir);
+					if (fDot < 0)
+					{
+						vDir.x = vDir.x * 0.5f + 0.5f;
+						vDir.y = vDir.y * 0.5f + 0.5f;
+						vDir.z = vDir.z * 0.5f + 0.5f;
+						m_LineDraw.Draw(m_pImmediateContext, vStart, vEnd, D3DXVECTOR4(vDir.x, vDir.y, vDir.z, 1.0f));
+					}
+				}
+			}
+		}
+
+		/*
+		for (UINT row = 0; row < m_HeightMap.m_iNumRows; row += 5)
+		{
+		for (UINT col = 0; col < m_HeightMap.m_iNumCols; col += 5)
+		{
+		D3DXVec3TransformCoord(&vStart, &m_HeightMap.m_VertexList[row*m_HeightMap.m_iNumCols + col].p, m_pMainCamera->GetWorldMatrix());
+		D3DXVec3TransformNormal(&vDir, &m_HeightMap.m_VertexList[row*m_HeightMap.m_iNumCols + col].n, &invWorld);
+		D3DXVec3Normalize(&vDir, &vDir);
+		vEnd = vStart + vDir * 2.0f;
+		float fDot = D3DXVec3Dot(&vEye, &vDir);
+		if (fDot < 0)
+		{
+		vDir.x = vDir.x * 0.5f + 0.5f;
+		vDir.y = vDir.y * 0.5f + 0.5f;
+		vDir.z = vDir.z * 0.5f + 0.5f;
+		m_LineDraw.Draw(m_pImmediateContext, vStart, vEnd, D3DXVECTOR4(vDir.x, vDir.y, vDir.z, 1.0f));
+		}
+		}
+		}
+		*/
+	}
+
+	if (!GBASISLib_0::DrawDebug()) return false;
+	return true;
+}
 
 int Sample::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -41,6 +101,20 @@ HRESULT Sample::DeleteResource()
 
 
 bool	Sample::Init() {
+	if (FAILED(m_LineDraw.Create(GetDevice(), L"data/shader/line.hlsl")))
+	{
+		MessageBox(0, _T("m_LineDraw 실패"), _T("Fatal error"), MB_OK);
+		return 0;
+	}
+
+	m_cbLight.g_cAmbientMaterial = D3DXVECTOR4(0.3f, 0.3f, 0.3f, 1);
+	m_cbLight.g_cDiffuseMaterial = D3DXVECTOR4(1, 1, 1, 1);
+	m_cbLight.g_cAmbientLightColor = D3DXVECTOR4(1, 1, 1, 1);
+	m_cbLight.g_cDiffuseLightColor = D3DXVECTOR4(1, 1, 1, 1);
+
+	m_pConstantBufferLight.Attach(DX::CreateConstantBuffer(
+		m_pd3dDevice, &m_cbLight, 1, sizeof(LIGHT_CONSTANT_BUFFER)));
+
 
 #ifdef G_DEFINE_BOX
 	m_stModel.Init(L"data/BOX.ASE", L"Tutorial04_2.fx");
@@ -135,10 +209,28 @@ bool	Sample::Frame() {
 	//
 	D3DXMatrixRotationY(&m_World, t);
 #endif
-
+	
 
 	m_pMainCamera->Frame();// (g_fSecPerFrame);
 	m_World = *m_pMainCamera->GetWorldMatrix();
+
+
+	//float t = m_Timer.GetElapsedTime() * D3DX_PI;
+	D3DXMATRIX mLightWorld, mTranslate, mRotation;
+	D3DXMatrixTranslation(&mTranslate, 100.0f, 100.0f, 0.0f);
+	//D3DXMatrixRotationY(&mRotation, t*0.1f);
+	D3DXMatrixIdentity(&mRotation);
+	D3DXMatrixMultiply(&mLightWorld, &mTranslate, &mRotation);
+
+	m_vLightVector.x = mLightWorld._41;
+	m_vLightVector.y = mLightWorld._42;
+	m_vLightVector.z = mLightWorld._43;
+
+	D3DXVec3Normalize(&m_vLightVector, &m_vLightVector);
+	m_vLightVector *= -1.0f;
+
+
+
 
 	m_stModel.Frame();
 
@@ -146,13 +238,26 @@ bool	Sample::Frame() {
 };
 bool	Sample::Render() {
 
-
+	DX::ApplyDSS(m_pImmediateContext, DX::GDxState::g_pDSSDepthEnable);
+	DX::ApplyBS(m_pImmediateContext, DX::GDxState::g_pAlphaBlend);
 	//
 	// Clear the back buffer
 	//
-	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
-	g_pImmediateContext->ClearRenderTargetView(GetRenderTargetView(), ClearColor);
+	//float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
+	//g_pImmediateContext->ClearRenderTargetView(GetRenderTargetView(), ClearColor);
 
+	m_cbLight.g_vLightDir.x = m_vLightVector.x;
+	m_cbLight.g_vLightDir.y = m_vLightVector.y;
+	m_cbLight.g_vLightDir.z = m_vLightVector.z;
+	m_cbLight.g_vLightDir.w = 1;
+	D3DXMATRIX matInvWorld;
+	D3DXMatrixInverse(&matInvWorld, NULL, &m_World);
+	D3DXMatrixTranspose(&matInvWorld, &matInvWorld);
+	D3DXMatrixTranspose(&m_cbLight.g_matInvWorld, &matInvWorld);
+
+	m_pImmediateContext->UpdateSubresource(m_pConstantBufferLight.Get(), 0, NULL, &m_cbLight, 0, 0);
+	m_pImmediateContext->VSSetConstantBuffers(1, 1, m_pConstantBufferLight.GetAddressOf());
+	m_pImmediateContext->PSSetConstantBuffers(1, 1, m_pConstantBufferLight.GetAddressOf());
 
 	m_stModel.Render(&m_World, m_pMainCamera->GetViewMatrix(), m_pMainCamera->GetProjMatrix());
 	
@@ -160,6 +265,10 @@ bool	Sample::Render() {
 	// Present our back buffer to our front buffer
 	//
 	//m_pSwapChain->Present(0, 0);
+
+
+
+
 
 	return true;
 };

@@ -1,3 +1,5 @@
+*.cso
+*.VC.VC.opendb
 *.VC.db
 *.ipch
 *.pch

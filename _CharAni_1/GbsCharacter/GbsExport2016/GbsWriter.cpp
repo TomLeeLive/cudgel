@@ -58,7 +58,15 @@ void TbsWriter::ExpScene()
 	TSTR today = _tasctime(newtime);	// The date string has a \n appended.
 	today.remove(today.length()-1);		// Remove the \n
 
-	_ftprintf( m_pStream, _T("%s %s\n"), _T("#TBF_FILE_EXPORT") , FixupName(today) );
+	_ftprintf( m_pStream, _T("%s %s\n"), _T("#GBS_FILE_EXPORT") , FixupName(today) );
+	_ftprintf(m_pStream, _T("%s\n"), _T("#OBB_MIN_MAX"));	// Scene
+	_ftprintf(m_pStream, _T("%f\t%f\t%f\t%f\t%f\t%f\n"),
+		-1.0f,
+		-1.0f,
+		-1.0f,
+		1.0f,
+		1.0f,
+		1.0f);
 	_ftprintf( m_pStream, _T("%s\n"), _T("#SCENE"));	// Scene
 	_ftprintf( m_pStream, _T("%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d"),
 											m_Scene.iVersion,
